@@ -80,19 +80,19 @@ module ocn_okubo_weiss
 
    interface
       subroutine compute_ev_2(A, wr, wi) bind(C)!{{{
-         use iso_c_binding, only: c_double
-         real (c_double), dimension(2,2) :: A
-         real (c_double), dimension(2) :: wr
-         real (c_double), dimension(2) :: wi
+         use iso_c_binding, only: c_float
+         real (kind = c_float), dimension(2,2) :: A
+         real (kind = c_float), dimension(2) :: wr
+         real (c_float), dimension(2) :: wi
       end subroutine compute_ev_2!}}}
    end interface
 
    interface
       subroutine compute_ev_3(A, wr, wi) bind(C)!{{{
-         use iso_c_binding, only: c_double
-         real (c_double), dimension(3,3) :: A
-         real (c_double), dimension(3) :: wr
-         real (c_double), dimension(3) :: wi
+         use iso_c_binding, only: c_float
+         real (c_float ), dimension(3,3) :: A
+         real (c_float ), dimension(3) :: wr
+         real (c_float ), dimension(3) :: wi
       end subroutine compute_ev_3!}}}
    end interface
 
@@ -298,13 +298,13 @@ contains
             T3 = matmul(sym3, sym3) + matmul(asym3, asym3)
 
             ! Compute eigen-values of 2x2 matrix
-            call compute_ev_2(T2, lambda, lambdaI)
+            call compute_ev_2(real(T2, 4), real(lambda, 4), real(lambdaI, 4))
             ! Take the second eigen-value, multiply by 4 to be on the same scale as OW
             Lam1(k, iCell) = 4*lambda(1)
             Lam2(k, iCell) = 4*lambda(2)
 
             ! Compute eigen-values of 3x3 matrix
-            call compute_ev_3(T3, lambda3, lambdaI3)
+            call compute_ev_3(real(T3, 4), real(lambda3, 4), real(lambdaI3, 4))
             ! Take the second eigen-value, multiply by 4 to be on the same scale as OW
             Lam2_R3(k, iCell) = 4*lambda3(2)
          end do

@@ -1,0 +1,134 @@
+[1mdiff --git a/components/mpas-seaice/src/column/ice_colpkg.F90 b/components/mpas-seaice/src/column/ice_colpkg.F90[m
+[1mindex 285d439840..66aeaaf61c 100644[m
+[1m--- a/components/mpas-seaice/src/column/ice_colpkg.F90[m
+[1m+++ b/components/mpas-seaice/src/column/ice_colpkg.F90[m
+[36m@@ -426,6 +426,16 @@[m
+       use ice_orbital, only: shr_orb_params[m
+ #endif[m
+ [m
+[32m+[m[32m      !in order to cooporate with the couplerhe year[m
+[32m+[m
+[32m+[m[32m      real (kind=8)    :: eccen_8[m
+[32m+[m[32m      real (kind=8)    :: mvelp_8[m
+[32m+[m[32m      real (kind=8)    :: mvelpp_8[m
+[32m+[m[32m      real (kind=8)    :: lambm0_8[m
+[32m+[m[32m      real (kind=8)    :: obliqr_8[m
+[32m+[m[32m      real (kind=8)    :: decln_8[m
+[32m+[m[32m      real (kind=8)    :: eccf_8[m
+[32m+[m
+ [m
+       logical (kind=log_kind), intent(out) :: &[m
+          l_stop          ! if true, abort the model[m
+[36m@@ -437,9 +447,18 @@[m
+       iyear_AD  = 1950[m
+       log_print = .false.   ! if true, write out orbital parameters[m
+ [m
+[32m+[m[32m      eccen_8 = real(eccen, kind = 8)[m
+[32m+[m[32m      mvelp_8 = real(mvelp, kind = 8)[m
+[32m+[m[32m      mvelpp_8 = real(mvelpp, kind = 8)[m
+[32m+[m[32m      lambm0_8  = real(lambm0, kind = 8)[m
+[32m+[m[32m      obliqr_8  = real(obliqr, kind = 8)[m
+[32m+[m[32m      decln_8  = real(decln, kind = 8)[m
+[32m+[m[32m      eccf_8  = real(eccf, kind = 8)[m
+[32m+[m
+[32m+[m
+ #ifdef CCSMCOUPLED[m
+[31m-      call shr_orb_params( iyear_AD, eccen , obliq , mvelp    , &[m
+[31m-                           obliqr  , lambm0, mvelpp, log_print)[m
+[32m+[m[32m      call shr_orb_params( iyear_AD, eccen_8, obliqr_8, mvelp_8, &[m
+[32m+[m[32m                           obliqr_8, lambm0_8, mvelpp_8, log_print)[m
+ #else[m
+       call shr_orb_params( iyear_AD, eccen , obliq , mvelp    , &[m
+                            obliqr  , lambm0, mvelpp, log_print, &[m
+[1mdiff --git a/components/mpas-seaice/src/column/ice_kinds_mod.F90 b/components/mpas-seaice/src/column/ice_kinds_mod.F90[m
+[1mindex 4b12177c78..fd3fb2bc32 100644[m
+[1m--- a/components/mpas-seaice/src/column/ice_kinds_mod.F90[m
+[1m+++ b/components/mpas-seaice/src/column/ice_kinds_mod.F90[m
+[36m@@ -20,8 +20,8 @@[m
+                             log_kind  = kind(.true.), &[m
+                             int_kind  = selected_int_kind(6), &[m
+                             real_kind = selected_real_kind(6), &[m
+[31m-                            dbl_kind  = selected_real_kind(13), &[m
+[31m-                            r16_kind  = selected_real_kind(26)[m
+[32m+[m[32m                            dbl_kind  = selected_real_kind(6), &[m
+[32m+[m[32m                            r16_kind  = selected_real_kind(23)[m
+ [m
+ !=======================================================================[m
+ [m
+[1mdiff --git a/components/mpas-seaice/src/column/ice_orbital.F90 b/components/mpas-seaice/src/column/ice_orbital.F90[m
+[1mindex 45c3dd2b2b..4b0c0f13ef 100644[m
+[1m--- a/components/mpas-seaice/src/column/ice_orbital.F90[m
+[1m+++ b/components/mpas-seaice/src/column/ice_orbital.F90[m
+[36m@@ -38,8 +38,8 @@[m
+                                  coszen,        dt)[m
+ [m
+       use ice_constants_colpkg, only: eccen, mvelpp, lambm0, obliqr, decln, eccf[m
+[31m-#ifdef CCSMCOUPLED[m
+[31m-      use shr_orb_mod, only: shr_orb_decl[m
+[32m+[m[32m#ifdef CCSMCOUPLED[m[41m [m
+[32m+[m[32m     use shr_orb_mod, only: shr_orb_decl[m
+ #endif[m
+  [m
+       real (kind=dbl_kind), intent(in) :: &[m
+[36m@@ -66,7 +66,24 @@[m
+       ! local variables[m
+ [m
+       real (kind=dbl_kind) :: ydayp1 ! day of year plus one time step[m
+[31m- [m
+[32m+[m[32m#ifdef SINGLE_PRECISION[m
+[32m+[m[32m        !in order to cooporate with the couplerhe year[m
+[32m+[m
+[32m+[m[32m      real (kind=8)    :: ydayp1_8 ! day of year plus one time step[m
+[32m+[m[32m      real (kind=8)    :: eccen_8[m[41m [m
+[32m+[m[32m      real (kind=8)    :: mvelpp_8[m
+[32m+[m[32m      real (kind=8)    :: lambm0_8[m
+[32m+[m[32m      real (kind=8)    :: obliqr_8[m
+[32m+[m[32m      real (kind=8)    :: decln_8[m
+[32m+[m[32m      real (kind=8)    :: eccf_8[m
+[32m+[m[32m      !ydayp1_8 = real(ydayp1, kind = 8)[m[41m [m
+[32m+[m[32m      eccen_8 = real(eccen, kind = 8)[m[41m [m
+[32m+[m[32m      mvelpp_8 = real(mvelpp, kind = 8)[m
+[32m+[m[32m      lambm0_8  = real(lambm0, kind = 8)[m[41m [m
+[32m+[m[32m      obliqr_8  = real(obliqr, kind = 8)[m[41m [m
+[32m+[m[32m      decln_8  = real(decln, kind = 8)[m[41m [m
+[32m+[m[32m      eccf_8  = real(eccf, kind = 8)[m
+[32m+[m[32m#endif[m
+ ! Solar declination for next time step[m
+  [m
+ #ifdef CCSMCOUPLED[m
+[36m@@ -81,14 +98,15 @@[m
+ #else[m
+       ydayp1 = yday + sec/secday[m
+ #endif[m
+[31m- [m
+[31m-      call shr_orb_decl(ydayp1, eccen, mvelpp, lambm0, &[m
+[31m-                        obliqr, decln, eccf)[m
+[32m+[m[32m      ydayp1 = real(ydayp1, kind = 8)[m
+[32m+[m[32m      call shr_orb_decl(ydayp1_8, eccen_8, &[m[41m [m
+[32m+[m[32m                        mvelpp_8, lambm0_8,  &[m[41m [m
+[32m+[m[32m                        obliqr_8, decln_8,  &[m
+[32m+[m[32m                        eccf_8)[m[41m [m
+ [m
+       coszen = sin(tlat)*sin(decln) &[m
+              + cos(tlat)*cos(decln) &[m
+              *cos((sec/secday-p5)*c2*pi + tlon) !cos(hour angle)[m
+[31m- [m
+ #ifdef CCSMCOUPLED[m
+       endif[m
+ #endif[m
+[36m@@ -615,6 +633,7 @@[m [mSUBROUTINE shr_orb_decl(calday ,eccen ,mvelpp ,lambm0 ,obliqr ,delta ,eccf)[m
+    !------------------------------Arguments--------------------------------[m
+    real   (dbl_kind),intent(in)  :: calday ! Calendar day, including fraction[m
+    real   (dbl_kind),intent(in)  :: eccen  ! Eccentricity[m
+[32m+[m[41m   [m
+    real   (dbl_kind),intent(in)  :: obliqr ! Earths obliquity in radians[m
+    real   (dbl_kind),intent(in)  :: lambm0 ! Mean long of perihelion at the [m
+                                               ! vernal equinox (radians)[m
+[36m@@ -634,6 +653,7 @@[m [mSUBROUTINE shr_orb_decl(calday ,eccen ,mvelpp ,lambm0 ,obliqr ,delta ,eccf)[m
+    real   (dbl_kind) ::   invrho ! Inverse normalized sun/earth distance[m
+    real   (dbl_kind) ::   sinl   ! Sine of lmm[m
+  [m
+[32m+[m[32m   print(kind(eccf))[m
+    ! Compute eccentricity factor and solar declination using[m
+    ! day value where a round day (such as 213.0) refers to 0z at[m
+    ! Greenwich longitude.[m

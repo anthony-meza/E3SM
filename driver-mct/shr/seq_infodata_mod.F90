@@ -21,7 +21,7 @@ MODULE seq_infodata_mod
   ! !USES:
 
   use shr_kind_mod, only: SHR_KIND_CS, SHR_KIND_CL, SHR_KIND_IN,             &
-       SHR_KIND_R8, SHR_KIND_I8
+       SHR_KIND_R8, SHR_KIND_I8, SHR_KIND_R4
   use shr_sys_mod,  only: shr_sys_flush, shr_sys_abort, shr_sys_getenv
   use seq_comm_mct, only: logunit, loglevel, CPLID, seq_comm_gloroot
   use seq_comm_mct, only: seq_comm_setptrs, seq_comm_iamroot, seq_comm_iamin
@@ -1722,7 +1722,6 @@ CONTAINS
     integer(SHR_KIND_IN),   optional, intent(IN)    :: wav_ny
     integer(SHR_KIND_IN),   optional, intent(IN)    :: iac_nx
     integer(SHR_KIND_IN),   optional, intent(IN)    :: iac_ny
-
     real(SHR_KIND_R8),      optional, intent(IN)    :: nextsw_cday        ! calendar of next atm shortwave
     real(SHR_KIND_R8),      optional, intent(IN)    :: precip_fact        ! precip factor
     integer(SHR_KIND_IN),   optional, intent(IN)    :: atm_phase          ! atm phase

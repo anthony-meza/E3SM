@@ -1,0 +1,43 @@
+diff --git a/driver-mct/shr/seq_infodata_mod.F90 b/driver-mct/shr/seq_infodata_mod.F90
+index 522030273b..056bd15b01 100644
+--- a/driver-mct/shr/seq_infodata_mod.F90
++++ b/driver-mct/shr/seq_infodata_mod.F90
+@@ -227,7 +227,7 @@ MODULE seq_infodata_mod
+      integer(SHR_KIND_IN)    :: iac_ny          ! nx, ny of "2d" grid
+ 
+      !--- set via components and may be time varying ---
+-     real(SHR_KIND_R8)       :: nextsw_cday     ! calendar of next atm shortwave
++     real(SHR_KIND_R4)       :: nextsw_cday     ! calendar of next atm shortwave
+      real(SHR_KIND_R8)       :: precip_fact     ! precip factor
+      integer(SHR_KIND_IN)    :: atm_phase       ! atm phase
+      integer(SHR_KIND_IN)    :: lnd_phase       ! lnd phase
+@@ -774,7 +774,7 @@ CONTAINS
+        infodata%iac_nx = 0
+        infodata%iac_ny = 0
+ 
+-       infodata%nextsw_cday   = -1.0_SHR_KIND_R8
++       infodata%nextsw_cday   = -1.0_SHR_KIND_R4
+        infodata%precip_fact   =  1.0_SHR_KIND_R8
+        infodata%atm_phase     = 1
+        infodata%lnd_phase     = 1
+@@ -1183,7 +1183,7 @@ CONTAINS
+     integer(SHR_KIND_IN),   optional, intent(OUT) :: iac_nx
+     integer(SHR_KIND_IN),   optional, intent(OUT) :: iac_ny
+ 
+-    real(SHR_KIND_R8),      optional, intent(OUT) :: nextsw_cday             ! calendar of next atm shortwave
++    real(SHR_KIND_R4),      optional, intent(OUT) :: nextsw_cday             ! calendar of next atm shortwave
+     real(SHR_KIND_R8),      optional, intent(OUT) :: precip_fact             ! precip factor
+     real(SHR_KIND_R8),      optional, intent(OUT) :: flux_epbalfact          ! adjusted precip factor
+     integer(SHR_KIND_IN),   optional, intent(OUT) :: atm_phase               ! atm phase
+@@ -1722,8 +1722,9 @@ CONTAINS
+     integer(SHR_KIND_IN),   optional, intent(IN)    :: wav_ny
+     integer(SHR_KIND_IN),   optional, intent(IN)    :: iac_nx
+     integer(SHR_KIND_IN),   optional, intent(IN)    :: iac_ny
+-
+-    real(SHR_KIND_R8),      optional, intent(IN)    :: nextsw_cday        ! calendar of next atm shortwave
++#ifdef SINGLE_PRECISION 
++#endif
++    real(SHR_KIND_R4),      optional, intent(IN)    :: nextsw_cday        ! calendar of next atm shortwave
+     real(SHR_KIND_R8),      optional, intent(IN)    :: precip_fact        ! precip factor
+     integer(SHR_KIND_IN),   optional, intent(IN)    :: atm_phase          ! atm phase
+     integer(SHR_KIND_IN),   optional, intent(IN)    :: lnd_phase          ! lnd phase

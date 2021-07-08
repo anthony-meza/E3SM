@@ -38,8 +38,8 @@
                                  coszen,        dt)
 
       use ice_constants_colpkg, only: eccen, mvelpp, lambm0, obliqr, decln, eccf
-#ifdef CCSMCOUPLED
-      use shr_orb_mod, only: shr_orb_decl
+#ifdef CCSMCOUPLED 
+     use shr_orb_mod, only: shr_orb_decl
 #endif
  
       real (kind=dbl_kind), intent(in) :: &
@@ -66,7 +66,24 @@
       ! local variables
 
       real (kind=dbl_kind) :: ydayp1 ! day of year plus one time step
- 
+#ifdef SINGLE_PRECISION
+        !in order to cooporate with the couplerhe year
+
+      real (kind=8)    :: ydayp1_8 ! day of year plus one time step
+      real (kind=8)    :: eccen_8 
+      real (kind=8)    :: mvelpp_8
+      real (kind=8)    :: lambm0_8
+      real (kind=8)    :: obliqr_8
+      real (kind=8)    :: decln_8
+      real (kind=8)    :: eccf_8
+      !ydayp1_8 = real(ydayp1, kind = 8) 
+      eccen_8 = real(eccen, kind = 8) 
+      mvelpp_8 = real(mvelpp, kind = 8)
+      lambm0_8  = real(lambm0, kind = 8) 
+      obliqr_8  = real(obliqr, kind = 8) 
+      decln_8  = real(decln, kind = 8) 
+      eccf_8  = real(eccf, kind = 8)
+#endif
 ! Solar declination for next time step
  
 #ifdef CCSMCOUPLED
@@ -81,14 +98,15 @@
 #else
       ydayp1 = yday + sec/secday
 #endif
- 
-      call shr_orb_decl(ydayp1, eccen, mvelpp, lambm0, &
-                        obliqr, decln, eccf)
+      ydayp1 = real(ydayp1, kind = 8)
+      call shr_orb_decl(ydayp1_8, eccen_8, & 
+                        mvelpp_8, lambm0_8,  & 
+                        obliqr_8, decln_8,  &
+                        eccf_8) 
 
       coszen = sin(tlat)*sin(decln) &
              + cos(tlat)*cos(decln) &
              *cos((sec/secday-p5)*c2*pi + tlon) !cos(hour angle)
- 
 #ifdef CCSMCOUPLED
       endif
 #endif
@@ -615,6 +633,7 @@ SUBROUTINE shr_orb_decl(calday ,eccen ,mvelpp ,lambm0 ,obliqr ,delta ,eccf)
    !------------------------------Arguments--------------------------------
    real   (dbl_kind),intent(in)  :: calday ! Calendar day, including fraction
    real   (dbl_kind),intent(in)  :: eccen  ! Eccentricity
+   
    real   (dbl_kind),intent(in)  :: obliqr ! Earths obliquity in radians
    real   (dbl_kind),intent(in)  :: lambm0 ! Mean long of perihelion at the 
                                               ! vernal equinox (radians)
@@ -634,6 +653,7 @@ SUBROUTINE shr_orb_decl(calday ,eccen ,mvelpp ,lambm0 ,obliqr ,delta ,eccf)
    real   (dbl_kind) ::   invrho ! Inverse normalized sun/earth distance
    real   (dbl_kind) ::   sinl   ! Sine of lmm
  
+   print(kind(eccf))
    ! Compute eccentricity factor and solar declination using
    ! day value where a round day (such as 213.0) refers to 0z at
    ! Greenwich longitude.

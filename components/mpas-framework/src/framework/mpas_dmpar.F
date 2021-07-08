@@ -6513,7 +6513,7 @@ subroutine mpas_dmpar_get_exch_list(haloLayer, ownedListField, neededListField, 
 
       implicit none
 
-      real (kind=R8KIND), intent(out) :: curTime !< Output: Current time
+      real (kind=RKIND), intent(out) :: curTime !< Output: Current time
       integer :: clock, hz, threadNum
 
 #ifdef _MPI

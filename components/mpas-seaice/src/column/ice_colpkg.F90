@@ -426,6 +426,16 @@
       use ice_orbital, only: shr_orb_params
 #endif
 
+      !in order to cooporate with the couplerhe year
+
+      real (kind=8)    :: eccen_8
+      real (kind=8)    :: mvelp_8
+      real (kind=8)    :: mvelpp_8
+      real (kind=8)    :: lambm0_8
+      real (kind=8)    :: obliqr_8
+      real (kind=8)    :: decln_8
+      real (kind=8)    :: eccf_8
+
 
       logical (kind=log_kind), intent(out) :: &
          l_stop          ! if true, abort the model
@@ -437,9 +447,18 @@
       iyear_AD  = 1950
       log_print = .false.   ! if true, write out orbital parameters
 
+      eccen_8 = real(eccen, kind = 8)
+      mvelp_8 = real(mvelp, kind = 8)
+      mvelpp_8 = real(mvelpp, kind = 8)
+      lambm0_8  = real(lambm0, kind = 8)
+      obliqr_8  = real(obliqr, kind = 8)
+      decln_8  = real(decln, kind = 8)
+      eccf_8  = real(eccf, kind = 8)
+
+
 #ifdef CCSMCOUPLED
-      call shr_orb_params( iyear_AD, eccen , obliq , mvelp    , &
-                           obliqr  , lambm0, mvelpp, log_print)
+      call shr_orb_params( iyear_AD, eccen_8, obliqr_8, mvelp_8, &
+                           obliqr_8, lambm0_8, mvelpp_8, log_print)
 #else
       call shr_orb_params( iyear_AD, eccen , obliq , mvelp    , &
                            obliqr  , lambm0, mvelpp, log_print, &

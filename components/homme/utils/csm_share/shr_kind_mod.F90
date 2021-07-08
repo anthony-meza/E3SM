@@ -19,4 +19,5 @@ MODULE shr_kind_mod
    integer,parameter :: SHR_KIND_CL = 256                    ! long char
    integer,parameter :: SHR_KIND_CX = 384                    ! extra-long char
 
+
 END MODULE shr_kind_mod
