@@ -31,6 +31,14 @@ module mpas_pool_routines
       module procedure mpas_pool_add_field_3d_real
       module procedure mpas_pool_add_field_4d_real
       module procedure mpas_pool_add_field_5d_real
+
+      module procedure mpas_pool_add_field_0d_real_4
+      module procedure mpas_pool_add_field_1d_real_4
+      module procedure mpas_pool_add_field_2d_real_4
+      module procedure mpas_pool_add_field_3d_real_4
+      module procedure mpas_pool_add_field_4d_real_4
+      module procedure mpas_pool_add_field_5d_real_4
+
       module procedure mpas_pool_add_field_0d_int
       module procedure mpas_pool_add_field_1d_int
       module procedure mpas_pool_add_field_2d_int
@@ -43,6 +51,14 @@ module mpas_pool_routines
       module procedure mpas_pool_add_field_3d_reals
       module procedure mpas_pool_add_field_4d_reals
       module procedure mpas_pool_add_field_5d_reals
+
+      module procedure mpas_pool_add_field_0d_reals_4
+      module procedure mpas_pool_add_field_1d_reals_4
+      module procedure mpas_pool_add_field_2d_reals_4
+      module procedure mpas_pool_add_field_3d_reals_4
+      module procedure mpas_pool_add_field_4d_reals_4
+      module procedure mpas_pool_add_field_5d_reals_4
+
       module procedure mpas_pool_add_field_0d_ints
       module procedure mpas_pool_add_field_1d_ints
       module procedure mpas_pool_add_field_2d_ints
@@ -58,6 +74,15 @@ module mpas_pool_routines
       module procedure mpas_pool_get_field_3d_real
       module procedure mpas_pool_get_field_4d_real
       module procedure mpas_pool_get_field_5d_real
+
+      module procedure mpas_pool_get_field_0d_real_4
+      module procedure mpas_pool_get_field_1d_real_4
+      module procedure mpas_pool_get_field_2d_real_4
+      module procedure mpas_pool_get_field_3d_real_4
+      module procedure mpas_pool_get_field_4d_real_4
+      module procedure mpas_pool_get_field_5d_real_4
+
+
       module procedure mpas_pool_get_field_0d_int
       module procedure mpas_pool_get_field_1d_int
       module procedure mpas_pool_get_field_2d_int
@@ -73,6 +98,12 @@ module mpas_pool_routines
       module procedure mpas_pool_get_array_3d_real
       module procedure mpas_pool_get_array_4d_real
       module procedure mpas_pool_get_array_5d_real
+      module procedure mpas_pool_get_array_0d_real_4
+      module procedure mpas_pool_get_array_1d_real_4
+      module procedure mpas_pool_get_array_2d_real_4
+      module procedure mpas_pool_get_array_3d_real_4
+      module procedure mpas_pool_get_array_4d_real_4
+      module procedure mpas_pool_get_array_5d_real_4   
       module procedure mpas_pool_get_array_0d_int
       module procedure mpas_pool_get_array_1d_int
       module procedure mpas_pool_get_array_2d_int
@@ -83,6 +114,7 @@ module mpas_pool_routines
 
    interface mpas_pool_add_config
       module procedure mpas_pool_add_config_real
+      module procedure mpas_pool_add_config_real_4
       module procedure mpas_pool_add_config_int
       module procedure mpas_pool_add_config_char
       module procedure mpas_pool_add_config_logical
@@ -90,6 +122,7 @@ module mpas_pool_routines
 
    interface mpas_pool_get_config
       module procedure mpas_pool_get_config_real
+      module procedure mpas_pool_get_config_real_4
       module procedure mpas_pool_get_config_int
       module procedure mpas_pool_get_config_char
       module procedure mpas_pool_get_config_logical
@@ -235,6 +268,8 @@ module mpas_pool_routines
    
                   if (dptr % contentsType == MPAS_POOL_REAL) then
                      deallocate(dptr % simple_real)
+                  else if (dptr % contentsType == MPAS_POOL_REAL_4) then
+                     deallocate(dptr % simple_real_4)
                   else if (dptr % contentsType == MPAS_POOL_INTEGER) then
                      deallocate(dptr % simple_int)
                   else if (dptr % contentsType == MPAS_POOL_CHARACTER) then
@@ -399,6 +434,8 @@ module mpas_pool_routines
                else if (ptr % contentsType == MPAS_POOL_CONFIG) then
                   if (ptr % data % contentsType == MPAS_POOL_REAL) then
                      deallocate(ptr % data % simple_real, stat=local_err)
+                  else if (ptr % data % contentsType == MPAS_POOL_REAL_4) then
+                     deallocate(ptr % data % simple_real_4, stat=local_err)
                   else if (ptr % data % contentsType == MPAS_POOL_INTEGER) then
                      deallocate(ptr % data % simple_int, stat=local_err)
                   else if (ptr % data % contentsType == MPAS_POOL_CHARACTER) then
@@ -499,6 +536,9 @@ module mpas_pool_routines
                if (dptr % contentsType == MPAS_POOL_REAL) then
                   allocate(newmem % data % simple_real)
                   newmem % data % simple_real = dptr % simple_real
+               else if (dptr % contentsType == MPAS_POOL_REAL_4) then
+                  allocate(newmem % data % simple_real_4)
+                  newmem % data % simple_real_4 = dptr % simple_real_4
                else if (dptr % contentsType == MPAS_POOL_INTEGER) then
                   allocate(newmem % data % simple_int)
                   newmem % data % simple_int = dptr % simple_int
@@ -966,6 +1006,8 @@ module mpas_pool_routines
                   mem => pool_get_member(destPool, ptr % key, MPAS_POOL_CONFIG)
                   if (dptr % contentsType == MPAS_POOL_REAL) then
                      mem % simple_real = dptr % simple_real
+                  else if (dptr % contentsType == MPAS_POOL_REAL_4) then
+                     mem % simple_real_4 = dptr % simple_real_4
                   else if (dptr % contentsType == MPAS_POOL_INTEGER) then
                      mem % simple_int = dptr % simple_int
                   else if (dptr % contentsType == MPAS_POOL_CHARACTER) then
@@ -1176,6 +1218,44 @@ module mpas_pool_routines
                            mem % r5 => mem % r5a(i)
                            call mpas_duplicate_field(mem % r5a(1), mem % r5, copy_array_only=.true.)
                            nullify(mem % r5)
+                        end do
+                     end if
+                  else if (itr % dataType == MPAS_POOL_REAL_4) then
+                     if (itr % nDims == 0) then
+                        do i = 2, itr % nTimeLevels
+                           mem % r0_4 => mem % r0a_4(i)
+                           call mpas_duplicate_field(mem % r0a_4(1), mem % r0_4, copy_array_only=.true.)
+                           nullify(mem % r0_4)
+                        end do
+                     else if (itr % nDims == 1) then
+                        do i = 2, itr % nTimeLevels
+                           mem % r1_4 => mem % r1a_4(i)
+                           call mpas_duplicate_field(mem % r1a_4(1), mem % r1_4, copy_array_only=.true.)
+                           nullify(mem % r1_4)
+                        end do
+                     else if (itr % nDims == 2) then
+                        do i = 2, itr % nTimeLevels
+                           mem % r2_4 => mem % r2a_4(i)
+                           call mpas_duplicate_field(mem % r2a_4(1), mem % r2_4, copy_array_only=.true.)
+                           nullify(mem % r2_4)
+                        end do
+                     else if (itr % nDims == 3) then
+                        do i = 2, itr % nTimeLevels
+                           mem % r3_4 => mem % r3a_4(i)
+                           call mpas_duplicate_field(mem % r3a_4(1), mem % r3_4, copy_array_only=.true.)
+                           nullify(mem % r3_4)
+                        end do
+                     else if (itr % nDims == 4) then
+                        do i = 2, itr % nTimeLevels
+                           mem % r4_4 => mem % r4a_4(i)
+                           call mpas_duplicate_field(mem % r4a_4(1), mem % r4_4, copy_array_only=.true.)
+                           nullify(mem % r4_4)
+                        end do
+                     else if (itr % nDims == 5) then
+                        do i = 2, itr % nTimeLevels
+                           mem % r5_4 => mem % r5a_4(i)
+                           call mpas_duplicate_field(mem % r5a_4(1), mem % r5_4, copy_array_only=.true.)
+                           nullify(mem % r5_4)
                         end do
                      end if
                   else if (itr % dataType == MPAS_POOL_INTEGER) then
@@ -1462,6 +1542,176 @@ module mpas_pool_routines
                            poolMem % r5 % next => nextPoolMem % r5
                         else
                            nullify(poolMem % r5 % next)
+                        end if
+                     end if
+                  end if
+               else if (poolItr % dataType == MPAS_POOL_REAL_4) then
+                  if (poolItr % nDims == 0) then
+                     if (poolItr % nTimeLevels > 1) then
+                        do i = 1, poolItr % nTimeLevels
+                           if (associated(prevPoolMem)) then
+                              poolMem % r0a_4(i) % prev => prevPoolMem % r0a_4(i)
+                           else
+                              nullify(poolMem % r0a_4(i) % prev)
+                           end if
+
+                           if (associated(nextPoolMem)) then
+                              poolMem % r0a_4(i) % next => nextPoolMem % r0a_4(i)
+                           else
+                              nullify(poolMem % r0a_4(i) % next)
+                           end if
+                        end do
+                     else
+                        if (associated(prevPoolMem)) then
+                           poolMem % r0_4 % prev => prevPoolMem % r0_4
+                        else
+                           nullify(poolMem % r0_4 % prev)
+                        end if
+
+                        if (associated(nextPoolMem)) then
+                           poolMem % r0_4 % next => nextPoolMem % r0_4
+                        else
+                           nullify(poolMem % r0_4 % next)
+                        end if
+                     end if
+                  else if (poolItr % nDims == 1) then
+                     if (poolItr % nTimeLevels > 1) then
+                        do i = 1, poolItr % nTimeLevels
+                           if (associated(prevPoolMem)) then
+                              poolMem % r1a_4(i) % prev => prevPoolMem % r1a_4(i)
+                           else
+                              nullify(poolMem % r1a_4(i) % prev)
+                           end if
+
+                           if (associated(nextPoolMem)) then
+                              poolMem % r1a_4(i) % next => nextPoolMem % r1a_4(i)
+                           else
+                              nullify(poolMem % r1a_4(i) % next)
+                           end if
+                        end do
+                     else
+                        if (associated(prevPoolMem)) then
+                           poolMem % r1_4 % prev => prevPoolMem % r1_4
+                        else
+                           nullify(poolMem % r1_4 % prev)
+                        end if
+
+                        if (associated(nextPoolMem)) then
+                           poolMem % r1_4 % next => nextPoolMem % r1_4
+                        else
+                           nullify(poolMem % r1_4 % next)
+                        end if
+                     end if
+                  else if (poolItr % nDims == 2) then
+                     if (poolItr % nTimeLevels > 1) then
+                        do i = 1, poolItr % nTimeLevels
+                           if (associated(prevPoolMem)) then
+                              poolMem % r2a_4(i) % prev => prevPoolMem % r2a_4(i)
+                           else
+                              nullify(poolMem % r2a_4(i) % prev)
+                           end if
+
+                           if (associated(nextPoolMem)) then
+                              poolMem % r2a_4(i) % next => nextPoolMem % r2a_4(i)
+                           else
+                              nullify(poolMem % r2a_4(i) % next)
+                           end if
+                        end do
+                     else
+                        if (associated(prevPoolMem)) then
+                           poolMem % r2_4 % prev => prevPoolMem % r2_4
+                        else
+                           nullify(poolMem % r2_4 % prev)
+                        end if
+
+                        if (associated(nextPoolMem)) then
+                           poolMem % r2_4 % next => nextPoolMem % r2_4
+                        else
+                           nullify(poolMem % r2_4 % next)
+                        end if
+                     end if
+                  else if (poolItr % nDims == 3) then
+                     if (poolItr % nTimeLevels > 1) then
+                        do i = 1, poolItr % nTimeLevels
+                           if (associated(prevPoolMem)) then
+                              poolMem % r3a_4(i) % prev => prevPoolMem % r3a_4(i)
+                           else
+                              nullify(poolMem % r3a_4(i) % prev)
+                           end if
+
+                           if (associated(nextPoolMem)) then
+                              poolMem % r3a_4(i) % next => nextPoolMem % r3a_4(i)
+                           else
+                              nullify(poolMem % r3a_4(i) % next)
+                           end if
+                        end do
+                     else
+                        if (associated(prevPoolMem)) then
+                           poolMem % r3_4 % prev => prevPoolMem % r3_4
+                        else
+                           nullify(poolMem % r3_4 % prev)
+                        end if
+
+                        if (associated(nextPoolMem)) then
+                           poolMem % r3_4 % next => nextPoolMem % r3_4
+                        else
+                           nullify(poolMem % r3_4 % next)
+                        end if
+                     end if
+                  else if (poolItr % nDims == 4) then
+                     if (poolItr % nTimeLevels > 1) then
+                        do i = 1, poolItr % nTimeLevels
+                           if (associated(prevPoolMem)) then
+                              poolMem % r4a_4(i) % prev => prevPoolMem % r4a_4(i)
+                           else
+                              nullify(poolMem % r4a_4(i) % prev)
+                           end if
+
+                           if (associated(nextPoolMem)) then
+                              poolMem % r4a_4(i) % next => nextPoolMem % r4a_4(i)
+                           else
+                              nullify(poolMem % r4a_4(i) % next)
+                           end if
+                        end do
+                     else
+                        if (associated(prevPoolMem)) then
+                           poolMem % r4_4 % prev => prevPoolMem % r4_4
+                        else
+                           nullify(poolMem % r4_4 % prev)
+                        end if
+
+                        if (associated(nextPoolMem)) then
+                           poolMem % r4_4 % next => nextPoolMem % r4_4
+                        else
+                           nullify(poolMem % r4_4 % next)
+                        end if
+                     end if
+                  else if (poolItr % nDims == 5) then
+                     if (poolItr % nTimeLevels > 1) then
+                        do i = 1, poolItr % nTimeLevels
+                           if (associated(prevPoolMem)) then
+                              poolMem % r5a_4(i) % prev => prevPoolMem % r5a_4(i)
+                           else
+                              nullify(poolMem % r5a_4(i) % prev)
+                           end if
+
+                           if (associated(nextPoolMem)) then
+                              poolMem % r5a_4(i) % next => nextPoolMem % r5a_4(i)
+                           else
+                              nullify(poolMem % r5a_4(i) % next)
+                           end if
+                        end do
+                     else
+                        if (associated(prevPoolMem)) then
+                           poolMem % r5_4 % prev => prevPoolMem % r5_4
+                        else
+                           nullify(poolMem % r5_4 % prev)
+                        end if
+
+                        if (associated(nextPoolMem)) then
+                           poolMem % r5_4 % next => nextPoolMem % r5_4
+                        else
+                           nullify(poolMem % r5_4 % next)
                         end if
                      end if
                   end if
@@ -1895,6 +2145,220 @@ module mpas_pool_routines
                            poolMem % r5 % sendList => block % parinfo % verticesToSend
                            poolMem % r5 % recvList => block % parinfo % verticesToRecv
                            poolMem % r5 % copyList => block % parinfo % verticesToCopy
+                        end if
+                     end if
+                  end if
+               else if (poolItr % dataType == MPAS_POOL_REAL_4) then
+                  if (poolItr % nDims == 0) then
+                     if (poolItr % nTimeLevels > 1) then
+                        do i = 1, poolItr % nTimeLevels
+                           nullify(poolMem % r0a_4(i) % sendList)
+                           nullify(poolMem % r0a_4(i) % recvList)
+                           nullify(poolMem % r0a_4(i) % copyList)
+                        end do
+                     else
+                        nullify(poolMem % r0_4 % sendList)
+                        nullify(poolMem % r0_4 % recvList)
+                        nullify(poolMem % r0_4 % copyList)
+                     end if
+                  else if (poolItr % nDims == 1) then
+                     if (poolItr % nTimeLevels > 1) then
+                        decompType = pool_get_member_decomp_type(poolMem % r1a_4(1) % dimNames(1))
+
+                        if (decompType == MPAS_DECOMP_CELLS) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r1a_4(i) % sendList => block % parinfo % cellsToSend
+                              poolMem % r1a_4(i) % recvList => block % parinfo % cellsToRecv
+                              poolMem % r1a_4(i) % copyList => block % parinfo % cellsToCopy
+                           end do
+                        else if (decompType == MPAS_DECOMP_EDGES) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r1a_4(i) % sendList => block % parinfo % edgesToSend
+                              poolMem % r1a_4(i) % recvList => block % parinfo % edgesToRecv
+                              poolMem % r1a_4(i) % copyList => block % parinfo % edgesToCopy
+                           end do
+                        else if (decompType == MPAS_DECOMP_VERTICES) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r1a_4(i) % sendList => block % parinfo % verticesToSend
+                              poolMem % r1a_4(i) % recvList => block % parinfo % verticesToRecv
+                              poolMem % r1a_4(i) % copyList => block % parinfo % verticesToCopy
+                           end do
+                        end if
+                     else
+                        decompType = pool_get_member_decomp_type(poolMem % r1_4 % dimNames(1))
+
+                        if (decompType == MPAS_DECOMP_CELLS) then
+                           poolMem % r1_4 % sendList => block % parinfo % cellsToSend
+                           poolMem % r1_4 % recvList => block % parinfo % cellsToRecv
+                           poolMem % r1_4 % copyList => block % parinfo % cellsToCopy
+                        else if (decompType == MPAS_DECOMP_EDGES) then
+                           poolMem % r1_4 % sendList => block % parinfo % edgesToSend
+                           poolMem % r1_4 % recvList => block % parinfo % edgesToRecv
+                           poolMem % r1_4 % copyList => block % parinfo % edgesToCopy
+                        else if (decompType == MPAS_DECOMP_VERTICES) then
+                           poolMem % r1_4 % sendList => block % parinfo % verticesToSend
+                           poolMem % r1_4 % recvList => block % parinfo % verticesToRecv
+                           poolMem % r1_4 % copyList => block % parinfo % verticesToCopy
+                        end if
+                     end if
+                  else if (poolItr % nDims == 2) then
+                     if (poolItr % nTimeLevels > 1) then
+                        decompType = pool_get_member_decomp_type(poolMem % r2a_4(1) % dimNames(2))
+
+                        if (decompType == MPAS_DECOMP_CELLS) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r2a_4(i) % sendList => block % parinfo % cellsToSend
+                              poolMem % r2a_4(i) % recvList => block % parinfo % cellsToRecv
+                              poolMem % r2a_4(i) % copyList => block % parinfo % cellsToCopy
+                           end do
+                        else if (decompType == MPAS_DECOMP_EDGES) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r2a_4(i) % sendList => block % parinfo % edgesToSend
+                              poolMem % r2a_4(i) % recvList => block % parinfo % edgesToRecv
+                              poolMem % r2a_4(i) % copyList => block % parinfo % edgesToCopy
+                           end do
+                        else if (decompType == MPAS_DECOMP_VERTICES) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r2a_4(i) % sendList => block % parinfo % verticesToSend
+                              poolMem % r2a_4(i) % recvList => block % parinfo % verticesToRecv
+                              poolMem % r2a_4(i) % copyList => block % parinfo % verticesToCopy
+                           end do
+                        end if
+                     else
+                        decompType = pool_get_member_decomp_type(poolMem % r2_4 % dimNames(2))
+
+                        if (decompType == MPAS_DECOMP_CELLS) then
+                           poolMem % r2_4 % sendList => block % parinfo % cellsToSend
+                           poolMem % r2_4 % recvList => block % parinfo % cellsToRecv
+                           poolMem % r2_4 % copyList => block % parinfo % cellsToCopy
+                        else if (decompType == MPAS_DECOMP_EDGES) then
+                           poolMem % r2_4 % sendList => block % parinfo % edgesToSend
+                           poolMem % r2_4 % recvList => block % parinfo % edgesToRecv
+                           poolMem % r2_4 % copyList => block % parinfo % edgesToCopy
+                        else if (decompType == MPAS_DECOMP_VERTICES) then
+                           poolMem % r2_4 % sendList => block % parinfo % verticesToSend
+                           poolMem % r2_4 % recvList => block % parinfo % verticesToRecv
+                           poolMem % r2_4 % copyList => block % parinfo % verticesToCopy
+                        end if
+                     end if
+                  else if (poolItr % nDims == 3) then
+                     if (poolItr % nTimeLevels > 1) then
+                        decompType = pool_get_member_decomp_type(poolMem % r3a_4(1) % dimNames(3))
+
+                        if (decompType == MPAS_DECOMP_CELLS) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r3a_4(i) % sendList => block % parinfo % cellsToSend
+                              poolMem % r3a_4(i) % recvList => block % parinfo % cellsToRecv
+                              poolMem % r3a_4(i) % copyList => block % parinfo % cellsToCopy
+                           end do
+                        else if (decompType == MPAS_DECOMP_EDGES) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r3a_4(i) % sendList => block % parinfo % edgesToSend
+                              poolMem % r3a_4(i) % recvList => block % parinfo % edgesToRecv
+                              poolMem % r3a_4(i) % copyList => block % parinfo % edgesToCopy
+                           end do
+                        else if (decompType == MPAS_DECOMP_VERTICES) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r3a_4(i) % sendList => block % parinfo % verticesToSend
+                              poolMem % r3a_4(i) % recvList => block % parinfo % verticesToRecv
+                              poolMem % r3a_4(i) % copyList => block % parinfo % verticesToCopy
+                           end do
+                        end if
+                     else
+                        decompType = pool_get_member_decomp_type(poolMem % r3_4 % dimNames(3))
+
+                        if (decompType == MPAS_DECOMP_CELLS) then
+                           poolMem % r3_4 % sendList => block % parinfo % cellsToSend
+                           poolMem % r3_4 % recvList => block % parinfo % cellsToRecv
+                           poolMem % r3_4 % copyList => block % parinfo % cellsToCopy
+                        else if (decompType == MPAS_DECOMP_EDGES) then
+                           poolMem % r3_4 % sendList => block % parinfo % edgesToSend
+                           poolMem % r3_4 % recvList => block % parinfo % edgesToRecv
+                           poolMem % r3_4 % copyList => block % parinfo % edgesToCopy
+                        else if (decompType == MPAS_DECOMP_VERTICES) then
+                           poolMem % r3_4 % sendList => block % parinfo % verticesToSend
+                           poolMem % r3_4 % recvList => block % parinfo % verticesToRecv
+                           poolMem % r3_4 % copyList => block % parinfo % verticesToCopy
+                        end if
+                     end if
+                  else if (poolItr % nDims == 4) then
+                     if (poolItr % nTimeLevels > 1) then
+                        decompType = pool_get_member_decomp_type(poolMem % r4a_4(1) % dimNames(4))
+
+                        if (decompType == MPAS_DECOMP_CELLS) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r4a_4(i) % sendList => block % parinfo % cellsToSend
+                              poolMem % r4a_4(i) % recvList => block % parinfo % cellsToRecv
+                              poolMem % r4a_4(i) % copyList => block % parinfo % cellsToCopy
+                           end do
+                        else if (decompType == MPAS_DECOMP_EDGES) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r4a_4(i) % sendList => block % parinfo % edgesToSend
+                              poolMem % r4a_4(i) % recvList => block % parinfo % edgesToRecv
+                              poolMem % r4a_4(i) % copyList => block % parinfo % edgesToCopy
+                           end do
+                        else if (decompType == MPAS_DECOMP_VERTICES) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r4a_4(i) % sendList => block % parinfo % verticesToSend
+                              poolMem % r4a_4(i) % recvList => block % parinfo % verticesToRecv
+                              poolMem % r4a_4(i) % copyList => block % parinfo % verticesToCopy
+                           end do
+                        end if
+                     else
+                        decompType = pool_get_member_decomp_type(poolMem % r4_4 % dimNames(4))
+
+                        if (decompType == MPAS_DECOMP_CELLS) then
+                           poolMem % r4_4 % sendList => block % parinfo % cellsToSend
+                           poolMem % r4_4 % recvList => block % parinfo % cellsToRecv
+                           poolMem % r4_4 % copyList => block % parinfo % cellsToCopy
+                        else if (decompType == MPAS_DECOMP_EDGES) then
+                           poolMem % r4_4 % sendList => block % parinfo % edgesToSend
+                           poolMem % r4_4 % recvList => block % parinfo % edgesToRecv
+                           poolMem % r4_4 % copyList => block % parinfo % edgesToCopy
+                        else if (decompType == MPAS_DECOMP_VERTICES) then
+                           poolMem % r4_4 % sendList => block % parinfo % verticesToSend
+                           poolMem % r4_4 % recvList => block % parinfo % verticesToRecv
+                           poolMem % r4_4 % copyList => block % parinfo % verticesToCopy
+                        end if
+                     end if
+                  else if (poolItr % nDims == 5) then
+                     if (poolItr % nTimeLevels > 1) then
+                        decompType = pool_get_member_decomp_type(poolMem % r5a_4(1) % dimNames(5))
+
+                        if (decompType == MPAS_DECOMP_CELLS) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r5a_4(i) % sendList => block % parinfo % cellsToSend
+                              poolMem % r5a_4(i) % recvList => block % parinfo % cellsToRecv
+                              poolMem % r5a_4(i) % copyList => block % parinfo % cellsToCopy
+                           end do
+                        else if (decompType == MPAS_DECOMP_EDGES) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r5a_4(i) % sendList => block % parinfo % edgesToSend
+                              poolMem % r5a_4(i) % recvList => block % parinfo % edgesToRecv
+                              poolMem % r5a_4(i) % copyList => block % parinfo % edgesToCopy
+                           end do
+                        else if (decompType == MPAS_DECOMP_VERTICES) then
+                           do i = 1, poolItr % nTimeLevels
+                              poolMem % r5a_4(i) % sendList => block % parinfo % verticesToSend
+                              poolMem % r5a_4(i) % recvList => block % parinfo % verticesToRecv
+                              poolMem % r5a_4(i) % copyList => block % parinfo % verticesToCopy
+                           end do
+                        end if
+                     else
+                        decompType = pool_get_member_decomp_type(poolMem % r5_4 % dimNames(5))
+
+                        if (decompType == MPAS_DECOMP_CELLS) then
+                           poolMem % r5_4 % sendList => block % parinfo % cellsToSend
+                           poolMem % r5_4 % recvList => block % parinfo % cellsToRecv
+                           poolMem % r5_4 % copyList => block % parinfo % cellsToCopy
+                        else if (decompType == MPAS_DECOMP_EDGES) then
+                           poolMem % r5_4 % sendList => block % parinfo % edgesToSend
+                           poolMem % r5_4 % recvList => block % parinfo % edgesToRecv
+                           poolMem % r5_4 % copyList => block % parinfo % edgesToCopy
+                        else if (decompType == MPAS_DECOMP_VERTICES) then
+                           poolMem % r5_4 % sendList => block % parinfo % verticesToSend
+                           poolMem % r5_4 % recvList => block % parinfo % verticesToRecv
+                           poolMem % r5_4 % copyList => block % parinfo % verticesToCopy
                         end if
                      end if
                   end if
@@ -2401,6 +2865,269 @@ module mpas_pool_routines
       end if
 
    end subroutine mpas_pool_add_field_0d_int!}}}
+
+!-----------------------------------------------------------------------
+!  routine mpas_pool_add_field_0d_real_4
+!
+!> \brief MPAS Pool 0D Real_4 field add routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts field into inPool when field is a 0D real_4 field
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_field_0d_real_4(inPool, key, field)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      type (field0DReal_4), pointer :: field
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_FIELD
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 0
+         newmem % data % contentsTimeLevs = 1
+         newmem % data % r0_4 => field
+   
+         if (.not. pool_add_member(inPool, key, newmem)) then
+            deallocate(newmem % data)
+            deallocate(newmem)
+         end if
+      end if
+
+   end subroutine mpas_pool_add_field_0d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  routine mpas_pool_add_field_1d_real_4
+!
+!> \brief MPAS Pool 1D Real_4 field add routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts field into inPool when field is a 1D real_4 field
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_field_1d_real_4(inPool, key, field)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      type (field1DReal_4), pointer :: field
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_FIELD
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 1
+         newmem % data % contentsTimeLevs = 1
+         newmem % data % r1_4 => field
+   
+         if (.not. pool_add_member(inPool, key, newmem)) then
+            deallocate(newmem % data)
+            deallocate(newmem)
+         end if
+      end if
+
+   end subroutine mpas_pool_add_field_1d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  routine mpas_pool_add_field_2d_real_4
+!
+!> \brief MPAS Pool 2D Real_4 field add routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts field into inPool when field is a 2D real_4 field
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_field_2d_real_4(inPool, key, field)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      type (field2DReal_4), pointer :: field
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_FIELD
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 2
+         newmem % data % contentsTimeLevs = 1
+         newmem % data % r2_4 => field
+   
+         if (.not. pool_add_member(inPool, key, newmem)) then
+            deallocate(newmem % data)
+            deallocate(newmem)
+         end if
+      end if
+
+   end subroutine mpas_pool_add_field_2d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  routine mpas_pool_add_field_3d_real_4
+!
+!> \brief MPAS Pool 3D Real_4 field add routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts field into inPool when field is a 3D real_4 field
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_field_3d_real_4(inPool, key, field)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      type (field3DReal_4), pointer :: field
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_FIELD
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 3
+         newmem % data % contentsTimeLevs = 1
+         newmem % data % r3_4 => field
+   
+         if (.not. pool_add_member(inPool, key, newmem)) then
+            deallocate(newmem % data)
+            deallocate(newmem)
+         end if
+      end if
+
+   end subroutine mpas_pool_add_field_3d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  routine mpas_pool_add_field_4d_real_4
+!
+!> \brief MPAS Pool 4D Real_4 field add routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts field into inPool when field is a 4D real_4 field
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_field_4d_real_4(inPool, key, field)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      type (field4DReal_4), pointer :: field
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_FIELD
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 4
+         newmem % data % contentsTimeLevs = 1
+         newmem % data % r4_4 => field
+   
+         if (.not. pool_add_member(inPool, key, newmem)) then
+            deallocate(newmem % data)
+            deallocate(newmem)
+         end if
+      end if
+
+   end subroutine mpas_pool_add_field_4d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  routine mpas_pool_add_field_5d_real_4
+!
+!> \brief MPAS Pool 5D Real_4 field add routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts field into inPool when field is a 5D real_4 field
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_field_5d_real_4(inPool, key, field)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      type (field5DReal_4), pointer :: field
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_FIELD
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 5
+         newmem % data % contentsTimeLevs = 1
+         newmem % data % r5_4 => field
+   
+         if (.not. pool_add_member(inPool, key, newmem)) then
+            deallocate(newmem % data)
+            deallocate(newmem)
+         end if
+      end if
+
+   end subroutine mpas_pool_add_field_5d_real_4!}}}
 
 
 !-----------------------------------------------------------------------
@@ -2912,6 +3639,295 @@ module mpas_pool_routines
 
 
 !-----------------------------------------------------------------------
+!  routine mpas_pool_add_field_0d_reals_4
+!
+!> \brief MPAS Pool 0D Multi-level Real_4 field add routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts fields into inPool when fields is a multi-level 0D real field
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_field_0d_reals_4(inPool, key, fields)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      type (field0DReal_4), dimension(:), pointer :: fields
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_FIELD
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 0
+         newmem % data % contentsTimeLevs = size(fields)
+         if (newmem % data % contentsTimeLevs == 1) then
+            newmem % data % r0_4 => fields(1)
+         else
+            newmem % data % r0a_4 => fields
+         end if
+      
+      end if
+      if (.not. pool_add_member(inPool, key, newmem)) then
+         deallocate(newmem % data)
+         deallocate(newmem)
+      end if
+
+   end subroutine mpas_pool_add_field_0d_reals_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  routine mpas_pool_add_field_1d_reals_4
+!
+!> \brief MPAS Pool 1D Multi-level Real_4 field add routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts fields into inPool when fields is a multi-level 1D real field
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_field_1d_reals_4(inPool, key, fields)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      type (field1DReal_4), dimension(:), pointer :: fields
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_FIELD
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 1
+         newmem % data % contentsTimeLevs = size(fields)
+         if (newmem % data % contentsTimeLevs == 1) then
+            newmem % data % r1_4 => fields(1)
+         else
+            newmem % data % r1a_4 => fields
+         end if
+      
+      end if
+      if (.not. pool_add_member(inPool, key, newmem)) then
+         deallocate(newmem % data)
+         deallocate(newmem)
+      end if
+
+   end subroutine mpas_pool_add_field_1d_reals_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  routine mpas_pool_add_field_2d_reals_4
+!
+!> \brief MPAS Pool 2D Multi-level Real_4 field add routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts fields into inPool when fields is a multi-level 2D real field
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_field_2d_reals_4(inPool, key, fields)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      type (field2DReal_4), dimension(:), pointer :: fields
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_FIELD
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 2
+         newmem % data % contentsTimeLevs = size(fields)
+         if (newmem % data % contentsTimeLevs == 1) then
+            newmem % data % r2_4 => fields(1)
+         else
+            newmem % data % r2a_4 => fields
+         end if
+      
+      end if
+      if (.not. pool_add_member(inPool, key, newmem)) then
+         deallocate(newmem % data)
+         deallocate(newmem)
+      end if
+
+   end subroutine mpas_pool_add_field_2d_reals_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  routine mpas_pool_add_field_3d_reals_4
+!
+!> \brief MPAS Pool 3D Multi-level Real_4 field add routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts fields into inPool when fields is a multi-level 3D real field
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_field_3d_reals_4(inPool, key, fields)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      type (field3DReal_4), dimension(:), pointer :: fields
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_FIELD
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 3
+         newmem % data % contentsTimeLevs = size(fields)
+         if (newmem % data % contentsTimeLevs == 1) then
+            newmem % data % r3_4 => fields(1)
+         else
+            newmem % data % r3a_4 => fields
+         end if
+      
+      end if
+      if (.not. pool_add_member(inPool, key, newmem)) then
+         deallocate(newmem % data)
+         deallocate(newmem)
+      end if
+
+   end subroutine mpas_pool_add_field_3d_reals_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  routine mpas_pool_add_field_4d_reals_4
+!
+!> \brief MPAS Pool 4D Multi-level Real_4 field add routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts fields into inPool when fields is a multi-level 4D real field
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_field_4d_reals_4(inPool, key, fields)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      type (field4DReal_4), dimension(:), pointer :: fields
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_FIELD
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 4
+         newmem % data % contentsTimeLevs = size(fields)
+         if (newmem % data % contentsTimeLevs == 1) then
+            newmem % data % r4_4 => fields(1)
+         else
+            newmem % data % r4a_4 => fields
+         end if
+      
+      end if
+      if (.not. pool_add_member(inPool, key, newmem)) then
+         deallocate(newmem % data)
+         deallocate(newmem)
+      end if
+
+   end subroutine mpas_pool_add_field_4d_reals_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  routine mpas_pool_add_field_5d_reals_4
+!
+!> \brief MPAS Pool 5D Multi-level Real_4 field add routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts fields into inPool when fields is a multi-level 5D real field
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_field_5d_reals_4(inPool, key, fields)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      type (field5DReal_4), dimension(:), pointer :: fields
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_FIELD
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 5
+         newmem % data % contentsTimeLevs = size(fields)
+         if (newmem % data % contentsTimeLevs == 1) then
+            newmem % data % r5_4 => fields(1)
+         else
+            newmem % data % r5a_4 => fields
+         end if
+      
+      end if
+      if (.not. pool_add_member(inPool, key, newmem)) then
+         deallocate(newmem % data)
+         deallocate(newmem)
+      end if
+
+   end subroutine mpas_pool_add_field_5d_reals_4!}}}
+
+
+
+!-----------------------------------------------------------------------
 !  routine mpas_pool_add_field_0d_ints
 !
 !> \brief MPAS Pool 0D Multi-level Integer field add routine
@@ -3315,6 +4331,80 @@ module mpas_pool_routines
                            info % isActive = ptr % data % r5 % isActive
                            if ( associated(ptr % data % r5 % sendList) ) then
                               info % nHaloLayers = size(ptr % data % r5 % sendList % halos)
+                           end if
+                        end if
+                     end if
+                  else if ( info % fieldType == MPAS_POOL_REAL_4 ) then
+                     if ( info % nDims == 0 ) then
+                        if ( info % nTimeLevels > 1 ) then 
+                           info % isActive = ptr % data % r0a_4(1) % isActive
+                           if ( associated(ptr % data % r0a_4(1) % sendList) ) then
+                              info % nHaloLayers = size(ptr % data % r0a_4(1) % sendList % halos)
+                           end if
+                        else
+                           info % isActive = ptr % data % r0_4 % isActive
+                           if ( associated(ptr % data % r0_4 % sendList) ) then
+                              info % nHaloLayers = size(ptr % data % r0_4 % sendList % halos)
+                           end if
+                        end if
+                     else if ( info % nDims == 1 ) then
+                        if ( info % nTimeLevels > 1 ) then 
+                           info % isActive = ptr % data % r1a_4(1) % isActive
+                           if ( associated(ptr % data % r1a_4(1) % sendList) ) then
+                              info % nHaloLayers = size(ptr % data % r1a_4(1) % sendList % halos)
+                           end if
+                        else
+                           info % isActive = ptr % data % r1_4 % isActive
+                           if ( associated(ptr % data % r1_4 % sendList) ) then
+                              info % nHaloLayers = size(ptr % data % r1_4 % sendList % halos)
+                           end if
+                        end if
+                     else if ( info % nDims == 2 ) then
+                        if ( info % nTimeLevels > 1 ) then 
+                           info % isActive = ptr % data % r2a_4(1) % isActive
+                           if ( associated(ptr % data % r2a_4(1) % sendList) ) then
+                              info % nHaloLayers = size(ptr % data % r2a_4(1) % sendList % halos)
+                           end if
+                        else
+                           info % isActive = ptr % data % r2_4 % isActive
+                           if ( associated(ptr % data % r2_4 % sendList) ) then
+                              info % nHaloLayers = size(ptr % data % r2_4 % sendList % halos)
+                           end if
+                        end if
+                     else if ( info % nDims == 3 ) then
+                        if ( info % nTimeLevels > 1 ) then 
+                           info % isActive = ptr % data % r3a_4(1) % isActive
+                           if ( associated(ptr % data % r3a_4(1) % sendList) ) then
+                              info % nHaloLayers = size(ptr % data % r3a_4(1) % sendList % halos)
+                           end if
+                        else
+                           info % isActive = ptr % data % r3_4 % isActive
+                           if ( associated(ptr % data % r3_4 % sendList) ) then
+                              info % nHaloLayers = size(ptr % data % r3_4 % sendList % halos)
+                           end if
+                        end if
+                     else if ( info % nDims == 4 ) then
+                        if ( info % nTimeLevels > 1 ) then 
+                           info % isActive = ptr % data % r4a_4(1) % isActive
+                           if ( associated(ptr % data % r4a_4(1) % sendList) ) then
+                              info % nHaloLayers = size(ptr % data % r4a_4(1) % sendList % halos)
+                           end if
+                        else
+                           info % isActive = ptr % data % r4_4 % isActive
+                           if ( associated(ptr % data % r4_4 % sendList) ) then
+                              info % nHaloLayers = size(ptr % data % r4_4 % sendList % halos)
+                           end if
+                        end if
+                     else if ( info % nDims == 5 ) then
+                        if ( info % nTimeLevels > 1 ) then 
+                           info % isActive = ptr % data % r5a_4(1) % isActive
+                           if ( associated(ptr % data % r5a_4(1) % sendList) ) then
+                              info % nHaloLayers = size(ptr % data % r5a_4(1) % sendList % halos)
+                           end if
+                        else
+                           info % isActive = ptr % data % r5_4 % isActive
+                           if ( associated(ptr % data % r5_4 % sendList) ) then
+                              info % nHaloLayers = size(ptr % data % r5_4 % sendList % halos)
                            end if
                         end if
                      end if
@@ -3793,6 +4883,379 @@ module mpas_pool_routines
       end if
 
    end subroutine mpas_pool_get_field_5d_real!}}}
+
+
+!-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_field_0d_real_4
+!
+!> \brief MPAS Pool 0D Real field get subroutine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns a pointer to the field associated with key in inPool.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_field_0d_real_4(inPool, key, field, timeLevel)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      type (field0DReal_4), pointer :: field
+      integer, intent(in), optional :: timeLevel
+
+      type (mpas_pool_data_type), pointer :: mem
+      integer :: local_timeLevel
+
+
+      if (present(timeLevel)) then
+         local_timeLevel = timeLevel
+      else
+         local_timeLevel = 1
+      end if
+
+      mem => pool_get_member(inPool, key, MPAS_POOL_FIELD)
+
+      nullify(field)
+      if (associated(mem)) then
+
+         if (mem % contentsType /= MPAS_POOL_REAL_4) then
+            call pool_mesg('Error: Field '//trim(key)//' is not type real.')
+         end if
+         if (mem % contentsDims /= 0) then
+            call pool_mesg('Error: Field '//trim(key)//' is not a 0-d field.')
+         end if
+         if ((mem % contentsTimeLevs > 1) .and. (.not. present(timeLevel))) then
+            call pool_mesg('Error: Field '//trim(key)//' has more than one time level, but no timeLevel argument given.')
+         end if
+         if (mem % contentsTimeLevs < local_timeLevel) then
+            call pool_mesg('Error: Field '//trim(key)//' has too few time levels.')
+         end if
+         
+         if (mem % contentsTimeLevs == 1) then
+            field => mem % r0_4
+         else
+            field => mem % r0a_4(local_timeLevel)
+         end if
+
+      else
+
+         call pool_mesg('Error: Field '//trim(key)//' not found in pool.')
+
+      end if
+
+   end subroutine mpas_pool_get_field_0d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_field_1d_real
+!
+!> \brief MPAS Pool 1D Real field get subroutine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns a pointer to the field associated with key in inPool.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_field_1d_real_4(inPool, key, field, timeLevel)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      type (field1DReal_4), pointer :: field
+      integer, intent(in), optional :: timeLevel
+
+      type (mpas_pool_data_type), pointer :: mem
+      integer :: local_timeLevel
+
+
+      if (present(timeLevel)) then
+         local_timeLevel = timeLevel
+      else
+         local_timeLevel = 1
+      end if
+
+      mem => pool_get_member(inPool, key, MPAS_POOL_FIELD)
+
+      nullify(field)
+      if (associated(mem)) then
+
+         if (mem % contentsType /= MPAS_POOL_REAL_4) then
+            call pool_mesg('Error: Field '//trim(key)//' is not type real.')
+         end if
+         if (mem % contentsDims /= 1) then
+            call pool_mesg('Error: Field '//trim(key)//' is not a 1-d field.')
+         end if
+         if ((mem % contentsTimeLevs > 1) .and. (.not. present(timeLevel))) then
+            call pool_mesg('Error: Field '//trim(key)//' has more than one time level, but no timeLevel argument given.')
+         end if
+         if (mem % contentsTimeLevs < local_timeLevel) then
+            call pool_mesg('Error: Field '//trim(key)//' has too few time levels.')
+         end if
+         
+         if (mem % contentsTimeLevs == 1) then
+            field => mem % r1_4
+         else
+            field => mem % r1a_4(local_timeLevel)
+         end if
+
+      else
+
+         call pool_mesg('Error: Field '//trim(key)//' not found in pool.')
+
+      end if
+
+   end subroutine mpas_pool_get_field_1d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_field_2d_real_4
+!
+!> \brief MPAS Pool 2D Real field get subroutine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns a pointer to the field associated with key in inPool.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_field_2d_real_4(inPool, key, field, timeLevel)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      type (field2DReal_4), pointer :: field
+      integer, intent(in), optional :: timeLevel
+
+      type (mpas_pool_data_type), pointer :: mem
+      integer :: local_timeLevel
+
+
+      if (present(timeLevel)) then
+         local_timeLevel = timeLevel
+      else
+         local_timeLevel = 1
+      end if
+
+      mem => pool_get_member(inPool, key, MPAS_POOL_FIELD)
+
+      nullify(field)
+      if (associated(mem)) then
+
+         if (mem % contentsType /= MPAS_POOL_REAL_4) then
+            call pool_mesg('Error: Field '//trim(key)//' is not type real.')
+         end if
+         if (mem % contentsDims /= 2) then
+            call pool_mesg('Error: Field '//trim(key)//' is not a 2-d field.')
+         end if
+         if ((mem % contentsTimeLevs > 1) .and. (.not. present(timeLevel))) then
+            call pool_mesg('Error: Field '//trim(key)//' has more than one time level, but no timeLevel argument given.')
+         end if
+         if (mem % contentsTimeLevs < local_timeLevel) then
+            call pool_mesg('Error: Field '//trim(key)//' has too few time levels.')
+         end if
+         
+         if (mem % contentsTimeLevs == 1) then
+            field => mem % r2_4
+         else
+            field => mem % r2a_4(local_timeLevel)
+         end if
+
+      else
+
+         call pool_mesg('Error: Field '//trim(key)//' not found in pool.')
+
+      end if
+
+   end subroutine mpas_pool_get_field_2d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_field_3d_real_4
+!
+!> \brief MPAS Pool 3D Real field get subroutine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns a pointer to the field associated with key in inPool.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_field_3d_real_4(inPool, key, field, timeLevel)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      type (field3DReal_4), pointer :: field
+      integer, intent(in), optional :: timeLevel
+
+      type (mpas_pool_data_type), pointer :: mem
+      integer :: local_timeLevel
+
+
+      if (present(timeLevel)) then
+         local_timeLevel = timeLevel
+      else
+         local_timeLevel = 1
+      end if
+
+      mem => pool_get_member(inPool, key, MPAS_POOL_FIELD)
+
+      nullify(field)
+      if (associated(mem)) then
+
+         if (mem % contentsType /= MPAS_POOL_REAL) then
+            call pool_mesg('Error: Field '//trim(key)//' is not type real.')
+         end if
+         if (mem % contentsDims /= 3) then
+            call pool_mesg('Error: Field '//trim(key)//' is not a 3-d field.')
+         end if
+         if ((mem % contentsTimeLevs > 1) .and. (.not. present(timeLevel))) then
+            call pool_mesg('Error: Field '//trim(key)//' has more than one time level, but no timeLevel argument given.')
+         end if
+         if (mem % contentsTimeLevs < local_timeLevel) then
+            call pool_mesg('Error: Field '//trim(key)//' has too few time levels.')
+         end if
+         
+         if (mem % contentsTimeLevs == 1) then
+            field => mem % r3_4
+         else
+            field => mem % r3a_4(local_timeLevel)
+         end if
+
+      else
+
+         call pool_mesg('Error: Field '//trim(key)//' not found in pool.')
+
+      end if
+
+   end subroutine mpas_pool_get_field_3d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_field_4d_real_4
+!
+!> \brief MPAS Pool 4D Real field get subroutine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns a pointer to the field associated with key in inPool.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_field_4d_real_4(inPool, key, field, timeLevel)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      type (field4DReal_4), pointer :: field
+      integer, intent(in), optional :: timeLevel
+
+      type (mpas_pool_data_type), pointer :: mem
+      integer :: local_timeLevel
+
+
+      if (present(timeLevel)) then
+         local_timeLevel = timeLevel
+      else
+         local_timeLevel = 1
+      end if
+
+      mem => pool_get_member(inPool, key, MPAS_POOL_FIELD)
+
+      nullify(field)
+      if (associated(mem)) then
+
+         if (mem % contentsType /= MPAS_POOL_REA_4L) then
+            call pool_mesg('Error: Field '//trim(key)//' is not type real.')
+         end if
+         if (mem % contentsDims /= 4) then
+            call pool_mesg('Error: Field '//trim(key)//' is not a 4-d field.')
+         end if
+         if ((mem % contentsTimeLevs > 1) .and. (.not. present(timeLevel))) then
+            call pool_mesg('Error: Field '//trim(key)//' has more than one time level, but no timeLevel argument given.')
+         end if
+         if (mem % contentsTimeLevs < local_timeLevel) then
+            call pool_mesg('Error: Field '//trim(key)//' has too few time levels.')
+         end if
+         
+         if (mem % contentsTimeLevs == 1) then
+            field => mem % r4_4
+         else
+            field => mem % r4a_4(local_timeLevel)
+         end if
+
+      else
+
+         call pool_mesg('Error: Field '//trim(key)//' not found in pool.')
+
+      end if
+
+   end subroutine mpas_pool_get_field_4d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_field_5d_real
+!
+!> \brief MPAS Pool 5D Real field get subroutine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns a pointer to the field associated with key in inPool.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_field_5d_real_4(inPool, key, field, timeLevel)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      type (field5DReal_4), pointer :: field
+      integer, intent(in), optional :: timeLevel
+
+      type (mpas_pool_data_type), pointer :: mem
+      integer :: local_timeLevel
+
+
+      if (present(timeLevel)) then
+         local_timeLevel = timeLevel
+      else
+         local_timeLevel = 1
+      end if
+
+      mem => pool_get_member(inPool, key, MPAS_POOL_FIELD)
+
+      nullify(field)
+      if (associated(mem)) then
+
+         if (mem % contentsType /= MPAS_POOL_REAL_4) then
+            call pool_mesg('Error: Field '//trim(key)//' is not type real.')
+         end if
+         if (mem % contentsDims /= 5) then
+            call pool_mesg('Error: Field '//trim(key)//' is not a 5-d field.')
+         end if
+         if ((mem % contentsTimeLevs > 1) .and. (.not. present(timeLevel))) then
+            call pool_mesg('Error: Field '//trim(key)//' has more than one time level, but no timeLevel argument given.')
+         end if
+         if (mem % contentsTimeLevs < local_timeLevel) then
+            call pool_mesg('Error: Field '//trim(key)//' has too few time levels.')
+         end if
+         
+         if (mem % contentsTimeLevs == 1) then
+            field => mem % r5_4
+         else
+            field => mem % r5a_4(local_timeLevel)
+         end if
+
+      else
+
+         call pool_mesg('Error: Field '//trim(key)//' not found in pool.')
+
+      end if
+
+   end subroutine mpas_pool_get_field_5d_real_4!}}}
+
 
 
 !-----------------------------------------------------------------------
@@ -4348,6 +5811,190 @@ module mpas_pool_routines
 
 
 !-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_array_0d_real_4
+!
+!> \brief MPAS Pool 0D Real field get subroutine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns a pointer to the array associated with key in inPool.
+!> This subroutine has added support for single-precision arrays
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_array_0d_real_4(inPool, key, scalar, timeLevel)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      real (kind=R4KIND), pointer :: scalar
+      integer, intent(in), optional :: timeLevel
+
+      type (field0DReal_4), pointer :: field
+
+
+      call mpas_pool_get_field_0d_real(inPool, key, field, timeLevel)
+
+      nullify(scalar)
+      if (associated(field)) scalar => field % scalar
+
+   end subroutine mpas_pool_get_array_0d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_array_1d_real_4
+!
+!> \brief MPAS Pool 1D Real field get subroutine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns a pointer to the array associated with key in inPool.
+!> This subroutine has added support for single-precision arrays
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_array_1d_real_4(inPool, key, array, timeLevel)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      real (kind=R4KIND), dimension(:), pointer :: array
+      integer, intent(in), optional :: timeLevel
+
+      type (field1DReal_4), pointer :: field
+
+
+      call mpas_pool_get_field_1d_real(inPool, key, field, timeLevel)
+
+      nullify(array)
+      if (associated(field)) array => field % array
+
+   end subroutine mpas_pool_get_array_1d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_array_2d_real_4
+!
+!> \brief MPAS Pool 2D Real field get subroutine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns a pointer to the array associated with key in inPool.
+!> This subroutine has added support for single-precision arrays
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_array_2d_real_4(inPool, key, array, timeLevel)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      real (kind=R4KIND), dimension(:,:), pointer :: array
+      integer, intent(in), optional :: timeLevel
+
+      type (field2DReal_4), pointer :: field
+
+
+      call mpas_pool_get_field_2d_real(inPool, key, field, timeLevel)
+
+      nullify(array)
+      if (associated(field)) array => field % array
+
+   end subroutine mpas_pool_get_array_2d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_array_3d_real
+!
+!> \brief MPAS Pool 3D Real field get subroutine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns a pointer to the array associated with key in inPool.
+!> This subroutine has added support for single-precision arrays
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_array_3d_real_4(inPool, key, array, timeLevel)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      real (kind=R4KIND), dimension(:,:,:), pointer :: array
+      integer, intent(in), optional :: timeLevel
+
+      type (field3DReal_4), pointer :: field
+
+
+      call mpas_pool_get_field_3d_real(inPool, key, field, timeLevel)
+
+      nullify(array)
+      if (associated(field)) array => field % array
+
+   end subroutine mpas_pool_get_array_3d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_array_4d_real_4
+!
+!> \brief MPAS Pool 4D Real field get subroutine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns a pointer to the array associated with key in inPool.
+!> This subroutine has added support for single-precision arrays
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_array_4d_real_4(inPool, key, array, timeLevel)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      real (kind=R4KIND), dimension(:,:,:,:), pointer :: array
+      integer, intent(in), optional :: timeLevel
+
+      type (field4DReal_4), pointer :: field
+
+
+      call mpas_pool_get_field_4d_real(inPool, key, field, timeLevel)
+
+      nullify(array)
+      if (associated(field)) array => field % array
+
+   end subroutine mpas_pool_get_array_4d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_array_5d_real
+!
+!> \brief MPAS Pool 5D Real field get subroutine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns a pointer to the array associated with key in inPool.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_array_5d_real_4(inPool, key, array, timeLevel)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      real (kind=R4KIND), dimension(:,:,:,:,:), pointer :: array
+      integer, intent(in), optional :: timeLevel
+
+      type (field5DReal_4), pointer :: field
+
+
+      call mpas_pool_get_field_5d_real(inPool, key, field, timeLevel)
+
+      nullify(array)
+      if (associated(field)) array => field % array
+
+   end subroutine mpas_pool_get_array_5d_real_4!}}}
+
+
+!-----------------------------------------------------------------------
 !  subroutine mpas_pool_get_array_0d_int
 !
 !> \brief MPAS Pool 0D Integer field get subroutine
@@ -4573,6 +6220,52 @@ module mpas_pool_routines
 
 
 !-----------------------------------------------------------------------
+!  routine mpas_pool_add_config_real_4
+!
+!> \brief MPAS Pool Real Config Insertion Routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This routine inserts a real value as a config option into inPool.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_add_config_real_4(inPool, key, value)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(inout) :: inPool
+      character (len=*), intent(in) :: key
+      real (kind=R4KIND), intent(in) :: value
+
+      type (mpas_pool_member_type), pointer :: newmem
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      if ( threadNum == 0 ) then
+         allocate(newmem)
+         newmem % key = trim(key)
+         newmem % keyLen = len_trim(key)
+         newmem % contentsType = MPAS_POOL_CONFIG
+
+         allocate(newmem % data)
+         newmem % data % contentsType = MPAS_POOL_REAL_4
+         newmem % data % contentsDims = 0
+         newmem % data % contentsTimeLevs = 0
+         allocate(newmem % data % simple_real_4)
+         newmem % data % simple_real_4 = value
+   
+         if (.not. pool_add_member(inPool, key, newmem)) then
+            deallocate(newmem % data)
+            deallocate(newmem)
+         end if
+      end if
+
+   end subroutine mpas_pool_add_config_real_4!}}}
+
+
+
+!-----------------------------------------------------------------------
 !  routine mpas_pool_add_config_int
 !
 !> \brief MPAS Pool Integer Config Insertion Routine
@@ -4787,6 +6480,47 @@ module mpas_pool_routines
       end if
 
    end subroutine mpas_pool_get_config_real!}}}
+
+
+!-----------------------------------------------------------------------
+!  subroutine mpas_pool_get_config_real_4
+!> \brief MPAS Pool Real Config Access Routine
+!> \author Michael Duda, Doug Jacobsen
+!> \date   03/27/2014
+!> \details
+!> This subroutine returns the value associated with a config option with the
+!> name key in inPool.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_pool_get_config_real_4(inPool, key, value, record)!{{{
+
+      implicit none
+
+      type (mpas_pool_type), intent(in) :: inPool
+      character (len=*), intent(in) :: key
+      real (kind=R4KIND), pointer :: value
+      character (len=*), intent(in), optional :: record
+      type (mpas_pool_type), pointer :: recordPool
+
+      type (mpas_pool_data_type), pointer :: mem
+
+      if ( present(record) ) then
+         call mpas_pool_get_subpool(inPool, record, recordPool)
+         mem => pool_get_member(recordPool, key, MPAS_POOL_CONFIG)
+      else
+         mem => pool_get_member(inPool, key, MPAS_POOL_CONFIG)
+      end if
+
+      if (associated(mem)) then
+         if (mem % contentsType /= MPAS_POOL_REAL_4) then
+            call pool_mesg('Error: Config '//trim(key)//' is not type real.')
+         end if
+         value => mem % simple_real_4
+      else
+         call pool_mesg('Error: Config '//trim(key)//' not found in pool.')
+      end if
+
+   end subroutine mpas_pool_get_config_real_4!}}}
 
 
 !-----------------------------------------------------------------------
@@ -5294,6 +7028,8 @@ module mpas_pool_routines
 
       if (mem % contentsType == MPAS_POOL_REAL) then
          deallocate(mem % simple_real)
+      else if (mem % contentsType == MPAS_POOL_REAL_4) then
+         deallocate(mem % simple_real_4)
       else if (mem % contentsType == MPAS_POOL_INTEGER) then
          deallocate(mem % simple_int)
       else if (mem % contentsType == MPAS_POOL_CHARACTER) then
@@ -5585,6 +7321,8 @@ module mpas_pool_routines
 
       type (mpas_pool_type), pointer :: subPool
       real (kind=RKIND), pointer :: tempReal
+      real (kind=R4KIND), pointer :: tempReal_4
+
       integer, pointer :: tempInteger
       logical, pointer :: tempLogical
       character (len=StrKIND), pointer :: tempChar
@@ -5602,6 +7340,9 @@ module mpas_pool_routines
             if ( poolItr % dataType == MPAS_POOL_REAL ) then
                call mpas_pool_get_config(inPool, poolItr % memberName, tempReal)
                call mpas_log_write('      ' // trim(poolItr % memberName) // ' = $r', realArgs=(/tempReal/))
+            else if ( poolItr % dataType == MPAS_POOL_REAL_4 ) then
+               call mpas_pool_get_config(inPool, poolItr % memberName, tempReal_4)
+               call mpas_log_write('      ' // trim(poolItr % memberName) // ' = $r', realArgs=(/tempReal_4/))
             else if ( poolItr % dataType == MPAS_POOL_INTEGER ) then
                call mpas_pool_get_config(inPool, poolItr % memberName, tempInteger)
                call mpas_log_write('      ' // trim(poolItr % memberName) // ' = $i', intArgs=(/tempInteger/))
@@ -5629,6 +7370,8 @@ module mpas_pool_routines
             call mpas_log_write('      ' // trim(poolItr % memberName))
             if ( poolItr % dataType == MPAS_POOL_REAL) then
                call mpas_log_write('            Type: Real')
+            else if ( poolItr % dataType == MPAS_POOL_REAL_4) then
+               call mpas_log_write('            Type: Real_4')
             else if ( poolItr % dataType == MPAS_POOL_INTEGER) then
                call mpas_log_write('            Type: Integer')
             else if ( poolItr % dataType == MPAS_POOL_CHARACTER) then
@@ -5897,12 +7640,16 @@ module mpas_pool_routines
       type (mpas_pool_iterator_type) :: poolItr
 
       real (kind=RKIND), pointer :: realPtr
+      real (kind=R4KIND), pointer :: realPtr_4
+
       integer, pointer :: intPtr
       logical, pointer :: logPtr
       character (len=StrKIND) :: charPtr
 
       call mpas_log_write('   Constants: ')
       call mpas_log_write('   Real: $i', intArgs=(/MPAS_POOL_REAL/))
+      call mpas_log_write('   Real_4: $i', intArgs=(/MPAS_POOL_REAL_4/))
+
       call mpas_log_write('   Integer: $i', intArgs=(/MPAS_POOL_INTEGER/))
       call mpas_log_write('   Logical: $i', intArgs=(/MPAS_POOL_LOGICAL/))
       call mpas_log_write('   Character: $i', intArgs=(/MPAS_POOL_CHARACTER/))

@@ -71,8 +71,8 @@ module ocn_diagnostics
    !--------------------------------------------------------------------
 
    integer :: ke_cell_flag, ke_vertex_flag
-   real (kind=RKIND) ::  fCoef
-   real (kind=RKIND), pointer ::  coef_3rd_order
+   real (kind=RDIAG) ::  fCoef
+   real (kind=RDIAG), pointer ::  coef_3rd_order
 
    logical :: jenkinsOn, hollandJenkinsOn
 
@@ -107,14 +107,14 @@ contains
       integer :: iEdge, iCell
       integer :: err, nCells, nEdges, nVertices
 
-      real (kind=RKIND) :: coef_3rd_order
+      real (kind=RDIAG) :: coef_3rd_order
 
-      real (kind=RKIND), dimension(:), pointer :: &
+      real (kind=RDIAG), dimension(:), pointer :: &
         ssh,  seaIcePressure, atmosphericPressure
-      real (kind=RKIND), dimension(:,:), pointer :: &
+      real (kind=RDIAG), dimension(:,:), pointer :: &
         layerThickness, normalVelocity
 
-      real (kind=RKIND), dimension(:,:,:), pointer :: activeTracers
+      real (kind=RDIAG), dimension(:,:,:), pointer :: activeTracers
 
       integer :: timeLevel
       integer, pointer :: indexTemperature, indexSalinity
@@ -372,7 +372,7 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          normalVelocity
 
       !-----------------------------------------------------------------
@@ -381,10 +381,10 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          relativeVorticity
 
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          circulation
 
       integer, intent(out) :: err !< Output: error flag
@@ -397,7 +397,7 @@ contains
 
       integer :: iVertex, iEdge, i, k
 
-      real (kind=RKIND) :: invAreaTri1, r_tmp
+      real (kind=RDIAG) :: invAreaTri1, r_tmp
 
       err = 0
 
@@ -411,9 +411,9 @@ contains
       !$omp do schedule(runtime) private(invAreaTri1, i, iEdge, k, r_tmp)
 #endif
       do iVertex = 1, nVerticesAll
-         circulation(:, iVertex) = 0.0_RKIND
-         relativeVorticity(:, iVertex) = 0.0_RKIND
-         invAreaTri1 = 1.0_RKIND / areaTriangle(iVertex)
+         circulation(:, iVertex) = 0.0_RDIAG
+         relativeVorticity(:, iVertex) = 0.0_RDIAG
+         invAreaTri1 = 1.0_RDIAG / areaTriangle(iVertex)
          do i = 1, vertexDegree
             iEdge = edgesOnVertex(i, iVertex)
             do k = minLevelVertexTop(iVertex), maxLevelVertexBot(iVertex)
@@ -455,9 +455,9 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          normalVelocity     !< Input: transport
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
         layerThickness      !< Input: layer thickness
 
       !-----------------------------------------------------------------
@@ -466,7 +466,7 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          layerThicknessEdge     !< Output: layer thickness on edge
 
       !-----------------------------------------------------------------
@@ -489,12 +489,12 @@ contains
         !$omp do schedule(runtime) private(cell1, cell2, k)
         do iEdge = 1, nEdges
           ! initialize layerThicknessEdge to avoid divide by zero and NaN problems.
-          layerThicknessEdge(:, iEdge) = -1.0e34_RKIND
+          layerThicknessEdge(:, iEdge) = -1.0e34_RDIAG
           cell1 = cellsOnEdge(1,iEdge)
           cell2 = cellsOnEdge(2,iEdge)
           do k = minLevelEdgeBot(iEdge), maxLevelEdgeTop(iEdge)
             ! central differenced
-            layerThicknessEdge(k,iEdge) = 0.5_RKIND * (layerThickness(k,cell1) + layerThickness(k,cell2))
+            layerThicknessEdge(k,iEdge) = 0.5_RDIAG * (layerThickness(k,cell1) + layerThickness(k,cell2))
           end do
         end do
         !$omp end do
@@ -506,14 +506,14 @@ contains
             !$omp do schedule(runtime) private(cell1, cell2, k)
             do iEdge = 1, nEdges
               ! initialize layerThicknessEdge to avoid divide by zero and NaN problems.
-              layerThicknessEdge(:, iEdge) = -1.0e34_RKIND
+              layerThicknessEdge(:, iEdge) = -1.0e34_RDIAG
               cell1 = cellsOnEdge(1,iEdge)
               cell2 = cellsOnEdge(2,iEdge)
               do k = minLevelEdgeBot(iEdge), maxLevelEdgeTop(iEdge)
                 ! upwind
-                if (normalVelocity(k, iEdge) > 0.0_RKIND) then
+                if (normalVelocity(k, iEdge) > 0.0_RDIAG) then
                   layerThicknessEdge(k,iEdge) = layerThickness(k,cell1)
-                elseif (normalVelocity(k, iEdge) < 0.0_RKIND) then
+                elseif (normalVelocity(k, iEdge) < 0.0_RDIAG) then
                   layerThicknessEdge(k,iEdge) = layerThickness(k,cell2)
                 else
                   layerThicknessEdge(k,iEdge) = max(layerThickness(k,cell1), layerThickness(k,cell2))
@@ -552,7 +552,7 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          normalVelocity     !< Input: transport
 
       !-----------------------------------------------------------------
@@ -561,7 +561,7 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          kineticEnergyCell
 
       !-----------------------------------------------------------------
@@ -571,15 +571,15 @@ contains
       !-----------------------------------------------------------------
 
       integer :: iVertex, i, iEdge, k, j, nCells, nVertices, iCell
-      real (kind=RKIND) :: r_tmp, invAreaCell1
+      real (kind=RDIAG) :: r_tmp, invAreaCell1
 
       ! Scratch Arrays
       ! kineticEnergyVertex: kinetic energy of horizontal velocity defined at vertices
       !               units: m^2 s^{-2}
-      real (kind=RKIND), dimension(:,:), allocatable :: kineticEnergyVertex
+      real (kind=RDIAG), dimension(:,:), allocatable :: kineticEnergyVertex
       ! kineticEnergyVertexOnCells: kinetic energy of horizontal velocity defined at vertices
       !                      units: m^2 s^{-2}
-      real (kind=RKIND), dimension(:,:), allocatable :: kineticEnergyVertexOnCells
+      real (kind=RDIAG), dimension(:,:), allocatable :: kineticEnergyVertexOnCells
 
       nCells = nCellsHalo( 2 )
       nVertices = nVerticesAll
@@ -590,10 +590,10 @@ contains
       !$omp parallel
       !$omp do schedule(runtime) private(i, iEdge, r_tmp, k)
       do iVertex = 1, nVertices
-        kineticEnergyVertex(:, iVertex) = 0.0_RKIND
+        kineticEnergyVertex(:, iVertex) = 0.0_RDIAG
         do i = 1, vertexDegree
           iEdge = edgesOnVertex(i, iVertex)
-          r_tmp = dcEdge(iEdge) * dvEdge(iEdge) * 0.25_RKIND / areaTriangle(iVertex)
+          r_tmp = dcEdge(iEdge) * dvEdge(iEdge) * 0.25_RDIAG / areaTriangle(iVertex)
           do k = 1, nVertLevels
             kineticEnergyVertex(k, iVertex) = kineticEnergyVertex(k, iVertex) + r_tmp * normalVelocity(k, iEdge)**2
           end do
@@ -603,7 +603,7 @@ contains
 
       !$omp do schedule(runtime) private(invAreaCell1, i, j, iVertex, k)
       do iCell = 1, nCells
-        kineticEnergyVertexOnCells(:, iCell) = 0.0_RKIND
+        kineticEnergyVertexOnCells(:, iCell) = 0.0_RDIAG
         invAreaCell1 = invAreaCell(iCell)
         do i = 1, nEdgesOnCell(iCell)
           j = kiteIndexOnCell(i, iCell)
@@ -622,7 +622,7 @@ contains
       !$omp do schedule(runtime) private(k)
       do iCell = 1, nCells
          do k = 1, nVertLevels
-            kineticEnergyCell(k,iCell) = 5.0_RKIND / 8.0_RKIND * kineticEnergyCell(k,iCell) + 3.0_RKIND / 8.0_RKIND &
+            kineticEnergyCell(k,iCell) = 5.0_RDIAG / 8.0_RDIAG * kineticEnergyCell(k,iCell) + 3.0_RDIAG / 8.0_RDIAG &
                                        * kineticEnergyVertexOnCells(k,iCell)
          end do
       end do
@@ -658,14 +658,14 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), intent(in) :: dt !< Input: Time step
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), intent(in) :: dt !< Input: Time step
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          normalVelocity     !< Input: transport
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          tangentialVelocity !< Input: transport
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
         layerThickness      !< Input: layer thickness
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
         relativeVorticity
 
       !-----------------------------------------------------------------
@@ -674,11 +674,11 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
         normalizedRelativeVorticityEdge
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
         normalizedPlanetaryVorticityEdge
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
         normalizedRelativeVorticityCell
 
       !-----------------------------------------------------------------
@@ -690,25 +690,25 @@ contains
       integer :: nVertices, nEdges, nCells
       integer :: iVertex, k, i, iEdge, iCell, j
       integer :: vertex1, vertex2, cell1, cell2
-      real(kind=RKIND) :: invAreaTri1, invAreaCell1, invLength
-      real(kind=RKIND) :: layerThicknessVertex
+      real(kind=RDIAG) :: invAreaTri1, invAreaCell1, invLength
+      real(kind=RDIAG) :: layerThicknessVertex
 
       ! normalizedPlanetaryVorticityVertex: earth's rotational rate (Coriolis parameter, f)
       !                                     divided by layer thickness, defined at vertices
       !                              units: s^{-1}
-      real (kind=RKIND), dimension(:,:), allocatable :: normalizedPlanetaryVorticityVertex
+      real (kind=RDIAG), dimension(:,:), allocatable :: normalizedPlanetaryVorticityVertex
       ! normalizedRelativeVorticityVertex: curl of horizontal velocity divided by layer thickness,
       !                                    defined at vertices
       !                             units: s^{-1}
-      real (kind=RKIND), dimension(:,:), allocatable :: normalizedRelativeVorticityVertex
+      real (kind=RDIAG), dimension(:,:), allocatable :: normalizedRelativeVorticityVertex
       ! vorticityGradientNormalComponent: gradient of vorticity in the normal direction
       !                                   (positive points from cell1 to cell2)
       !                            units: s^{-1} m^{-1}
-      real (kind=RKIND), dimension(:,:), allocatable :: vorticityGradientNormalComponent
+      real (kind=RDIAG), dimension(:,:), allocatable :: vorticityGradientNormalComponent
       ! vorticityGradientTangentialComponent: gradient of vorticity in the tangent direction
       !                                       (positive points from vertex1 to vertex2)
       !                                units: s^{-1} m^{-1}
-      real (kind=RKIND), dimension(:,:), allocatable :: vorticityGradientTangentialComponent
+      real (kind=RDIAG), dimension(:,:), allocatable :: vorticityGradientTangentialComponent
 
       !
       ! Compute normalized relative and planetary vorticity
@@ -733,9 +733,9 @@ contains
       !$omp do schedule(runtime) private(invAreaTri1, k, layerThicknessVertex, i)
 #endif
       do iVertex = 1, nVertices
-         invAreaTri1 = 1.0_RKIND / areaTriangle(iVertex)
+         invAreaTri1 = 1.0_RDIAG / areaTriangle(iVertex)
          do k = 1, maxLevelVertexBot(iVertex)
-            layerThicknessVertex = 0.0_RKIND
+            layerThicknessVertex = 0.0_RDIAG
             do i = 1, vertexDegree
                layerThicknessVertex = layerThicknessVertex + layerThickness(k,cellsOnVertex(i,iVertex)) &
                                     * kiteAreasOnVertex(i,iVertex)
@@ -767,14 +767,14 @@ contains
       !$omp do schedule(runtime) private(vertex1, vertex2, k)
 #endif
       do iEdge = 1, nEdges
-        normalizedRelativeVorticityEdge(:, iEdge) = 0.0_RKIND
-        normalizedPlanetaryVorticityEdge(:, iEdge) = 0.0_RKIND
+        normalizedRelativeVorticityEdge(:, iEdge) = 0.0_RDIAG
+        normalizedPlanetaryVorticityEdge(:, iEdge) = 0.0_RDIAG
         vertex1 = verticesOnEdge(1, iEdge)
         vertex2 = verticesOnEdge(2, iEdge)
         do k = minLevelEdgeTop(iEdge), maxLevelEdgeBot(iEdge)
-          normalizedRelativeVorticityEdge(k, iEdge) = 0.5_RKIND * (normalizedRelativeVorticityVertex(k, vertex1) &
+          normalizedRelativeVorticityEdge(k, iEdge) = 0.5_RDIAG * (normalizedRelativeVorticityVertex(k, vertex1) &
                                                     + normalizedRelativeVorticityVertex(k, vertex2))
-          normalizedPlanetaryVorticityEdge(k, iEdge) = 0.5_RKIND * (normalizedPlanetaryVorticityVertex(k, vertex1) &
+          normalizedPlanetaryVorticityEdge(k, iEdge) = 0.5_RDIAG * (normalizedPlanetaryVorticityVertex(k, vertex1) &
                                                      + normalizedPlanetaryVorticityVertex(k, vertex2))
         end do
       end do
@@ -796,7 +796,7 @@ contains
       !$omp do schedule(runtime) private(invAreaCell1, i, j, iVertex, k)
 #endif
       do iCell = 1, nCells
-        normalizedRelativeVorticityCell(:, iCell) = 0.0_RKIND
+        normalizedRelativeVorticityCell(:, iCell) = 0.0_RDIAG
         invAreaCell1 = invAreaCell(iCell)
 
         do i = 1, nEdgesOnCell(iCell)
@@ -837,7 +837,7 @@ contains
             vertex1 = verticesOnedge(1, iEdge)
             vertex2 = verticesOnedge(2, iEdge)
 
-            invLength = 1.0_RKIND / dcEdge(iEdge)
+            invLength = 1.0_RDIAG / dcEdge(iEdge)
             ! Compute gradient of PV in normal direction
             !   ( this computes the gradient for all edges bounding real cells )
             do k = minLevelEdgeBot(iEdge), maxLevelEdgeTop(iEdge)
@@ -845,7 +845,7 @@ contains
                   (normalizedRelativeVorticityCell(k,cell2) - normalizedRelativeVorticityCell(k,cell1)) * invLength
             enddo
 
-            invLength = 1.0_RKIND / dvEdge(iEdge)
+            invLength = 1.0_RDIAG / dvEdge(iEdge)
             ! Compute gradient of PV in the tangent direction
             !   ( this computes the gradient at all edges bounding real cells and distance-1 ghost cells )
             do k = minLevelEdgeTop(iEdge), maxLevelEdgeBot(iEdge)
@@ -909,15 +909,15 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
         displacedDensity
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
         density
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
         zMid
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
         normalVelocity
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
         edgeAreaFractionOfCell
 
       !-----------------------------------------------------------------
@@ -926,9 +926,9 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
         BruntVaisalaFreqTop
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
         RiTopOfCell
 
       !-----------------------------------------------------------------
@@ -937,10 +937,10 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real(kind=RKIND) :: coef, shearSquared, delU2, shearMean
+      real(kind=RDIAG) :: coef, shearSquared, delU2, shearMean
       integer :: iCell, k, i, iEdge
       integer :: nCells
-      real(kind=RKIND) :: invAreaCell1
+      real(kind=RDIAG) :: invAreaCell1
 
       !
       ! Brunt-Vaisala frequency (this has units of s^{-2})
@@ -955,7 +955,7 @@ contains
       !$omp do schedule(runtime) private(k)
 #endif
       do iCell = 1, nCellsAll
-         BruntVaisalaFreqTop(minLevelCell(iCell),iCell) = 0.0_RKIND
+         BruntVaisalaFreqTop(minLevelCell(iCell),iCell) = 0.0_RDIAG
          do k = minLevelCell(iCell)+1, maxLevelCell(iCell)
             BruntVaisalaFreqTop(k,iCell) = coef * (displacedDensity(k-1,iCell) - density(k,iCell)) &
               / (zMid(k-1,iCell) - zMid(k,iCell))
@@ -982,18 +982,18 @@ contains
       !$omp do schedule(runtime) private(k, shearSquared, i, iEdge, delU2, shearMean)
 #endif
       do iCell=1,nCells
-         RiTopOfCell(:,iCell) = 100.0_RKIND
+         RiTopOfCell(:,iCell) = 100.0_RDIAG
          do k = minLevelCell(iCell)+1, maxLevelCell(iCell)
-           shearSquared = 0.0_RKIND
+           shearSquared = 0.0_RDIAG
            do i = 1, nEdgesOnCell(iCell)
              iEdge = edgesOnCell(i, iCell)
              delU2 = (normalVelocity(k-1,iEdge) - normalVelocity(k,iEdge))**2
              shearSquared = shearSquared + edgeAreaFractionOfCell(i,iCell) * delU2
            enddo
            ! Note that the factor of two is from averaging dot product to cell center on a C-grid
-           shearMean = sqrt(2.0_RKIND*shearSquared )
+           shearMean = sqrt(2.0_RDIAG*shearSquared )
            shearMean = shearMean / (zMid(k-1,iCell) - zMid(k,iCell))
-           RiTopOfCell(k,iCell) = BruntVaisalaFreqTop(k,iCell) / (shearMean**2 + 1.0e-10_RKIND)
+           RiTopOfCell(k,iCell) = BruntVaisalaFreqTop(k,iCell) / (shearMean**2 + 1.0e-10_RDIAG)
           end do
           RiTopOfCell(minLevelCell(iCell),iCell) = RiTopOfCell(minLevelCell(iCell)+1,iCell)
       end do
@@ -1033,13 +1033,13 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
         layerThickness      !< Input: layer thickness
-      real (kind=RKIND), dimension(:,:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:,:), intent(in) :: &
         activeTracers
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
         layerThicknessEdge
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
         normalVelocity
 
       !-----------------------------------------------------------------
@@ -1048,15 +1048,15 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          tracersSurfaceLayerValue
-      real (kind=RKIND), dimension(:), intent(out) :: &
+      real (kind=RDIAG), dimension(:), intent(out) :: &
          indexSurfaceLayerDepth
-      real (kind=RKIND), dimension(:), intent(out) :: &
+      real (kind=RDIAG), dimension(:), intent(out) :: &
          normalVelocitySurfaceLayer
-      real (kind=RKIND), dimension(:), intent(out) :: &
+      real (kind=RDIAG), dimension(:), intent(out) :: &
          surfaceFluxAttenuationCoefficient
-      real (kind=RKIND), dimension(:), intent(out) :: &
+      real (kind=RDIAG), dimension(:), intent(out) :: &
          surfaceFluxAttenuationCoefficientRunoff
 
       !-----------------------------------------------------------------
@@ -1068,10 +1068,10 @@ contains
       integer :: nCells, nEdges
       integer :: iCell, iEdge
       integer :: k
-      real(kind=RKIND) :: rSurfaceLayer
+      real(kind=RDIAG) :: rSurfaceLayer
       integer :: cell1, cell2
-      real(kind=RKIND) :: surfaceLayerDepth
-      real(kind=RKIND) :: sumSurfaceLayer
+      real(kind=RDIAG) :: surfaceLayerDepth
+      real(kind=RDIAG) :: sumSurfaceLayer
 
       !
       ! average tracer values over the ocean surface layer
@@ -1090,8 +1090,8 @@ contains
         !$omp do schedule(runtime) private(sumSurfaceLayer, k, rSurfaceLayer)
 #endif
         do iCell=1,nCells
-          sumSurfaceLayer=0.0_RKIND
-          tracersSurfaceLayerValue(:,iCell) = 0.0_RKIND
+          sumSurfaceLayer=0.0_RDIAG
+          tracersSurfaceLayerValue(:,iCell) = 0.0_RDIAG
           indexSurfaceLayerDepth(iCell) = -9.e30
           do k = minLevelCell(iCell), maxLevelCell(iCell)
            sumSurfaceLayer = sumSurfaceLayer + layerThickness(k,iCell)
@@ -1103,7 +1103,7 @@ contains
              exit
            endif
           end do
-          tracersSurfaceLayerValue(:, iCell) = 0.0_RKIND
+          tracersSurfaceLayerValue(:, iCell) = 0.0_RDIAG
           do k=1,int(rSurfaceLayer)
             tracersSurfaceLayerValue(:,iCell) = tracersSurfaceLayerValue(:,iCell) + activeTracers(:,k,iCell) &
                                               * layerThickness(k,iCell)
@@ -1135,10 +1135,10 @@ contains
         !$omp do schedule(runtime) private(cell1, cell2, sumSurfaceLayer, k, rSurfaceLayer)
 #endif
         do iEdge=1,nEdges
-          normalVelocitySurfaceLayer(iEdge) = 0.0_RKIND
+          normalVelocitySurfaceLayer(iEdge) = 0.0_RDIAG
           cell1=cellsOnEdge(1,iEdge)
           cell2=cellsOnEdge(2,iEdge)
-          sumSurfaceLayer=0.0_RKIND
+          sumSurfaceLayer=0.0_RDIAG
           rSurfaceLayer = min(minLevelEdgeBot(iEdge), maxLevelEdgeTop(iEdge))
           do k = minLevelEdgeBot(iEdge), maxLevelEdgeTop(iEdge)
            rSurfaceLayer = k
@@ -1149,7 +1149,7 @@ contains
              exit
            endif
           end do
-          normalVelocitySurfaceLayer(iEdge) = 0.0_RKIND
+          normalVelocitySurfaceLayer(iEdge) = 0.0_RDIAG
           do k = minLevelEdgeBot(iEdge),int(rSurfaceLayer)
             normalVelocitySurfaceLayer(iEdge) = normalVelocitySurfaceLayer(iEdge) + normalVelocity(k,iEdge) &
                                               * layerThicknessEdge(k,iEdge)
@@ -1207,15 +1207,15 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          relativeVorticity
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          layerThicknessEdge
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          normalVelocity
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          normalTransportVelocity
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          normalGMBolusVelocity
 
       !-----------------------------------------------------------------
@@ -1224,19 +1224,19 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(inout) :: &
+      real (kind=RDIAG), dimension(:,:), intent(inout) :: &
          vertVelocityTop
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          vertTransportVelocityTop
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          vertGMBolusVelocityTop
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          relativeVorticityCell
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          divergence
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          kineticEnergyCell
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          tangentialVelocity
 
       !-----------------------------------------------------------------
@@ -1249,10 +1249,10 @@ contains
       integer :: iCell, iVertex, iEdge
       integer :: i, j, k
       integer :: edgeSignOnCell_temp, eoe
-      real(kind=RKIND) :: invAreaCell1
-      real(kind=RKIND) :: dcEdge_temp, dvEdge_temp, r_tmp, weightsOnEdge_temp
+      real(kind=RDIAG) :: invAreaCell1
+      real(kind=RDIAG) :: dcEdge_temp, dvEdge_temp, r_tmp, weightsOnEdge_temp
 
-      real (kind=RKIND), dimension(:), allocatable:: div_hu,div_huTransport,div_huGMBolus
+      real (kind=RDIAG), dimension(:), allocatable:: div_hu,div_huTransport,div_huGMBolus
 
       ! Need owned cells for relativeVorticityCell
       nCells = nCellsOwned
@@ -1268,7 +1268,7 @@ contains
       !$omp do schedule(runtime) private(invAreaCell1, i, j, k, iVertex)
 #endif
       do iCell = 1, nCells
-        relativeVorticityCell(:,iCell) = 0.0_RKIND
+        relativeVorticityCell(:,iCell) = 0.0_RDIAG
         invAreaCell1 = invAreaCell(iCell)
 
         do i = 1, nEdgesOnCell(iCell)
@@ -1310,11 +1310,11 @@ contains
       !$omp         k, r_tmp, div_hu, div_huTransport, div_huGMBolus)
 #endif
       do iCell = 1, nCells
-         divergence(:, iCell) = 0.0_RKIND
-         kineticEnergyCell(:, iCell) = 0.0_RKIND
-         div_hu(:) = 0.0_RKIND
-         div_huTransport(:) = 0.0_RKIND
-         div_huGMBolus(:) = 0.0_RKIND
+         divergence(:, iCell) = 0.0_RDIAG
+         kineticEnergyCell(:, iCell) = 0.0_RDIAG
+         div_hu(:) = 0.0_RDIAG
+         div_huTransport(:) = 0.0_RDIAG
+         div_huGMBolus(:) = 0.0_RDIAG
          invAreaCell1 = invAreaCell(iCell)
          do i = 1, nEdgesOnCell(iCell)
             iEdge = edgesOnCell(i, iCell)
@@ -1339,8 +1339,8 @@ contains
             end do
          end do
          ! Vertical velocity at bottom (maxLevelCell(iCell)+1) is zero, initialized above.
-         vertVelocityTop(1:minLevelCell(iCell)-1, iCell) = 0.0_RKIND
-         vertVelocityTop(maxLevelCell(iCell)+1, iCell) = 0.0_RKIND
+         vertVelocityTop(1:minLevelCell(iCell)-1, iCell) = 0.0_RDIAG
+         vertVelocityTop(maxLevelCell(iCell)+1, iCell) = 0.0_RDIAG
          do k = maxLevelCell(iCell), 1, -1
             vertVelocityTop(k,iCell) = vertVelocityTop(k+1,iCell) - div_hu(k)
             vertTransportVelocityTop(k,iCell) = vertTransportVelocityTop(k+1,iCell) - div_huTransport(k)
@@ -1367,7 +1367,7 @@ contains
       !$omp do schedule(runtime) private(i, eoe, weightsOnEdge_temp, k)
 #endif
       do iEdge = 1, nEdges
-         tangentialVelocity(:, iEdge) = 0.0_RKIND
+         tangentialVelocity(:, iEdge) = 0.0_RDIAG
          ! Compute v (tangential) velocities
          do i = 1, nEdgesOnEdge(iEdge)
             eoe = edgesOnEdge(i,iEdge)
@@ -1408,9 +1408,9 @@ contains
       !-----------------------------------------------------------------
 
       type (mpas_pool_type), intent(in) :: forcingPool !< Input: Forcing information
-      real (kind=RKIND), dimension(:), intent(in) :: &
+      real (kind=RDIAG), dimension(:), intent(in) :: &
          atmosphericPressure
-      real (kind=RKIND), dimension(:), intent(in) :: &
+      real (kind=RDIAG), dimension(:), intent(in) :: &
          seaIcePressure
 
       !-----------------------------------------------------------------
@@ -1419,7 +1419,7 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:), intent(out) :: &
+      real (kind=RDIAG), dimension(:), intent(out) :: &
          surfacePressure
 
       !-----------------------------------------------------------------
@@ -1431,7 +1431,7 @@ contains
       integer :: nCells
       integer :: iCell
 
-      real (kind=RKIND), dimension(:), pointer :: &
+      real (kind=RDIAG), dimension(:), pointer :: &
         frazilSurfacePressure, landIcePressure
 
       !
@@ -1482,7 +1482,7 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          layerThickness
 
       !-----------------------------------------------------------------
@@ -1491,11 +1491,11 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          zMid
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          zTop
-      real (kind=RKIND), dimension(:), intent(out) :: &
+      real (kind=RDIAG), dimension(:), intent(out) :: &
          ssh
 
       !-----------------------------------------------------------------
@@ -1525,12 +1525,12 @@ contains
          ! Note the negative sign, since bottomDepth is positive
          ! and z-coordinates are negative below the surface.
          k = maxLevelCell(iCell)
-         zMid(k:nVertLevels,iCell) = -bottomDepth(iCell) + 0.5_RKIND*layerThickness(k,iCell)
+         zMid(k:nVertLevels,iCell) = -bottomDepth(iCell) + 0.5_RDIAG*layerThickness(k,iCell)
          zTop(k:nVertLevels,iCell) = -bottomDepth(iCell) + layerThickness(k,iCell)
 
          do k = maxLevelCell(iCell)-1, minLevelCell(iCell), -1
             zMid(k,iCell) = zMid(k+1,iCell)  &
-              + 0.5_RKIND*(  layerThickness(k+1,iCell) &
+              + 0.5_RDIAG*(  layerThickness(k+1,iCell) &
                            + layerThickness(k  ,iCell))
             zTop(k,iCell) = zTop(k+1,iCell)  &
               + layerThickness(k  ,iCell)
@@ -1567,11 +1567,11 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          layerThickness
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          density
-      real (kind=RKIND), dimension(:), intent(in) :: &
+      real (kind=RDIAG), dimension(:), intent(in) :: &
          surfacePressure
 
       !-----------------------------------------------------------------
@@ -1580,9 +1580,9 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          montgomeryPotential
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          pressure
 
       !-----------------------------------------------------------------
@@ -1595,7 +1595,7 @@ contains
       integer :: iCell
       integer :: k
 
-      real (kind=RKIND), dimension(:), allocatable:: pTop
+      real (kind=RDIAG), dimension(:), allocatable:: pTop
 
       !
       ! Pressure
@@ -1616,7 +1616,7 @@ contains
         do iCell = 1, nCells
 
            ! assume atmospheric pressure at the surface is zero for now.
-           pTop(1) = 0.0_RKIND
+           pTop(1) = 0.0_RDIAG
            ! At top layer it is g*SSH, where SSH may be off by a
            ! constant (ie, bottomDepth can be relative to top or bottom)
            montgomeryPotential(minLevelCell(iCell),iCell) = gravity &
@@ -1627,7 +1627,7 @@ contains
 
               ! from delta M = p delta / density
               montgomeryPotential(k,iCell) = montgomeryPotential(k-1,iCell) &
-                 + pTop(k)*(1.0_RKIND/density(k,iCell) - 1.0_RKIND/density(k-1,iCell))
+                 + pTop(k)*(1.0_RDIAG/density(k,iCell) - 1.0_RDIAG/density(k-1,iCell))
            end do
 
         end do
@@ -1643,11 +1643,11 @@ contains
         do iCell = 1, nCells
            ! Pressure for generalized coordinates.
            pressure(minLevelCell(iCell),iCell) = surfacePressure(iCell) &
-             + density(minLevelCell(iCell),iCell)*gravity*0.5_RKIND*layerThickness(minLevelCell(iCell),iCell)
+             + density(minLevelCell(iCell),iCell)*gravity*0.5_RDIAG*layerThickness(minLevelCell(iCell),iCell)
 
            do k = minLevelCell(iCell)+1, maxLevelCell(iCell)
               pressure(k,iCell) = pressure(k-1,iCell)  &
-                + 0.5_RKIND*gravity*(  density(k-1,iCell)*layerThickness(k-1,iCell) &
+                + 0.5_RDIAG*gravity*(  density(k-1,iCell)*layerThickness(k-1,iCell) &
                                      + density(k  ,iCell)*layerThickness(k  ,iCell))
            end do
 
@@ -1682,9 +1682,9 @@ contains
       !-----------------------------------------------------------------
 
       type (mpas_pool_type), intent(in) :: forcingPool !< Input: Forcing information
-      real (kind=RKIND), dimension(:), intent(in) :: &
+      real (kind=RDIAG), dimension(:), intent(in) :: &
          ssh
-      real (kind=RKIND), dimension(:), intent(in) :: &
+      real (kind=RDIAG), dimension(:), intent(in) :: &
          seaIcePressure
 
       !-----------------------------------------------------------------
@@ -1693,9 +1693,9 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:), intent(out) :: &
+      real (kind=RDIAG), dimension(:), intent(out) :: &
          pressureAdjustedSSH
-      real (kind=RKIND), dimension(:), intent(out) :: &
+      real (kind=RDIAG), dimension(:), intent(out) :: &
          gradSSH
 
       !-----------------------------------------------------------------
@@ -1708,7 +1708,7 @@ contains
       integer :: iCell, iEdge
       integer :: cell1, cell2
 
-      real (kind=RKIND), dimension(:), pointer :: landIceDraft
+      real (kind=RDIAG), dimension(:), pointer :: landIceDraft
 
       call mpas_pool_get_array(forcingPool, 'landIceDraft', landIceDraft)
 
@@ -1775,22 +1775,22 @@ contains
       type (mpas_pool_type), intent(in) :: &
          verticalMeshPool   !< Input: vertical mesh information
 
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          oldLayerThickness    !< Input: layer thickness at old time
 
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          layerThicknessEdge     !< Input: layerThickness interpolated to an edge
 
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=RDIAG), dimension(:,:), intent(in) :: &
          normalVelocity     !< Input: transport
 
-      real (kind=RKIND), dimension(:), intent(in) :: &
+      real (kind=RDIAG), dimension(:), intent(in) :: &
          oldSSH     !< Input: sea surface height at old time
 
-      real (kind=RKIND), dimension(:,:), intent(in), optional :: &
+      real (kind=RDIAG), dimension(:,:), intent(in), optional :: &
          newHighFreqThickness   !< Input: high frequency thickness.  Alters ALE thickness.
 
-      real (kind=RKIND), intent(in) :: &
+      real (kind=RDIAG), intent(in) :: &
          dt     !< Input: time step
 
       !-----------------------------------------------------------------
@@ -1799,7 +1799,7 @@ contains
       !
       !-----------------------------------------------------------------
 
-      real (kind=RKIND), dimension(:,:), intent(out) :: &
+      real (kind=RDIAG), dimension(:,:), intent(out) :: &
          vertAleTransportTop     !< Output: vertical transport at top of cell
 
       integer, intent(out) :: err !< Output: error flag
@@ -1812,24 +1812,24 @@ contains
 
       integer :: iEdge, iCell, k, i, nCells, kmin, kmax
 
-      real (kind=RKIND) :: flux, invAreaCell1, div_hu_btr
+      real (kind=RDIAG) :: flux, invAreaCell1, div_hu_btr
       integer, dimension(:,:), pointer :: edgeSignOnCell
 
       ! Scratch Arrays
       ! projectedSSH: projected SSH at a new time
       !        units: none
-      real (kind=RKIND), dimension(:), allocatable ::  projectedSSH
+      real (kind=RDIAG), dimension(:), allocatable ::  projectedSSH
       ! div_hu: divergence of (thickness*velocity)
       !  units: none
-      real (kind=RKIND), dimension(:,:), allocatable :: div_hu
+      real (kind=RDIAG), dimension(:,:), allocatable :: div_hu
       ! ALE_Thickness: ALE thickness at new time
       !         units: none
-      real (kind=RKIND), dimension(:,:), allocatable :: ALE_Thickness
+      real (kind=RDIAG), dimension(:,:), allocatable :: ALE_Thickness
 
       err = 0
 
       if (config_vert_coord_movement.eq.'impermeable_interfaces') then
-        vertAleTransportTop=0.0_RKIND
+        vertAleTransportTop=0.0_RDIAG
         !$acc update device(vertAleTransportTop)
         return
       end if
@@ -1863,8 +1863,8 @@ contains
       !$omp do schedule(runtime) private(invAreaCell1, i, iEdge, k, flux, div_hu_btr, kmin, kmax)
 #endif
       do iCell = 1, nCells
-         div_hu(:,iCell) = 0.0_RKIND
-         div_hu_btr = 0.0_RKIND
+         div_hu(:,iCell) = 0.0_RDIAG
+         div_hu_btr = 0.0_RDIAG
          invAreaCell1 = invAreaCell(iCell)
          do i = 1, nEdgesOnCell(iCell)
             iEdge = edgesOnCell(i, iCell)
@@ -1917,8 +1917,8 @@ contains
       !$omp do schedule(runtime) private(k)
 #endif
       do iCell = 1,nCells
-         vertAleTransportTop(1,iCell) = 0.0_RKIND
-         vertAleTransportTop(maxLevelCell(iCell)+1,iCell) = 0.0_RKIND
+         vertAleTransportTop(1,iCell) = 0.0_RDIAG
+         vertAleTransportTop(maxLevelCell(iCell)+1,iCell) = 0.0_RDIAG
          do k = maxLevelCell(iCell), minLevelCell(iCell)+1, -1
             vertAleTransportTop(k,iCell) = vertAleTransportTop(k+1,iCell) - div_hu(k,iCell) &
               - (ALE_Thickness(k,iCell) - oldLayerThickness(k,iCell))/dt
@@ -1956,7 +1956,7 @@ contains
       integer, intent(in), optional :: timeLevelIn !< Input: Input time level for state pool
 
       integer :: iEdge, cell1, cell2, eoe, j, k
-      real (kind=RKIND), dimension(:,:), pointer :: normalVelocity, normalBaroclinicVelocity
+      real (kind=RDIAG), dimension(:,:), pointer :: normalVelocity, normalBaroclinicVelocity
 
       integer :: timeLevel
 
@@ -1993,7 +1993,7 @@ contains
 
          do k = minLevelEdgeBot(iEdge), maxLevelEdgeTop(iEdge)
 
-            normalVelocity(k,iEdge) = 0.0_RKIND
+            normalVelocity(k,iEdge) = 0.0_RDIAG
             do j = 1,nEdgesOnEdge(iEdge)
                eoe = edgesOnEdge(j,iEdge)
                normalVelocity(k,iEdge) = normalVelocity(k,iEdge) + weightsOnEdge(j,iEdge) * normalBaroclinicVelocity(k,eoe) &
@@ -2031,8 +2031,8 @@ contains
       integer, intent(in), optional :: timeLevelIn !< Input: Time level for state pool
 
       integer :: iEdge, k
-      real (kind=RKIND) :: vertSum, normalThicknessFluxSum, thicknessSum
-      real (kind=RKIND), dimension(:,:), pointer :: tend_normalVelocity
+      real (kind=RDIAG) :: vertSum, normalThicknessFluxSum, thicknessSum
+      real (kind=RDIAG), dimension(:,:), pointer :: tend_normalVelocity
 
       integer :: timeLevel
 
@@ -2105,38 +2105,38 @@ contains
       integer :: nCells
 
       ! real pointers
-      real (kind=RKIND), dimension(:), pointer :: penetrativeTemperatureFlux, surfaceThicknessFlux, &
+      real (kind=RDIAG), dimension(:), pointer :: penetrativeTemperatureFlux, surfaceThicknessFlux, &
            surfaceThicknessFluxRunoff, rainTemperatureFlux, evapTemperatureFlux, &
            icebergFreshWaterTemperatureFlux, seaIceFreshWaterTemperatureFlux
 
-      real (kind=RKIND), dimension(:), pointer :: surfaceStress, surfaceStressMagnitude
-      real (kind=RKIND), dimension(:,:), pointer ::  &
+      real (kind=RDIAG), dimension(:), pointer :: surfaceStress, surfaceStressMagnitude
+      real (kind=RDIAG), dimension(:,:), pointer ::  &
            layerThickness, &
            normalVelocity, activeTracersSurfaceFlux, &
            activeTracersSurfaceFluxRunoff, nonLocalSurfaceTracerFlux
 
-      real (kind=RKIND), dimension(:,:,:), pointer :: &
+      real (kind=RDIAG), dimension(:,:,:), pointer :: &
            activeTracers
 
       ! local
       integer :: iCell, iEdge, i, err, timeLevel
       integer, pointer :: indexTempFlux, indexSaltFlux
-      real (kind=RKIND) :: turbulentVelocitySquared, fracAbsorbed, fracAbsorbedRunoff
-      real (kind=RKIND) :: sumSurfaceStressSquared
+      real (kind=RDIAG) :: turbulentVelocitySquared, fracAbsorbed, fracAbsorbedRunoff
+      real (kind=RDIAG) :: sumSurfaceStressSquared
 
       ! Scratch Arrays
       ! densitySurfaceDisplaced: Density computed by displacing SST and SSS to every vertical
       !                          layer within the column
       !                   units: kg m^{-3}
-      real (kind=RKIND), dimension(:,:), allocatable :: densitySurfaceDisplaced
+      real (kind=RDIAG), dimension(:,:), allocatable :: densitySurfaceDisplaced
       ! thermalExpansionCoeff: Thermal expansion coefficient (alpha), defined as $-1/\rho
       !                        d\rho/dT$ (note negative sign)
       !                 units: C^{-1}
-      real (kind=RKIND), dimension(:,:), allocatable :: thermalExpansionCoeff
+      real (kind=RDIAG), dimension(:,:), allocatable :: thermalExpansionCoeff
       ! salineContractionCoeff: Saline contraction coefficient (beta), defined as $1/\rho
       !                         d\rho/dS$.  This is also called the haline contraction coefficient.
       !                  units: PSU^{-1}
-      real (kind=RKIND), dimension(:,:), allocatable :: salineContractionCoeff
+      real (kind=RDIAG), dimension(:,:), allocatable :: salineContractionCoeff
 
       call mpas_timer_start('KPP input fields')
 
@@ -2149,7 +2149,7 @@ contains
       call mpas_pool_get_subpool(forcingPool, 'tracersSurfaceFlux', tracersSurfaceFluxPool)
       call mpas_pool_get_subpool(statePool, 'tracers', tracersPool)
       ! set the parameter turbulentVelocitySquared
-      turbulentVelocitySquared = 0.001_RKIND
+      turbulentVelocitySquared = 0.001_RDIAG
 
       ! set scalar values
       call mpas_pool_get_dimension(tracersSurfaceFluxPool, 'index_temperatureSurfaceFlux', indexTempFlux)
@@ -2226,9 +2226,9 @@ contains
          !
 
          ! Compute fraction of thickness flux that is in the top model layer
-         fracAbsorbed = 1.0_RKIND - exp( max(-layerThickness(minLevelCell(iCell), iCell) / config_flux_attenuation_coefficient, -100.0_RKIND) )
-         fracAbsorbedRunoff = 1.0_RKIND - exp( max(-layerThickness(minLevelCell(iCell), iCell) / config_flux_attenuation_coefficient_runoff, &
-                              -100.0_RKIND) )
+         fracAbsorbed = 1.0_RDIAG - exp( max(-layerThickness(minLevelCell(iCell), iCell) / config_flux_attenuation_coefficient, -100.0_RDIAG) )
+         fracAbsorbedRunoff = 1.0_RDIAG - exp( max(-layerThickness(minLevelCell(iCell), iCell) / config_flux_attenuation_coefficient_runoff, &
+                              -100.0_RDIAG) )
          ! Store the total tracer flux below in nonLocalSurfaceTemperatureFlux for use in the CVMix nonlocal
          ! transport code.  This includes tracer forcing due to thickness
 
@@ -2251,13 +2251,13 @@ contains
          surfaceBuoyancyForcing(iCell) = surfaceBuoyancyForcing(iCell) * gravity
 
          ! compute magnitude of surface stress
-         sumSurfaceStressSquared = 0.0_RKIND
+         sumSurfaceStressSquared = 0.0_RDIAG
          do i = 1, nEdgesOnCell(iCell)
             iEdge = edgesOnCell(i, iCell)
             sumSurfaceStressSquared = sumSurfaceStressSquared + edgeAreaFractionOfCell(i,iCell) * surfaceStress(iEdge)**2
          enddo
          ! NOTE that the factor of 2 is from averaging dot products to cell centers on a C-grid
-         surfaceStressMagnitude(iCell) = sqrt(2.0_RKIND * sumSurfaceStressSquared)
+         surfaceStressMagnitude(iCell) = sqrt(2.0_RDIAG * sumSurfaceStressSquared)
          surfaceFrictionVelocity(iCell) = sqrt(surfaceStressMagnitude(iCell) / rho_sw)
 
       enddo
@@ -2314,26 +2314,26 @@ contains
 
       integer, pointer :: indexT, indexS
 
-      real (kind=RKIND) :: blThickness, dz, weightSum, h_nu, Gamma_turb, landIceEdgeFraction, velocityMagnitude
+      real (kind=RDIAG) :: blThickness, dz, weightSum, h_nu, Gamma_turb, landIceEdgeFraction, velocityMagnitude
 
-      real (kind=RKIND), dimension(:), pointer :: landIceFraction
+      real (kind=RDIAG), dimension(:), pointer :: landIceFraction
 
       integer, dimension(:), pointer :: landIceMask
 
-      real (kind=RKIND), dimension(:,:), pointer :: layerThickness, normalVelocity
-      real (kind=RKIND), dimension(:,:,:), pointer :: activeTracers
+      real (kind=RDIAG), dimension(:,:), pointer :: layerThickness, normalVelocity
+      real (kind=RDIAG), dimension(:,:,:), pointer :: activeTracers
 
       ! Scratch Arrays
-      real (kind=RKIND), dimension(:), allocatable ::  blTempScratch, blSaltScratch
+      real (kind=RDIAG), dimension(:), allocatable ::  blTempScratch, blSaltScratch
 
 
       ! constants for Holland and Jenkins 1999 parameterization of the boundary layer
-      real (kind=RKIND), parameter :: &
-         Pr = 13.8_RKIND, &             ! the Prandtl number
-         Sc = 2432.0_RKIND, &           ! the Schmidt number
-         nuSaltWater = 1.95e-6_RKIND, & ! molecular viscosity of sea water (m^2/s)
-         kVonKarman = 0.4_RKIND, &      ! the von Karman constant
-         xiN = 0.052_RKIND              ! dimensionless planetary boundary layer constant
+      real (kind=RDIAG), parameter :: &
+         Pr = 13.8_RDIAG, &             ! the Prandtl number
+         Sc = 2432.0_RDIAG, &           ! the Schmidt number
+         nuSaltWater = 1.95e-6_RDIAG, & ! molecular viscosity of sea water (m^2/s)
+         kVonKarman = 0.4_RDIAG, &      ! the von Karman constant
+         xiN = 0.052_RDIAG              ! dimensionless planetary boundary layer constant
 
 
       if ( trim(config_land_ice_flux_mode) .ne. 'standalone' .and. trim(config_land_ice_flux_mode) .ne. 'coupled' ) then
@@ -2365,7 +2365,7 @@ contains
 
          ! top drag tau = - CD*|u|*u, where |u| = sqrt(2*KE) = sqrt(KE1 + KE2) from the neighboring cells
          velocityMagnitude = sqrt(kineticEnergyCell(minLevelCell(cell1),cell1) + kineticEnergyCell(minLevelCell(cell2),cell2))
-         landIceEdgeFraction = 0.5_RKIND*(landIceFraction(cell1)+landIceFraction(cell2))
+         landIceEdgeFraction = 0.5_RDIAG*(landIceFraction(cell1)+landIceFraction(cell2))
 
          topDrag(iEdge) = - rho_sw * landIceEdgeFraction * config_land_ice_flux_topDragCoeff &
                           * velocityMagnitude * normalVelocity(minLevelEdgeBot(iEdge),iEdge)
@@ -2378,12 +2378,12 @@ contains
       do iCell = 1, nCellsAll
          ! the magnitude of the top drag is CD*u**2 = CD*(2*KE)
          topDragMag(iCell) = rho_sw * landIceFraction(iCell) &
-                           * 2.0_RKIND * config_land_ice_flux_topDragCoeff *  kineticEnergyCell(minLevelCell(iCell),iCell)
+                           * 2.0_RDIAG * config_land_ice_flux_topDragCoeff *  kineticEnergyCell(minLevelCell(iCell),iCell)
 
          ! the friction velocity is the square root of the top drag + variance of tidal velocity
          ! (computed regardless of land-ice coverage)
          landIceFrictionVelocity(iCell) = sqrt(config_land_ice_flux_topDragCoeff * &
-                                   (2.0_RKIND * kineticEnergyCell(minLevelCell(iCell),iCell) &
+                                   (2.0_RDIAG * kineticEnergyCell(minLevelCell(iCell),iCell) &
                                    + config_land_ice_flux_rms_tidal_velocity**2))
       end do
       !$omp end do
@@ -2391,17 +2391,17 @@ contains
       ! average temperature and salinity over horizontal neighbors and the sub-ice-shelf boundary layer
       !$omp do schedule(runtime) private(blThickness, iLevel, dz)
       do iCell = 1, nCellsAll
-         blThickness = 0.0_RKIND
-         blTempScratch(iCell) = 0.0_RKIND
-         blSaltScratch(iCell) = 0.0_RKIND
+         blThickness = 0.0_RDIAG
+         blTempScratch(iCell) = 0.0_RDIAG
+         blSaltScratch(iCell) = 0.0_RDIAG
          do iLevel = minLevelCell(iCell), maxLevelCell(iCell)
             dz = min(layerThickness(iLevel,iCell),config_land_ice_flux_boundaryLayerThickness-blThickness)
-            if(dz <= 0.0_RKIND) exit
+            if(dz <= 0.0_RDIAG) exit
             blTempScratch(iCell) = blTempScratch(iCell) + activeTracers(indexT, iLevel, iCell)*dz
             blSaltScratch(iCell) = blSaltScratch(iCell) + activeTracers(indexS, iLevel, iCell)*dz
             blThickness = blThickness + dz
          end do
-         if(blThickness > 0.0_RKIND) then
+         if(blThickness > 0.0_RDIAG) then
            blTempScratch(iCell) = blTempScratch(iCell)/blThickness
            blSaltScratch(iCell) = blSaltScratch(iCell)/blThickness
          end if
@@ -2412,8 +2412,8 @@ contains
       do iCell = 1, nCellsAll
          landIceBoundaryLayerTracers(indexBLT, iCell) = blTempScratch(iCell)
          landIceBoundaryLayerTracers(indexBLS, iCell) = blSaltScratch(iCell)
-         if(config_land_ice_flux_boundaryLayerNeighborWeight > 0.0_RKIND) then
-            weightSum = 1.0_RKIND
+         if(config_land_ice_flux_boundaryLayerNeighborWeight > 0.0_RDIAG) then
+            weightSum = 1.0_RDIAG
             do i = 1, nEdgesOnCell(iCell)
                cell2 = cellsOnCell(i,iCell)
 
@@ -2447,18 +2447,18 @@ contains
          do iCell = 1, nCellsAll
             ! friction-velocity dependent non-dimensional transfer coefficients from
             ! Holland and Jenkins 1999, (14)-(16) with eta_* = 1
-            h_nu = 5.0_RKIND*nuSaltWater/landIceFrictionVelocity(iCell) ! uStar should never be zero because of tidal term
+            h_nu = 5.0_RDIAG*nuSaltWater/landIceFrictionVelocity(iCell) ! uStar should never be zero because of tidal term
 
-            Gamma_turb = 1.0_RKIND/(2.0_RKIND*xiN) - 1.0_RKIND/kVonKarman
-            if(abs(fCell(iCell)) > 0.0_RKIND) then
-              Gamma_turb = Gamma_turb + 1.0_RKIND/kVonKarman*log(landIceFrictionVelocity(iCell) &
+            Gamma_turb = 1.0_RDIAG/(2.0_RDIAG*xiN) - 1.0_RDIAG/kVonKarman
+            if(abs(fCell(iCell)) > 0.0_RDIAG) then
+              Gamma_turb = Gamma_turb + 1.0_RDIAG/kVonKarman*log(landIceFrictionVelocity(iCell) &
                 *xiN/(abs(fCell(iCell))*h_nu))
             end if
 
-            landIceTracerTransferVelocities(indexHeatTrans, iCell) = 1.0_RKIND/(Gamma_turb + 12.5_RKIND &
-                                                                   * Pr**(2.0_RKIND/3.0_RKIND) - 6.0_RKIND)
-            landIceTracerTransferVelocities(indexSaltTrans, iCell) = 1.0_RKIND/(Gamma_turb + 12.5_RKIND &
-                                                                   * Sc**(2.0_RKIND/3.0_RKIND) - 6.0_RKIND)
+            landIceTracerTransferVelocities(indexHeatTrans, iCell) = 1.0_RDIAG/(Gamma_turb + 12.5_RDIAG &
+                                                                   * Pr**(2.0_RDIAG/3.0_RDIAG) - 6.0_RDIAG)
+            landIceTracerTransferVelocities(indexSaltTrans, iCell) = 1.0_RDIAG/(Gamma_turb + 12.5_RDIAG &
+                                                                   * Sc**(2.0_RDIAG/3.0_RDIAG) - 6.0_RDIAG)
          end do
          !$omp end do
          !$omp end parallel
@@ -2560,12 +2560,12 @@ contains
       type (mpas_pool_type), pointer :: meshPool, statePool, tracersPool
       type (mpas_pool_type), pointer :: forcingPool
 
-      real (kind=RKIND), dimension(:, :), pointer :: layerThickness, normalVelocity
-      real (kind=RKIND), dimension(:, :, :), pointer :: activeTracers
+      real (kind=RDIAG), dimension(:, :), pointer :: layerThickness, normalVelocity
+      real (kind=RDIAG), dimension(:, :, :), pointer :: activeTracers
 
       integer, dimension(:), pointer :: maxLevelCell, maxLevelEdgeBot, maxLevelVertexBot
 
-      real (kind=RKIND), dimension(:), pointer :: real1DArr
+      real (kind=RDIAG), dimension(:), pointer :: real1DArr
 
       integer :: iCell, iEdge, iTracer, k
 
@@ -2573,7 +2573,7 @@ contains
 
       logical :: thickNanFound, velNanFound, tracersNanFound
 
-      real (kind=RKIND) :: minValue, maxValue
+      real (kind=RDIAG) :: minValue, maxValue
 
       integer :: debugUnit
       character (len=StrKIND) :: debugFilename, fieldName
@@ -3166,7 +3166,7 @@ contains
    subroutine ocn_write_field_statistics(unitNumber, fieldName, minValue, maxValue)
       integer, intent(in) :: unitNumber
       character (len=*), intent(in) :: fieldName
-      real (kind=RKIND), intent(in) :: minValue, maxValue
+      real (kind=RDIAG), intent(in) :: minValue, maxValue
 
       write(unitNumber, *) '    Field: ', trim(fieldName)
       write(unitNumber, *) '        Min: ', minValue

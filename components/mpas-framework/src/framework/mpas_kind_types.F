@@ -21,6 +21,7 @@ module mpas_kind_types
 
    integer, parameter :: R4KIND = selected_real_kind(6)
    integer, parameter :: R8KIND = selected_real_kind(12)
+   integer, parameter :: RDIAG = R4KIND
 #ifdef SINGLE_PRECISION
    integer, parameter :: RKIND  = selected_real_kind(6)
 #else

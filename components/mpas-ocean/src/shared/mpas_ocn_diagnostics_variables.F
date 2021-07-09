@@ -38,161 +38,161 @@ module ocn_diagnostics_variables
    !
    !--------------------------------------------------------------------
 
-   real (kind=RKIND), dimension(:,:), pointer :: zMid
-   real (kind=RKIND), dimension(:,:), pointer :: zTop
-   real (kind=RKIND), dimension(:,:), pointer :: divergence
-   real (kind=RKIND), dimension(:,:), pointer :: circulation
-   real (kind=RKIND), dimension(:,:), pointer :: relativeVorticity
-   real (kind=RKIND), dimension(:,:), pointer :: relativeVorticityCell
-   real (kind=RKIND), dimension(:,:), pointer :: normPlanetVortEdge
-   real (kind=RKIND), dimension(:,:), pointer :: normRelVortEdge
-   real (kind=RKIND), dimension(:,:), pointer :: normalizedRelativeVorticityCell
-   real (kind=RKIND), dimension(:,:), pointer :: density
-   real (kind=RKIND), dimension(:,:), pointer :: displaceddensity
-   real (kind=RKIND), dimension(:,:), pointer :: potentialdensity
-   real (kind=RKIND), dimension(:,:), pointer :: montgomeryPotential
-   real (kind=RKIND), dimension(:,:), pointer :: pressure
-   real (kind=RKIND), dimension(:,:), pointer :: thermExpCoeff
-   real (kind=RKIND), dimension(:,:), pointer :: salineContractCoeff
-   real (kind=RKIND), dimension(:,:), pointer :: BruntVaisalaFreqTop
-   real (kind=RKIND), dimension(:,:), pointer :: tangentialVelocity
-   real (kind=RKIND), dimension(:,:), pointer :: layerThickEdge
-   real (kind=RKIND), dimension(:,:), pointer :: kineticEnergyCell
-   real (kind=RKIND), dimension(:,:), pointer :: vertVelocityTop
-   real (kind=RKIND), dimension(:,:), pointer :: vertTransportVelocityTop
-   real (kind=RKIND), dimension(:,:), pointer :: vertGMBolusVelocityTop
-   real (kind=RKIND), dimension(:,:), pointer :: normalGMBolusVelocity
-   real (kind=RKIND), dimension(:,:), pointer :: normalTransportVelocity
-   real (kind=RKIND), dimension(:,:), pointer :: RiTopOfCell
-   real (kind=RKIND), dimension(:,:), pointer :: RiTopOfEdge
+   real (kind=RDIAG), dimension(:,:), pointer :: zMid
+   real (kind=RDIAG), dimension(:,:), pointer :: zTop
+   real (kind=RDIAG), dimension(:,:), pointer :: divergence
+   real (kind=RDIAG), dimension(:,:), pointer :: circulation
+   real (kind=RDIAG), dimension(:,:), pointer :: relativeVorticity
+   real (kind=RDIAG), dimension(:,:), pointer :: relativeVorticityCell
+   real (kind=RDIAG), dimension(:,:), pointer :: normPlanetVortEdge
+   real (kind=RDIAG), dimension(:,:), pointer :: normRelVortEdge
+   real (kind=RDIAG), dimension(:,:), pointer :: normalizedRelativeVorticityCell
+   real (kind=RDIAG), dimension(:,:), pointer :: density
+   real (kind=RDIAG), dimension(:,:), pointer :: displaceddensity
+   real (kind=RDIAG), dimension(:,:), pointer :: potentialdensity
+   real (kind=RDIAG), dimension(:,:), pointer :: montgomeryPotential
+   real (kind=RDIAG), dimension(:,:), pointer :: pressure
+   real (kind=RDIAG), dimension(:,:), pointer :: thermExpCoeff
+   real (kind=RDIAG), dimension(:,:), pointer :: salineContractCoeff
+   real (kind=RDIAG), dimension(:,:), pointer :: BruntVaisalaFreqTop
+   real (kind=RDIAG), dimension(:,:), pointer :: tangentialVelocity
+   real (kind=RDIAG), dimension(:,:), pointer :: layerThickEdge
+   real (kind=RDIAG), dimension(:,:), pointer :: kineticEnergyCell
+   real (kind=RDIAG), dimension(:,:), pointer :: vertVelocityTop
+   real (kind=RDIAG), dimension(:,:), pointer :: vertTransportVelocityTop
+   real (kind=RDIAG), dimension(:,:), pointer :: vertGMBolusVelocityTop
+   real (kind=RDIAG), dimension(:,:), pointer :: normalGMBolusVelocity
+   real (kind=RDIAG), dimension(:,:), pointer :: normalTransportVelocity
+   real (kind=RDIAG), dimension(:,:), pointer :: RiTopOfCell
+   real (kind=RDIAG), dimension(:,:), pointer :: RiTopOfEdge
 
-   real (kind=RKIND), dimension(:), pointer :: gradSSH
-   real (kind=RKIND), dimension(:), pointer :: pressureAdjustedSSH
+   real (kind=RDIAG), dimension(:), pointer :: gradSSH
+   real (kind=RDIAG), dimension(:), pointer :: pressureAdjustedSSH
 
-   real (kind=RKIND), dimension(:,:), pointer :: tracersSurfaceValue
-   real (kind=RKIND), dimension(:,:), pointer :: tracersSurfaceLayerValue
-   real (kind=RKIND), dimension(:),   pointer :: normalVelocitySurfaceLayer
-   real (kind=RKIND), dimension(:),   pointer :: indexSurfaceLayerDepth
+   real (kind=RDIAG), dimension(:,:), pointer :: tracersSurfaceValue
+   real (kind=RDIAG), dimension(:,:), pointer :: tracersSurfaceLayerValue
+   real (kind=RDIAG), dimension(:),   pointer :: normalVelocitySurfaceLayer
+   real (kind=RDIAG), dimension(:),   pointer :: indexSurfaceLayerDepth
 
-   real (kind=RKIND), dimension(:), pointer :: sfcFlxAttCoeff
-   real (kind=RKIND), dimension(:), pointer :: surfaceFluxAttenuationCoefficientRunoff
+   real (kind=RDIAG), dimension(:), pointer :: sfcFlxAttCoeff
+   real (kind=RDIAG), dimension(:), pointer :: surfaceFluxAttenuationCoefficientRunoff
 
-   real (kind=RKIND), dimension(:), pointer :: landIceFrictionVelocity
-   real (kind=RKIND), dimension(:), pointer :: topDrag
-   real (kind=RKIND), dimension(:), pointer :: topDragMag
-   real (kind=RKIND), dimension(:), pointer :: topographic_wave_drag
-   real (kind=RKIND), dimension(:,:), pointer :: landIceBoundaryLayerTracers
-   real (kind=RKIND), dimension(:,:), pointer :: landIceTracerTransferVelocities
+   real (kind=RDIAG), dimension(:), pointer :: landIceFrictionVelocity
+   real (kind=RDIAG), dimension(:), pointer :: topDrag
+   real (kind=RDIAG), dimension(:), pointer :: topDragMag
+   real (kind=RDIAG), dimension(:), pointer :: topographic_wave_drag
+   real (kind=RDIAG), dimension(:,:), pointer :: landIceBoundaryLayerTracers
+   real (kind=RDIAG), dimension(:,:), pointer :: landIceTracerTransferVelocities
 
    integer, pointer :: indexBLT, indexBLS, indexHeatTrans, indexSaltTrans
 
-   real (kind=RKIND), dimension(:), pointer :: penetrativeTemperatureFluxOBL
-   real (kind=RKIND), dimension(:), pointer :: bottomLayerShortwaveTemperatureFlux
+   real (kind=RDIAG), dimension(:), pointer :: penetrativeTemperatureFluxOBL
+   real (kind=RDIAG), dimension(:), pointer :: bottomLayerShortwaveTemperatureFlux
 
-   real (kind=RKIND), dimension(:), pointer :: surfaceBuoyancyForcing
-   real (kind=RKIND), dimension(:), pointer :: surfaceFrictionVelocity
-   real (kind=RKIND), dimension(:), pointer :: surfacePressure
+   real (kind=RDIAG), dimension(:), pointer :: surfaceBuoyancyForcing
+   real (kind=RDIAG), dimension(:), pointer :: surfaceFrictionVelocity
+   real (kind=RDIAG), dimension(:), pointer :: surfacePressure
 
-   real (kind=RKIND), dimension(:,:), pointer :: &
+   real (kind=RDIAG), dimension(:,:), pointer :: &
       transportVelocityX, transportVelocityY, transportVelocityZ, transportVelocityZonal, &
       transportVelocityMeridional, GMBolusVelocityX, GMBolusVelocityY, &
       GMBolusVelocityZ, GMBolusVelocityZonal, GMBolusVelocityMeridional, gmStreamFuncTopOfEdge, &
       GMStreamFuncX, GMStreamFuncY, GMStreamFuncZ, GMStreamFuncZonal, GMStreamFuncMeridional, &
       gmStreamFuncTopOfCell
 
-   real (kind=RKIND), dimension(:,:), pointer :: rx1Edge
-   real (kind=RKIND), dimension(:,:), pointer :: rx1Cell
-   real (kind=RKIND), dimension(:), pointer :: rx1MaxEdge
-   real (kind=RKIND), dimension(:), pointer :: rx1MaxCell
-   real (kind=RKIND), pointer :: globalRx1Max
+   real (kind=RDIAG), dimension(:,:), pointer :: rx1Edge
+   real (kind=RDIAG), dimension(:,:), pointer :: rx1Cell
+   real (kind=RDIAG), dimension(:), pointer :: rx1MaxEdge
+   real (kind=RDIAG), dimension(:), pointer :: rx1MaxCell
+   real (kind=RDIAG), pointer :: globalRx1Max
 
    integer, dimension(:), pointer :: smoothingMask
-   real (kind=RKIND), dimension(:,:), pointer :: verticalStretch
+   real (kind=RDIAG), dimension(:,:), pointer :: verticalStretch
 
    integer, dimension(:), pointer :: modifyLandIcePressureMask
 
-   real (kind=RKIND), dimension(:,:), pointer :: velocityMeridional
-   real (kind=RKIND), dimension(:,:), pointer :: velocityZonal
+   real (kind=RDIAG), dimension(:,:), pointer :: velocityMeridional
+   real (kind=RDIAG), dimension(:,:), pointer :: velocityZonal
 
-   real(kind=RKIND), dimension(:,:), pointer :: gmKappaScaling
-   real(kind=RKIND), dimension(:,:), pointer :: RediKappaScaling
-   real(kind=RKIND), dimension(:,:), pointer :: RediKappaSfcTaper
-   real(kind=RKIND), dimension(:,:), pointer :: k33
-   real(kind=RKIND), dimension(:), pointer   :: gmBolusKappa
-   real(kind=RKIND), dimension(:), pointer   :: cGMphaseSpeed
-   real(kind=RKIND), dimension(:,:,:), pointer :: slopeTriadUp, slopeTriadDown
+   real(kind=RDIAG), dimension(:,:), pointer :: gmKappaScaling
+   real(kind=RDIAG), dimension(:,:), pointer :: RediKappaScaling
+   real(kind=RDIAG), dimension(:,:), pointer :: RediKappaSfcTaper
+   real(kind=RDIAG), dimension(:,:), pointer :: k33
+   real(kind=RDIAG), dimension(:), pointer   :: gmBolusKappa
+   real(kind=RDIAG), dimension(:), pointer   :: cGMphaseSpeed
+   real(kind=RDIAG), dimension(:,:,:), pointer :: slopeTriadUp, slopeTriadDown
 
    integer, dimension(:), pointer :: indMLD
-   real (kind=RKIND), dimension(:,:), pointer :: velocityX, velocityY, velocityZ
+   real (kind=RDIAG), dimension(:,:), pointer :: velocityX, velocityY, velocityZ
 
-   real (kind=RKIND), dimension(:,:), pointer :: vertAleTransportTop
+   real (kind=RDIAG), dimension(:,:), pointer :: vertAleTransportTop
 
-   real (kind=RKIND), dimension(:,:), pointer :: viscosity
-   real (kind=RKIND), dimension(:,:), pointer :: vertViscTopOfEdge
-   real (kind=RKIND), dimension(:,:), pointer :: vertViscTopOfCell
-   real (kind=RKIND), dimension(:,:), pointer :: wettingVelocity
+   real (kind=RDIAG), dimension(:,:), pointer :: viscosity
+   real (kind=RDIAG), dimension(:,:), pointer :: vertViscTopOfEdge
+   real (kind=RDIAG), dimension(:,:), pointer :: vertViscTopOfCell
+   real (kind=RDIAG), dimension(:,:), pointer :: wettingVelocity
    type (field2DReal), pointer :: wettingVelocityField
 
-   real (kind=RKIND), dimension(:,:), pointer :: vertDiffTopOfCell
-   real (kind=RKIND), dimension(:,:,:), pointer :: vertNonLocalFlux
+   real (kind=RDIAG), dimension(:,:), pointer :: vertDiffTopOfCell
+   real (kind=RDIAG), dimension(:,:,:), pointer :: vertNonLocalFlux
    integer, dimension(:,:), pointer :: rediLimiterCount
-   real (kind=RKIND), dimension(:,:,:), pointer :: activeTracerSurfaceFluxTendency
-   real (kind=RKIND), dimension(:,:,:), pointer :: activeTracerNonLocalTendency
-   real (kind=RKIND), dimension(:,:,:), pointer :: activeTracerHorMixTendency
-   real (kind=RKIND), dimension(:,:), pointer :: temperatureShortWaveTendency
-   real (kind=RKIND), dimension(:), pointer :: RediKappa
+   real (kind=RDIAG), dimension(:,:,:), pointer :: activeTracerSurfaceFluxTendency
+   real (kind=RDIAG), dimension(:,:,:), pointer :: activeTracerNonLocalTendency
+   real (kind=RDIAG), dimension(:,:,:), pointer :: activeTracerHorMixTendency
+   real (kind=RDIAG), dimension(:,:), pointer :: temperatureShortWaveTendency
+   real (kind=RDIAG), dimension(:), pointer :: RediKappa
 
    ! pointers for tendencies used in diagnostic budget computation
-   real (kind=RKIND), dimension(:,:,:), pointer, contiguous :: &
+   real (kind=RDIAG), dimension(:,:,:), pointer, contiguous :: &
       activeTracerHorizontalAdvectionTendency, &
       activeTracerVerticalAdvectionTendency,   &
       activeTracerHorizontalAdvectionEdgeFlux, &
       activeTracerVerticalAdvectionTopFlux,    &
       activeTracerVertMixTendency
 
-   real (kind=RKIND), pointer :: daysSinceStartOfSim
+   real (kind=RDIAG), pointer :: daysSinceStartOfSim
    character (len=StrKIND), pointer :: xtime, simulationStartTime
 
-   real (kind=RKIND), dimension(:,:), pointer :: bulkRichardsonNumber
-   real (kind=RKIND), dimension(:,:), pointer :: bulkRichardsonNumberBuoy
-   real (kind=RKIND), dimension(:,:), pointer :: bulkRichardsonNumberShear
+   real (kind=RDIAG), dimension(:,:), pointer :: bulkRichardsonNumber
+   real (kind=RDIAG), dimension(:,:), pointer :: bulkRichardsonNumberBuoy
+   real (kind=RDIAG), dimension(:,:), pointer :: bulkRichardsonNumberShear
 
-   real (kind=RKIND), dimension(:), pointer :: boundaryLayerDepth
-   real (kind=RKIND), dimension(:), pointer :: boundaryLayerDepthSmooth
-   real (kind=RKIND), dimension(:), pointer :: indexBoundaryLayerDepth
+   real (kind=RDIAG), dimension(:), pointer :: boundaryLayerDepth
+   real (kind=RDIAG), dimension(:), pointer :: boundaryLayerDepthSmooth
+   real (kind=RDIAG), dimension(:), pointer :: indexBoundaryLayerDepth
    integer, pointer :: index_vertNonLocalFluxTemp
 
-   real (kind=RKIND), dimension(:), pointer :: salinitySurfaceRestoringTendency
+   real (kind=RDIAG), dimension(:), pointer :: salinitySurfaceRestoringTendency
 
-   real (kind=RKIND), dimension(:,:), pointer :: surfaceVelocity
-   real (kind=RKIND), dimension(:), pointer :: gradSSHZonal, gradSSHMeridional
-   real (kind=RKIND), dimension(:), pointer :: gradSSHX
-   real (kind=RKIND), dimension(:), pointer :: gradSSHY
-   real (kind=RKIND), dimension(:), pointer :: gradSSHZ
+   real (kind=RDIAG), dimension(:,:), pointer :: surfaceVelocity
+   real (kind=RDIAG), dimension(:), pointer :: gradSSHZonal, gradSSHMeridional
+   real (kind=RDIAG), dimension(:), pointer :: gradSSHX
+   real (kind=RDIAG), dimension(:), pointer :: gradSSHY
+   real (kind=RDIAG), dimension(:), pointer :: gradSSHZ
 
-   real (kind=RKIND), dimension(:), pointer :: barotropicForcing
-   real (kind=RKIND), dimension(:), pointer :: barotropicCoriolisTerm
-   real (kind=RKIND), dimension(:), pointer :: barotropicThicknessFlux
+   real (kind=RDIAG), dimension(:), pointer :: barotropicForcing
+   real (kind=RDIAG), dimension(:), pointer :: barotropicCoriolisTerm
+   real (kind=RDIAG), dimension(:), pointer :: barotropicThicknessFlux
 
-   real (kind=RKIND), dimension(:, :), pointer :: SSHGradient
+   real (kind=RDIAG), dimension(:, :), pointer :: SSHGradient
    integer, pointer :: indexSurfaceVelocityZonal, indexSurfaceVelocityMeridional
    integer, pointer :: indexSSHGradientZonal, indexSSHGradientMeridional
 
    type (field1DInteger), pointer :: smoothingMaskField
    type (field2DReal), pointer :: verticalStretchField
 
-   real (kind=RKIND), pointer :: globalVerticalStretchMax, globalVerticalStretchMin
-   real (kind=RKIND), dimension(:), pointer :: betaEdge
-   real (kind=RKIND), dimension(:), pointer :: eddyLength
-   real (kind=RKIND), dimension(:), pointer :: eddyTime
-   real (kind=RKIND), dimension(:), pointer :: gmResolutionTaper
+   real (kind=RDIAG), pointer :: globalVerticalStretchMax, globalVerticalStretchMin
+   real (kind=RDIAG), dimension(:), pointer :: betaEdge
+   real (kind=RDIAG), dimension(:), pointer :: eddyLength
+   real (kind=RDIAG), dimension(:), pointer :: eddyTime
+   real (kind=RDIAG), dimension(:), pointer :: gmResolutionTaper
 
    ! Semi-implicit Array Pointers
-   real (kind=RKIND), dimension(:), pointer :: CGvec_r0,CGvec_r00,CGvec_r1 ,CGvec_rh0,CGvec_rh1,CGvec_ph0,CGvec_ph1
-   real (kind=RKIND), dimension(:), pointer :: CGvec_v0,CGvec_v1 ,CGvec_s0 ,CGvec_s1 ,CGvec_sh0,CGvec_sh1
-   real (kind=RKIND), dimension(:), pointer :: CGvec_t0,CGvec_t1 ,CGvec_q0 ,CGvec_q1 ,CGvec_qh0
-   real (kind=RKIND), dimension(:), pointer :: CGvec_w0,CGvec_w1 ,CGvec_wh0,CGvec_wh1,CGvec_y0
-   real (kind=RKIND), dimension(:), pointer :: CGvec_z0,CGvec_z1 ,CGvec_zh0,CGvec_zh1
+   real (kind=RDIAG), dimension(:), pointer :: CGvec_r0,CGvec_r00,CGvec_r1 ,CGvec_rh0,CGvec_rh1,CGvec_ph0,CGvec_ph1
+   real (kind=RDIAG), dimension(:), pointer :: CGvec_v0,CGvec_v1 ,CGvec_s0 ,CGvec_s1 ,CGvec_sh0,CGvec_sh1
+   real (kind=RDIAG), dimension(:), pointer :: CGvec_t0,CGvec_t1 ,CGvec_q0 ,CGvec_q1 ,CGvec_qh0
+   real (kind=RDIAG), dimension(:), pointer :: CGvec_w0,CGvec_w1 ,CGvec_wh0,CGvec_wh1,CGvec_y0
+   real (kind=RDIAG), dimension(:), pointer :: CGvec_z0,CGvec_z1 ,CGvec_zh0,CGvec_zh1
 
    !--------------------------------------------------------------------
    !

@@ -771,6 +771,26 @@ module mpas_stream_manager
                            call mpas_pool_get_field(fieldPool, poolItr % memberName, real5DField, 1)
                            call mpas_stream_mgr_add_field(manager, streamID, real5DField % fieldName, packages=packages, ierr=ierr)
                        end if
+                   else if (poolItr % dataType == MPAS_POOL_REAL_4) then
+                       if (poolItr % nDims == 0) then
+                           call mpas_pool_get_field(fieldPool, poolItr % memberName, real0DField_4, 1)
+                           call mpas_stream_mgr_add_field(manager, streamID, real0DField_4 % fieldName, packages=packages, ierr=ierr)
+                       else if (poolItr % nDims == 1) then
+                           call mpas_pool_get_field(fieldPool, poolItr % memberName, real1DField_4, 1)
+                           call mpas_stream_mgr_add_field(manager, streamID, real1DField_4 % fieldName, packages=packages, ierr=ierr)
+                       else if (poolItr % nDims == 2) then
+                           call mpas_pool_get_field(fieldPool, poolItr % memberName, real2DField_4, 1)
+                           call mpas_stream_mgr_add_field(manager, streamID, real2DField_4 % fieldName, packages=packages, ierr=ierr)
+                       else if (poolItr % nDims == 3) then
+                           call mpas_pool_get_field(fieldPool, poolItr % memberName, real3DField_4, 1)
+                           call mpas_stream_mgr_add_field(manager, streamID, real3DField_4 % fieldName, packages=packages, ierr=ierr)
+                       else if (poolItr % nDims == 4) then
+                           call mpas_pool_get_field(fieldPool, poolItr % memberName, real4DField_4, 1)
+                           call mpas_stream_mgr_add_field(manager, streamID, real4DField_4 % fieldName, packages=packages, ierr=ierr)
+                       else if (poolItr % nDims == 5) then
+                           call mpas_pool_get_field(fieldPool, poolItr % memberName, real5DField_4, 1)
+                           call mpas_stream_mgr_add_field(manager, streamID, real5DField_4 % fieldName, packages=packages, ierr=ierr)
+                       end if
                    else if (poolItr % dataType == MPAS_POOL_INTEGER) then
                        if (poolItr % nDims == 0) then
                            call mpas_pool_get_field(fieldPool, poolItr % memberName, int0DField, 1)
@@ -4200,6 +4220,13 @@ module mpas_stream_manager
         type (field1DReal), pointer :: real1d
         type (field0DReal), pointer :: real0d
 
+        type (field5DReal_4), pointer :: real5d_4
+        type (field4DReal_4), pointer :: real4d_4
+        type (field3DReal_4), pointer :: real3d_4
+        type (field2DReal_4), pointer :: real2d_4
+        type (field1DReal_4), pointer :: real1d_4
+        type (field0DReal_4), pointer :: real0d_4
+
         type (field3DInteger), pointer :: int3d
         type (field2DInteger), pointer :: int2d
         type (field1DInteger), pointer :: int1d
@@ -4212,6 +4239,7 @@ module mpas_stream_manager
         logical, pointer :: logAtt
         character (len=StrKIND), pointer :: charAtt
         real (kind=RKIND), pointer :: realAtt
+        real (kind=R4KIND), pointer :: realAtt_4
 
         integer :: local_ierr
 
@@ -4235,6 +4263,9 @@ module mpas_stream_manager
                     if ( itr % dataType == MPAS_POOL_REAL ) then
                         call mpas_pool_get_config(stream % att_pool, itr % memberName, realAtt)
                         call mpas_writeStreamAtt(stream % stream, itr % memberName, realAtt, syncVal=.false., ierr=local_ierr)
+                    else if ( itr % dataType == MPAS_POOL_REAL_4 ) then
+                        call mpas_pool_get_config(stream % att_pool, itr % memberName, realAtt_4)
+                        call mpas_writeStreamAtt(stream % stream, itr % memberName, realAtt_4, syncVal=.false., ierr=local_ierr)
                     else if ( itr % dataType == MPAS_POOL_INTEGER ) then
                         call mpas_pool_get_config(stream % att_pool, itr % memberName, intAtt)
                         call mpas_writeStreamAtt(stream % stream, itr % memberName, intAtt, syncVal=.false., ierr=local_ierr)
@@ -4249,6 +4280,7 @@ module mpas_stream_manager
                             call mpas_writeStreamAtt(stream % stream, itr % memberName, 'NO', syncVal=.false., ierr=local_ierr)
                         end if
                     end if
+
 
                     if (local_ierr /= MPAS_STREAM_NOERR) then
                         ierr = MPAS_STREAM_MGR_ERROR
@@ -4328,6 +4360,27 @@ module mpas_stream_manager
                             case (5)
                                 call mpas_pool_get_field(allFields, itr % memberName, real5d, timeLevel)
                                 call MPAS_streamAddField(stream % stream, real5d)
+                        end select
+                    case (MPAS_POOL_REAL_4)
+                        select case (info % nDims)
+                            case (0)
+                                call mpas_pool_get_field(allFields, itr % memberName, real0d_4, timeLevel)
+                                call MPAS_streamAddField(stream % stream, real0d_4)
+                            case (1)
+                                call mpas_pool_get_field(allFields, itr % memberName, real1d_4, timeLevel)
+                                call MPAS_streamAddField(stream % stream, real1d_4)
+                            case (2)
+                                call mpas_pool_get_field(allFields, itr % memberName, real2d_4, timeLevel)
+                                call MPAS_streamAddField(stream % stream, real2d_4)
+                            case (3)
+                                call mpas_pool_get_field(allFields, itr % memberName, real3d_4, timeLevel)
+                                call MPAS_streamAddField(stream % stream, real3d_4)
+                            case (4)
+                                call mpas_pool_get_field(allFields, itr % memberName, real4d_4, timeLevel)
+                                call MPAS_streamAddField(stream % stream, real4d_4)
+                            case (5)
+                                call mpas_pool_get_field(allFields, itr % memberName, real5d_4, timeLevel)
+                                call MPAS_streamAddField(stream % stream, real5d_4)
                         end select
                     case (MPAS_POOL_INTEGER)
                         select case (info % nDims)
@@ -4443,6 +4496,27 @@ module mpas_stream_manager
                             case (5)
                                 call mpas_pool_get_field(allFields, itr % memberName, real5d, timeLevel)
                                 call MPAS_streamUpdateField(stream % stream, real5d)
+                        end select
+                    case (MPAS_POOL_REAL_4)
+                        select case (info % nDims)
+                            case (0)
+                                call mpas_pool_get_field(allFields, itr % memberName, real0d_4, timeLevel)
+                                call MPAS_streamUpdateField(stream % stream, real0d_4)
+                            case (1)
+                                call mpas_pool_get_field(allFields, itr % memberName, real1d_4, timeLevel)
+                                call MPAS_streamUpdateField(stream % stream, real1d_4)
+                            case (2)
+                                call mpas_pool_get_field(allFields, itr % memberName, real2d_4, timeLevel)
+                                call MPAS_streamUpdateField(stream % stream, real2d_4)
+                            case (3)
+                                call mpas_pool_get_field(allFields, itr % memberName, real3d_4, timeLevel)
+                                call MPAS_streamUpdateField(stream % stream, real3d_4)
+                            case (4)
+                                call mpas_pool_get_field(allFields, itr % memberName, real4d_4, timeLevel)
+                                call MPAS_streamUpdateField(stream % stream, real4d_4)
+                            case (5)
+                                call mpas_pool_get_field(allFields, itr % memberName, real5d_4, timeLevel)
+                                call MPAS_streamUpdateField(stream % stream, real5d_4)
                         end select
                     case (MPAS_POOL_INTEGER)
                         select case (info % nDims)
@@ -4674,6 +4748,17 @@ module mpas_stream_manager
                             STREAM_DEBUG_WRITE(' -- Exchange halo for '//trim(fieldItr % memberName))
                             call mpas_dmpar_field_halo_exch(real1DField % block % domain, fieldItr % memberName, timeLevel=timeLevel)
                         end if
+                    else if ( fieldInfo % fieldType == MPAS_POOL_REAL_4 ) then
+                        if ( timeLevel <= fieldInfo % nTimeLevels ) then
+                            call mpas_pool_get_field(allFields, fieldItr % memberName, real1DField_4, timeLevel)
+                        else
+                            call mpas_pool_get_field(allFields, fieldItr % memberName, real1DField_4, 1)
+                        end if
+
+                        if ( is_decomposed_dim(real1DField_4 % dimNames(1))) then
+                            STREAM_DEBUG_WRITE(' -- Exchange halo for '//trim(fieldItr % memberName))
+                            call mpas_dmpar_field_halo_exch(real1DField_4 % block % domain, fieldItr % memberName, timeLevel=timeLevel)
+                        end if
                     else if ( fieldInfo % fieldType == MPAS_POOL_INTEGER ) then
                         if ( timeLevel <= fieldInfo % nTimeLevels ) then
                           call mpas_pool_get_field(allFields, fieldItr % memberName, int1DField, timeLevel)
@@ -4697,6 +4782,16 @@ module mpas_stream_manager
                             STREAM_DEBUG_WRITE(' -- Exchange halo for '//trim(fieldItr % memberName))
                             call mpas_dmpar_field_halo_exch(real2DField % block % domain, fieldItr % memberName, timeLevel=timeLevel)
                         end if
+                    else if ( fieldInfo % fieldType == MPAS_POOL_REAL_4 ) then
+                        if ( timeLevel <= fieldInfo % nTimeLevels ) then
+                            call mpas_pool_get_field(allFields, fieldItr % memberName, real2DField_4, timeLevel)
+                        else
+                            call mpas_pool_get_field(allFields, fieldItr % memberName, real2DField_4, 1)
+                        end if
+                        if ( is_decomposed_dim(real2DField_4 % dimNames(2))) then
+                            STREAM_DEBUG_WRITE(' -- Exchange halo for '//trim(fieldItr % memberName))
+                            call mpas_dmpar_field_halo_exch(real2DField_4 % block % domain, fieldItr % memberName, timeLevel=timeLevel)
+                        end if                    
                     else if ( fieldInfo % fieldType == MPAS_POOL_INTEGER ) then
                         if ( timeLevel <= fieldInfo % nTimeLevels ) then
                             call mpas_pool_get_field(allFields, fieldItr % memberName, int2DField, timeLevel)
@@ -4719,6 +4814,16 @@ module mpas_stream_manager
                         if ( is_decomposed_dim(real3DField % dimNames(3))) then
                             STREAM_DEBUG_WRITE(' -- Exchange halo for '//trim(fieldItr % memberName))
                             call mpas_dmpar_field_halo_exch(real3DField % block % domain, fieldItr % memberName, timeLevel=timeLevel)
+                        end if
+                    else if ( fieldInfo % fieldType == MPAS_POOL_REAL_4 ) then
+                        if ( timeLevel <= fieldInfo % nTimeLevels ) then
+                            call mpas_pool_get_field(allFields, fieldItr % memberName, real3DField_4, timeLevel)
+                        else
+                            call mpas_pool_get_field(allFields, fieldItr % memberName, real3DField_4, 1)
+                        end if
+                        if ( is_decomposed_dim(real3DField_4 % dimNames(3))) then
+                            STREAM_DEBUG_WRITE(' -- Exchange halo for '//trim(fieldItr % memberName))
+                            call mpas_dmpar_field_halo_exch(real3DField_4 % block % domain, fieldItr % memberName, timeLevel=timeLevel)
                         end if
                     else if ( fieldInfo % fieldType == MPAS_POOL_INTEGER ) then
                         if ( timeLevel <= fieldInfo % nTimeLevels ) then
@@ -4743,6 +4848,16 @@ module mpas_stream_manager
                             STREAM_DEBUG_WRITE(' -- Exchange halo for '//trim(fieldItr % memberName))
                             call mpas_dmpar_field_halo_exch(real4DField % block % domain, fieldItr % memberName, timeLevel=timeLevel)
                         end if
+                    else if ( fieldInfo % fieldType == MPAS_POOL_REAL ) then
+                        if ( timeLevel <= fieldInfo % nTimeLevels ) then
+                            call mpas_pool_get_field(allFields, fieldItr % memberName, real4DField_4, timeLevel)
+                        else
+                            call mpas_pool_get_field(allFields, fieldItr % memberName, real4DField_4, 1)
+                        end if
+                        if ( is_decomposed_dim(real4DField_4 % dimNames(4))) then
+                            STREAM_DEBUG_WRITE(' -- Exchange halo for '//trim(fieldItr % memberName))
+                            call mpas_dmpar_field_halo_exch(real4DField_4 % block % domain, fieldItr % memberName, timeLevel=timeLevel)
+                        end if
                     end if
 
                 else if ( fieldInfo % nDims == 5) then
@@ -4757,6 +4872,17 @@ module mpas_stream_manager
                             call mpas_dmpar_field_halo_exch(real5DField % block % domain, fieldItr % memberName, timeLevel=timeLevel)
                         end if
                     end if
+                    else if ( fieldInfo % fieldType == MPAS_POOL_REAL_4 ) then
+                        if ( timeLevel <= fieldInfo % nTimeLevels ) then
+                            call mpas_pool_get_field(allFields, fieldItr % memberName, real5DField_4, timeLevel)
+                        else
+                            call mpas_pool_get_field(allFields, fieldItr % memberName, real5DField_4, 1)
+                        end if
+                        if ( is_decomposed_dim(real5DField_4 % dimNames(5))) then
+                            STREAM_DEBUG_WRITE(' -- Exchange halo for '//trim(fieldItr % memberName))
+                            call mpas_dmpar_field_halo_exch(real5DField_4 % block % domain, fieldItr % memberName, timeLevel=timeLevel)
+                        end if
+
                 end if
 
             end if

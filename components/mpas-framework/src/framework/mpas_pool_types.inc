@@ -33,6 +33,20 @@
       type (field3DReal), dimension(:), pointer :: r3a => null()
       type (field4DReal), dimension(:), pointer :: r4a => null()
       type (field5DReal), dimension(:), pointer :: r5a => null()
+
+      type (field0DReal_4), pointer :: r0_4 => null()
+      type (field1DReal_4), pointer :: r1_4 => null()
+      type (field2DReal_4), pointer :: r2_4 => null()
+      type (field3DReal_4), pointer :: r3_4 => null()
+      type (field4DReal_4), pointer :: r4_4 => null()
+      type (field5DReal_4), pointer :: r5_4 => null()
+      type (field0DReal_4), dimension(:), pointer :: r0a_4 => null()
+      type (field1DReal_4), dimension(:), pointer :: r1a_4 => null()
+      type (field2DReal_4), dimension(:), pointer :: r2a_4 => null()
+      type (field3DReal_4), dimension(:), pointer :: r3a_4 => null()
+      type (field4DReal_4), dimension(:), pointer :: r4a_4 => null()
+      type (field5DReal_4), dimension(:), pointer :: r5a_4 => null()
+
       type (field0DInteger), pointer :: i0 => null()
       type (field1DInteger), pointer :: i1 => null()
       type (field2DInteger), pointer :: i2 => null()
@@ -53,6 +67,8 @@
       integer, pointer :: simple_int => null()
       integer, dimension(:), pointer :: simple_int_arr => null()
       real(kind=RKIND), pointer :: simple_real => null()
+      real(kind=RKIND), pointer :: simple_real_4 => null()
+
       logical, pointer :: simple_logical => null()
       character(len=StrKIND), pointer :: simple_char => null()
    end type mpas_pool_data_type

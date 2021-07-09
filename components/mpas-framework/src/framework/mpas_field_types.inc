@@ -207,6 +207,206 @@
       type (mpas_multihalo_exchange_list), pointer :: copyList => null()
    end type field0DReal
 
+   type field5DReal_4
+  
+      ! Back-pointer to the containing block
+      type (block_type), pointer :: block => null()
+
+      ! Raw array holding field data on this block
+      real (kind=R4KIND), dimension(:,:,:,:,:), pointer :: array => null()
+
+      ! Information used by the I/O layer
+      character (len=StrKIND) :: fieldName
+      character (len=StrKIND), dimension(:), pointer :: constituentNames => null()
+      character (len=StrKIND), dimension(5) :: dimNames
+      integer, dimension(5) :: dimSizes
+      real (kind=R4KIND) :: defaultValue
+      real (kind=R4KIND) :: missingValue
+      logical :: isDecomposed
+      logical :: hasTimeDimension
+      logical :: isActive
+      logical :: isVarArray
+      logical :: isPersistent
+      type (att_lists_type), dimension(:), pointer :: attLists => null()     
+
+      ! Pointers to the prev and next blocks for this field on this task
+      type (field5DReal_4), pointer :: prev => null()
+      type (field5DReal_4), pointer :: next => null()
+
+      ! Halo communication lists
+      type (mpas_multihalo_exchange_list), pointer :: sendList => null()
+      type (mpas_multihalo_exchange_list), pointer :: recvList => null()
+      type (mpas_multihalo_exchange_list), pointer :: copyList => null()
+   end type field5DReal_4
+
+
+   ! Derived type for storing fields
+   type field4DReal_4
+  
+      ! Back-pointer to the containing block
+      type (block_type), pointer :: block => null()
+
+      ! Raw array holding field data on this block
+      real (kind=R4KIND), dimension(:,:,:,:), pointer :: array => null()
+
+      ! Information used by the I/O layer
+      character (len=StrKIND) :: fieldName
+      character (len=StrKIND), dimension(:), pointer :: constituentNames => null()
+      character (len=StrKIND), dimension(4) :: dimNames
+      integer, dimension(4) :: dimSizes
+      real (kind=R4KIND) :: defaultValue
+      real (kind=R4KIND) :: missingValue
+      logical :: isDecomposed
+      logical :: hasTimeDimension
+      logical :: isActive
+      logical :: isVarArray
+      logical :: isPersistent
+      type (att_lists_type), dimension(:), pointer :: attLists => null()     
+
+      ! Pointers to the prev and next blocks for this field on this task
+      type (field4DReal_4), pointer :: prev => null()
+      type (field4DReal_4), pointer :: next => null()
+
+      ! Halo communication lists
+      type (mpas_multihalo_exchange_list), pointer :: sendList => null()
+      type (mpas_multihalo_exchange_list), pointer :: recvList => null()
+      type (mpas_multihalo_exchange_list), pointer :: copyList => null()
+   end type field4DReal_4
+
+
+
+   ! Derived type for storing fields
+   type field3DReal_4
+  
+      ! Back-pointer to the containing block
+      type (block_type), pointer :: block => null()
+
+      ! Raw array holding field data on this block
+      real (kind=R4KIND), dimension(:,:,:), pointer :: array => null()
+
+      ! Information used by the I/O layer
+      character (len=StrKIND) :: fieldName
+      character (len=StrKIND), dimension(:), pointer :: constituentNames => null()
+      character (len=StrKIND), dimension(3) :: dimNames
+      integer, dimension(3) :: dimSizes
+      real (kind=R4KIND) :: defaultValue
+      real (kind=R4KIND) :: missingValue
+      logical :: isDecomposed
+      logical :: hasTimeDimension
+      logical :: isActive
+      logical :: isVarArray
+      logical :: isPersistent
+      type (att_lists_type), dimension(:), pointer :: attLists => null()     
+
+      ! Pointers to the prev and next blocks for this field on this task
+      type (field3DReal_4), pointer :: prev => null()
+      type (field3DReal_4), pointer :: next => null()
+
+      ! Halo communication lists
+      type (mpas_multihalo_exchange_list), pointer :: sendList => null()
+      type (mpas_multihalo_exchange_list), pointer :: recvList => null()
+      type (mpas_multihalo_exchange_list), pointer :: copyList => null()
+   end type field3DReal_4
+
+
+   ! Derived type for storing fields
+   type field2DReal_4
+  
+      ! Back-pointer to the containing block
+      type (block_type), pointer :: block => null()
+
+      ! Raw array holding field data on this block
+      real (kind=R4KIND), dimension(:,:), pointer :: array => null()
+
+      ! Information used by the I/O layer
+      character (len=StrKIND) :: fieldName
+      character (len=StrKIND), dimension(:), pointer :: constituentNames => null()
+      character (len=StrKIND), dimension(2) :: dimNames
+      integer, dimension(2) :: dimSizes
+      real (kind=R4KIND) :: defaultValue
+      real (kind=R4KIND) :: missingValue
+      logical :: isDecomposed
+      logical :: hasTimeDimension
+      logical :: isActive
+      logical :: isVarArray
+      logical :: isPersistent
+      type (att_lists_type), dimension(:), pointer :: attLists => null()     
+
+      ! Pointers to the prev and next blocks for this field on this task
+      type (field2DReal_4), pointer :: prev => null()
+      type (field2DReal_4), pointer :: next => null()
+
+      ! Halo communication lists
+      type (mpas_multihalo_exchange_list), pointer :: sendList => null()
+      type (mpas_multihalo_exchange_list), pointer :: recvList => null()
+      type (mpas_multihalo_exchange_list), pointer :: copyList => null()
+   end type field2DReal_4
+
+
+   ! Derived type for storing fields
+   type field1DReal_4
+  
+      ! Back-pointer to the containing block
+      type (block_type), pointer :: block => null()
+
+      ! Raw array holding field data on this block
+      real (kind=R4KIND), dimension(:), pointer :: array => null()
+
+      ! Information used by the I/O layer
+      character (len=StrKIND) :: fieldName
+      character (len=StrKIND), dimension(:), pointer :: constituentNames => null()
+      character (len=StrKIND), dimension(1) :: dimNames
+      integer, dimension(1) :: dimSizes
+      real (kind=R4KIND) :: defaultValue
+      real (kind=R4KIND) :: missingValue
+      logical :: isDecomposed
+      logical :: hasTimeDimension
+      logical :: isActive
+      logical :: isVarArray
+      logical :: isPersistent
+      type (att_lists_type), dimension(:), pointer :: attLists => null()     
+
+      ! Pointers to the prev and next blocks for this field on this task
+      type (field1DReal_4), pointer :: prev => null()
+      type (field1DReal_4), pointer :: next => null()
+
+      ! Halo communication lists
+      type (mpas_multihalo_exchange_list), pointer :: sendList => null()
+      type (mpas_multihalo_exchange_list), pointer :: recvList => null()
+      type (mpas_multihalo_exchange_list), pointer :: copyList => null()
+   end type field1DReal_4
+
+
+   ! Derived type for storing fields
+   type field0DReal_4
+  
+      ! Back-pointer to the containing block
+      type (block_type), pointer :: block => null()
+
+      ! Raw array holding field data on this block
+      real (kind=R4KIND) :: scalar
+
+      ! Information used by the I/O layer
+      character (len=StrKIND) :: fieldName
+      character (len=StrKIND), dimension(:), pointer :: constituentNames => null()
+      real (kind=R4KIND) :: defaultValue
+      real (kind=R4KIND) :: missingValue
+      logical :: isDecomposed
+      logical :: hasTimeDimension
+      logical :: isActive
+      logical :: isVarArray
+      type (att_lists_type), dimension(:), pointer :: attLists => null()     
+
+      ! Pointers to the prev and next blocks for this field on this task
+      type (field0DReal_4), pointer :: prev => null()
+      type (field0DReal_4), pointer :: next => null()
+
+      ! Halo communication lists
+      type (mpas_multihalo_exchange_list), pointer :: sendList => null()
+      type (mpas_multihalo_exchange_list), pointer :: recvList => null()
+      type (mpas_multihalo_exchange_list), pointer :: copyList => null()
+   end type field0DReal_4
+
 
    ! Derived type for storing fields
    type field3DInteger
