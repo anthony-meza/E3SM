@@ -601,10 +601,8 @@ contains
     do while (associated(block))
        call MPAS_pool_get_subpool(block % structs, "shortwave", shortwave)
        call MPAS_pool_get_array(shortwave, "dayOfNextShortwaveCalculation", dayOfNextShortwaveCalculation)
-       dayOfNextShortwaveCalculation_8 = real(dayOfNextShortwaveCalculation, kind = R8KIND)
-       call seq_infodata_GetData(infodata, nextsw_cday=dayOfNextShortwaveCalculation_8)
+       call seq_infodata_GetData(infodata, nextsw_cday=real(dayOfNextShortwaveCalculation, kind=8))
        ! might need to update dayOfNextShortwaveCalculation value with this command. 
-       ! dayOfNextShortwaveCalculation = real(dayOfNextShortwaveCalculation_8, kind = RKIND)
        ! Set dayOfNextShortwaveCalculation to -1 for continue and branch runs.
        if (trim(runtype) /= 'initial') dayOfNextShortwaveCalculation = -1
        call mpas_log_write('dayOfNextShortwaveCalculation = $r', realArgs=(/dayOfNextShortwaveCalculation/))
@@ -1083,10 +1081,8 @@ contains
       
          call MPAS_pool_get_subpool(block % structs, "shortwave", shortwave)
          call MPAS_pool_get_array(shortwave, "dayOfNextShortwaveCalculation", dayOfNextShortwaveCalculation)
-         dayOfNextShortwaveCalculation_8 = real(dayOfNextShortwaveCalculation, kind = R8KIND)
-         call seq_infodata_GetData(infodata, nextsw_cday=dayOfNextShortwaveCalculation_8)
+         call seq_infodata_GetData(infodata, nextsw_cday=real(dayOfNextShortwaveCalculation, kind=8))
          ! might have to copy with 
-         ! dayOfNextShortwaveCalculation = real(dayOfNextShortwaveCalculation_8, kind = RKIND)
          ! perform post coupling operations
          call post_atmospheric_coupling(block)
          call post_oceanic_coupling(block)
