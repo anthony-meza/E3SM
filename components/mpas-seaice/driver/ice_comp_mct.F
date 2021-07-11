@@ -212,7 +212,7 @@ contains
     real(kind=RKIND), pointer :: &
             dayOfNextShortwaveCalculation ! needed for CESM like coupled simulations
     real(kind=R8KIND) :: &
-            dayOfNextShortwaveCalculation_8 ! needed for CESM like coupled simulations
+            dayOfNextShortwaveCalculation_R8 ! needed for CESM like coupled simulations
 
 
 
@@ -601,7 +601,9 @@ contains
     do while (associated(block))
        call MPAS_pool_get_subpool(block % structs, "shortwave", shortwave)
        call MPAS_pool_get_array(shortwave, "dayOfNextShortwaveCalculation", dayOfNextShortwaveCalculation)
-       call seq_infodata_GetData(infodata, nextsw_cday=real(dayOfNextShortwaveCalculation, kind=8))
+       dayOfNextShortwaveCalculation_R8 = dayOfNextShortwaveCalculation
+       call seq_infodata_GetData(infodata, nextsw_cday=dayOfNextShortwaveCalculation_R8)
+       dayOfNextShortwaveCalculation = dayOfNextShortwaveCalculation_R8
        ! might need to update dayOfNextShortwaveCalculation value with this command. 
        ! Set dayOfNextShortwaveCalculation to -1 for continue and branch runs.
        if (trim(runtype) /= 'initial') dayOfNextShortwaveCalculation = -1
@@ -1046,7 +1048,7 @@ contains
       real(kind=RKIND), pointer :: &
             dayOfNextShortwaveCalculation ! needed for CESM like coupled simulations
       real(kind=R8KIND) :: &
-            dayOfNextShortwaveCalculation_8 ! needed for CESM like coupled simulations
+            dayOfNextShortwaveCalculation_R8 ! needed for CESM like coupled simulations
 
 
      iam = domain % dminfo % my_proc_id
@@ -1081,7 +1083,9 @@ contains
       
          call MPAS_pool_get_subpool(block % structs, "shortwave", shortwave)
          call MPAS_pool_get_array(shortwave, "dayOfNextShortwaveCalculation", dayOfNextShortwaveCalculation)
-         call seq_infodata_GetData(infodata, nextsw_cday=real(dayOfNextShortwaveCalculation, kind=8))
+         dayOfNextShortwaveCalculation_R8 = dayOfNextShortwaveCalculation
+         call seq_infodata_GetData(infodata, nextsw_cday=dayOfNextShortwaveCalculation_R8)
+         dayOfNextShortwaveCalculation = dayOfNextShortwaveCalculation_R8
          ! might have to copy with 
          ! perform post coupling operations
          call post_atmospheric_coupling(block)
