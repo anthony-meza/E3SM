@@ -5167,7 +5167,7 @@ module mpas_pool_routines
       nullify(field)
       if (associated(mem)) then
 
-         if (mem % contentsType /= MPAS_POOL_REA_4L) then
+         if (mem % contentsType /= MPAS_POOL_REAL_4) then
             call pool_mesg('Error: Field '//trim(key)//' is not type real.')
          end if
          if (mem % contentsDims /= 4) then

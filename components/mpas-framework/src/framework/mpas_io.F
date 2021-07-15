@@ -35,12 +35,14 @@ module mpas_io
 #ifdef SINGLE_PRECISION
    real (kind=RKIND), parameter :: MPAS_REAL_FILLVAL = PIO_FILL_FLOAT
 #else
+   real (kind=RKIND), parameter :: MPAS_REAL_FILLVAL_4 = PIO_FILL_FLOAT
    real (kind=RKIND), parameter :: MPAS_REAL_FILLVAL = PIO_FILL_DOUBLE
 #endif
 #else
 #ifdef SINGLE_PRECISION
    real (kind=RKIND), parameter :: MPAS_REAL_FILLVAL = NF_FILL_FLOAT
 #else
+   real (kind=RKIND), parameter :: MPAS_REAL_FILLVAL_4 = NF_FILL_FLOAT
    real (kind=RKIND), parameter :: MPAS_REAL_FILLVAL = NF_FILL_DOUBLE
 #endif
 #endif

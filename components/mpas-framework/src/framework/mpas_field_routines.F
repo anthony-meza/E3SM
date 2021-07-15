@@ -30,6 +30,11 @@ module mpas_field_routines
       module procedure mpas_allocate_mold_3dreal
       module procedure mpas_allocate_mold_4dreal
       module procedure mpas_allocate_mold_5dreal
+      module procedure mpas_allocate_mold_1dreal_4
+      module procedure mpas_allocate_mold_2dreal_4
+      module procedure mpas_allocate_mold_3dreal_4
+      module procedure mpas_allocate_mold_4dreal_4
+      module procedure mpas_allocate_mold_5dreal_4
       module procedure mpas_allocate_mold_1dinteger
       module procedure mpas_allocate_mold_2dinteger
       module procedure mpas_allocate_mold_3dinteger
@@ -43,6 +48,14 @@ module mpas_field_routines
       module procedure mpas_duplicate_field3d_real
       module procedure mpas_duplicate_field4d_real
       module procedure mpas_duplicate_field5d_real
+
+      module procedure mpas_duplicate_field0d_real_4
+      module procedure mpas_duplicate_field1d_real_4
+      module procedure mpas_duplicate_field2d_real_4
+      module procedure mpas_duplicate_field3d_real_4
+      module procedure mpas_duplicate_field4d_real_4
+      module procedure mpas_duplicate_field5d_real_4
+
       module procedure mpas_duplicate_field0d_integer
       module procedure mpas_duplicate_field1d_integer
       module procedure mpas_duplicate_field2d_integer
@@ -59,6 +72,14 @@ module mpas_field_routines
       module procedure mpas_shift_time_levs_3dreal
       module procedure mpas_shift_time_levs_4dreal
       module procedure mpas_shift_time_levs_5dreal
+
+      module procedure mpas_shift_time_levs_0dreal_4
+      module procedure mpas_shift_time_levs_1dreal_4
+      module procedure mpas_shift_time_levs_2dreal_4
+      module procedure mpas_shift_time_levs_3dreal_4
+      module procedure mpas_shift_time_levs_4dreal_4
+      module procedure mpas_shift_time_levs_5dreal_4
+
       module procedure mpas_shift_time_levs_0dinteger
       module procedure mpas_shift_time_levs_1dinteger
       module procedure mpas_shift_time_levs_2dinteger
@@ -72,11 +93,20 @@ module mpas_field_routines
       module procedure mpas_allocate_scratch_field1d_integer
       module procedure mpas_allocate_scratch_field2d_integer
       module procedure mpas_allocate_scratch_field3d_integer
+
       module procedure mpas_allocate_scratch_field1d_real
       module procedure mpas_allocate_scratch_field2d_real
       module procedure mpas_allocate_scratch_field3d_real
       module procedure mpas_allocate_scratch_field4d_real
       module procedure mpas_allocate_scratch_field5d_real
+            
+      module procedure mpas_allocate_scratch_field1d_real_4
+      module procedure mpas_allocate_scratch_field2d_real_4
+      module procedure mpas_allocate_scratch_field3d_real_4
+      module procedure mpas_allocate_scratch_field4d_real_4
+      module procedure mpas_allocate_scratch_field5d_real_4
+
+
       module procedure mpas_allocate_scratch_field1d_char
    end interface
 
@@ -89,6 +119,13 @@ module mpas_field_routines
       module procedure mpas_deallocate_scratch_field3d_real
       module procedure mpas_deallocate_scratch_field4d_real
       module procedure mpas_deallocate_scratch_field5d_real
+
+      module procedure mpas_deallocate_scratch_field1d_real_4
+      module procedure mpas_deallocate_scratch_field2d_real_4
+      module procedure mpas_deallocate_scratch_field3d_real_4
+      module procedure mpas_deallocate_scratch_field4d_real_4
+      module procedure mpas_deallocate_scratch_field5d_real_4
+      
       module procedure mpas_deallocate_scratch_field1d_char
    end interface
 
@@ -104,6 +141,14 @@ module mpas_field_routines
       module procedure mpas_deallocate_field3d_real
       module procedure mpas_deallocate_field4d_real
       module procedure mpas_deallocate_field5d_real
+      
+      module procedure mpas_deallocate_field0d_real_4
+      module procedure mpas_deallocate_field1d_real_4
+      module procedure mpas_deallocate_field2d_real_4
+      module procedure mpas_deallocate_field3d_real_4
+      module procedure mpas_deallocate_field4d_real_4
+      module procedure mpas_deallocate_field5d_real_4
+
       module procedure mpas_deallocate_field0d_char
       module procedure mpas_deallocate_field1d_char
    end interface
@@ -114,6 +159,7 @@ module mpas_field_routines
       module procedure mpas_deallocate_field1d_integer_target
       module procedure mpas_deallocate_field2d_integer_target
       module procedure mpas_deallocate_field3d_integer_target
+      
       module procedure mpas_deallocate_field0d_real_target
       module procedure mpas_deallocate_field1d_real_target
       module procedure mpas_deallocate_field2d_real_target
@@ -122,6 +168,15 @@ module mpas_field_routines
       module procedure mpas_deallocate_field5d_real_target
       module procedure mpas_deallocate_field0d_char_target
       module procedure mpas_deallocate_field1d_char_target
+
+      module procedure mpas_deallocate_field0d_real_target_4
+      module procedure mpas_deallocate_field1d_real_target_4
+      module procedure mpas_deallocate_field2d_real_target_4
+      module procedure mpas_deallocate_field3d_real_target_4
+      module procedure mpas_deallocate_field4d_real_target_4
+      module procedure mpas_deallocate_field5d_real_target_4
+
+
    end interface
 
    contains
@@ -866,6 +921,471 @@ module mpas_field_routines
 
 !***********************************************************************
 !
+!  routine mpas_allocate_scratch_field1d_real_4
+!
+!> \brief   MPAS 1D Scratch real allocation routine.
+!> \author  Doug Jacobsen
+!> \date    04/02/13
+!> \details 
+!> This routine allocates a 1D scratch real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_scratch_field1d_real_4(f, single_block_in, init_array_in)!{{{
+       type (field1dReal_4), pointer :: f !< Input: Field to allocate
+       logical, intent(in), optional :: single_block_in !< Input: Logical flag that determines if a single block should be allocated, or all blocks.
+       logical, intent(in), optional :: init_array_in !< Input: Logical flag that determines if allocated arrays are initialized
+       logical :: single_block, init_array
+       type (field1dReal_4), pointer :: f_cursor
+       integer :: threadNum
+
+       if(f % isPersistent) then
+          return
+       end if
+
+       if(present(single_block_in)) then
+          single_block = single_block_in
+       else
+          single_block = .false.
+       end if
+
+       if (present(init_array_in)) then
+          init_array = init_array_in
+       else
+          init_array = .true.
+       end if
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if(.not. single_block) then
+
+         ! thread 0 first allocates everything
+         f_cursor => f
+         if ( threadNum == 0 ) then
+           do while(associated(f_cursor))
+             if(.not.associated(f_cursor % array)) then
+               allocate(f_cursor % array(f_cursor % dimSizes(1)))
+             end if
+             f_cursor => f_cursor % next
+           end do
+         end if
+
+         call mpas_threading_barrier()
+
+         ! then all threads initialize
+         if ( init_array ) then
+         f_cursor => f
+         do while(associated(f_cursor))
+           !$omp do schedule(runtime)
+           do i = 1, f_cursor % dimSizes(1)
+             f_cursor % array(i) = f_cursor % defaultValue
+           end do
+           !$omp end do
+           f_cursor => f_cursor % next
+         end do
+         end if
+       else
+
+         ! thread 0 allocates
+         if ( threadNum == 0 ) then
+           if(.not.associated(f % array)) then
+             allocate(f % array(f % dimSizes(1)))
+           end if
+         end if
+
+         call mpas_threading_barrier()
+
+         ! then all threads initialize
+         if ( init_array ) then
+         !$omp do schedule(runtime)
+         do i = 1, f % dimSizes(1)
+           f % array(i) = f % defaultValue
+         end do
+         !$omp end do
+         end if
+       end if
+
+   end subroutine mpas_allocate_scratch_field1d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_scratch_field2d_real_4
+!
+!> \brief   MPAS 2D Scratch real allocation routine.
+!> \author  Doug Jacobsen
+!> \date    04/02/13
+!> \details 
+!> This routine allocates a 2D scratch real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_scratch_field2d_real_4(f, single_block_in, init_array_in)!{{{
+       type (field2dReal_4), pointer :: f !< Input: Field to allocate
+       logical, intent(in), optional :: single_block_in !< Input: Logical flag that determines if a single block should be allocated, or all blocks.
+       logical, intent(in), optional :: init_array_in !< Input: Logical flag that determines if allocated arrays are initialized
+       logical :: single_block, init_array
+       type (field2dReal_4), pointer :: f_cursor
+       integer :: threadNum
+
+       if(f % isPersistent) then
+          return
+       end if
+
+       if(present(single_block_in)) then
+          single_block = single_block_in
+       else
+          single_block = .false.
+       end if
+
+       if (present(init_array_in)) then
+          init_array = init_array_in
+       else
+          init_array = .true.
+       end if
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if(.not. single_block) then
+
+         ! thread 0 allocates everything
+         f_cursor => f
+         if ( threadNum == 0 ) then
+           do while(associated(f_cursor))
+             if(.not.associated(f_cursor % array)) then
+               allocate(f_cursor % array(f_cursor % dimSizes(1), f_cursor % dimSizes(2)))
+             end if
+             f_cursor => f_cursor % next
+           end do
+         end if
+
+         call mpas_threading_barrier()
+
+         ! then all threads initialize
+         if ( init_array ) then
+         f_cursor => f
+         do while(associated(f_cursor))
+           !$omp do collapse(2) schedule(runtime)
+           do i = 1, f_cursor % dimSizes(2)
+             do j = 1, f_cursor % dimSizes(1)
+               f_cursor % array(j, i) = f_cursor % defaultValue
+             end do
+           end do
+           !$omp end do
+           f_cursor => f_cursor % next
+         end do
+         end if
+       else
+
+         if ( threadNum == 0 ) then
+           if(.not.associated(f % array)) then
+             allocate(f % array(f % dimSizes(1), f % dimSizes(2)))
+           end if
+         end if
+
+         call mpas_threading_barrier()
+
+         if ( init_array ) then
+         !$omp do schedule(runtime) collapse(2)
+         do i = 1, f % dimSizes(2)
+           do j = 1, f % dimSizes(1)
+             f % array(j, i) = f % defaultValue
+           end do
+         end do
+         !$omp end do
+         end if
+       end if
+
+   end subroutine mpas_allocate_scratch_field2d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_scratch_field3d_real_4
+!
+!> \brief   MPAS 3D Scratch real allocation routine.
+!> \author  Doug Jacobsen
+!> \date    04/02/13
+!> \details 
+!> This routine allocates a 3D scratch real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_scratch_field3d_real_4(f, single_block_in, init_array_in)!{{{
+       type (field3dReal_4), pointer :: f !< Input: Field to allocate
+       logical, intent(in), optional :: single_block_in !< Input: Logical flag that determines if a single block should be allocated, or all blocks.
+       logical, intent(in), optional :: init_array_in !< Input: Logical flag that determines if allocated arrays are initialized
+       logical :: single_block, init_array
+       type (field3dReal_4), pointer :: f_cursor
+       integer :: threadNum
+
+       if(f % isPersistent) then
+          return
+       end if
+
+       if(present(single_block_in)) then
+          single_block = single_block_in
+       else
+          single_block = .false.
+       end if
+
+       if (present(init_array_in)) then
+          init_array = init_array_in
+       else
+          init_array = .true.
+       end if
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if(.not. single_block) then
+
+         f_cursor => f
+         if ( threadNum == 0 ) then
+           do while(associated(f_cursor))
+             if(.not.associated(f_cursor % array)) then
+               allocate(f_cursor % array(f_cursor % dimSizes(1), f_cursor % dimSizes(2), f_cursor % dimSizes(3)))
+             end if
+             f_cursor => f_cursor % next
+           end do
+         end if
+
+         call mpas_threading_barrier()
+
+         if ( init_array ) then
+         f_cursor => f
+         do while(associated(f_cursor))
+           !$omp do collapse(3) schedule(runtime)
+           do i = 1, f_cursor % dimSizes(3)
+             do j = 1, f_cursor % dimSizes(2)
+               do k = 1, f_cursor % dimSizes(1)
+                 f_cursor % array(k, j, i) = f_cursor % defaultValue
+               end do
+             end do
+           end do
+           !$omp end do
+           f_cursor => f_cursor % next
+         end do
+         end if
+       else
+
+         if ( threadNum == 0 ) then
+           if(.not.associated(f % array)) then
+             allocate(f % array(f % dimSizes(1), f % dimSizes(2), f % dimSizes(3)))
+           end if
+         end if
+
+         call mpas_threading_barrier()
+
+         if ( init_array ) then
+         !$omp do collapse(3) schedule(runtime)
+         do i = 1, f % dimSizes(3)
+           do j = 1, f % dimSizes(2)
+             do k = 1, f % dimSizes(1)
+               f % array(k, j, k) = f % defaultValue
+             end do
+           end do
+         end do
+         !$omp end do
+         end if
+       end if
+
+   end subroutine mpas_allocate_scratch_field3d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_scratch_field4d_real_4
+!
+!> \brief   MPAS 4D Scratch real allocation routine.
+!> \author  Doug Jacobsen
+!> \date    04/02/13
+!> \details 
+!> This routine allocates a 4D scratch real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_scratch_field4d_real_4(f, single_block_in, init_array_in)!{{{
+       type (field4dReal_4), pointer :: f !< Input: Field to allocate
+       logical, intent(in), optional :: single_block_in !< Input: Logical flag that determines if a single block should be allocated, or all blocks.
+       logical, intent(in), optional :: init_array_in !< Input: Logical flag that determines if allocated arrays are initialized
+       logical :: single_block, init_array
+       type (field4dReal_4), pointer :: f_cursor
+       integer :: threadNum
+
+       if(f % isPersistent) then
+          return
+       end if
+
+       if(present(single_block_in)) then
+          single_block = single_block_in
+       else
+          single_block = .false.
+       end if
+
+       if (present(init_array_in)) then
+          init_array = init_array_in
+       else
+          init_array = .true.
+       end if
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if(.not. single_block) then
+
+         f_cursor => f
+         if ( threadNum == 0 ) then
+           do while(associated(f_cursor))
+             if(.not.associated(f_cursor % array)) then
+               allocate(f_cursor % array(f_cursor % dimSizes(1), f_cursor % dimSizes(2), f_cursor % dimSizes(3), f_cursor % dimSizes(4)))
+             end if
+             f_cursor => f_cursor % next
+           end do
+         end if
+
+         call mpas_threading_barrier()
+
+         if ( init_array ) then
+         f_cursor => f
+         do while(associated(f_cursor))
+           !$omp do collapse(4) schedule(runtime)
+           do i = 1, f_cursor % dimSizes(4)
+             do j = 1, f_cursor % dimSizes(3)
+               do k = 1, f_cursor % dimSizes(2)
+                 do l = 1, f_cursor % dimSizes(1)
+                   f_cursor % array(l, k, j, i) = f_cursor % defaultValue
+                 end do
+               end do
+             end do
+           end do
+           !$omp end do
+           f_cursor => f_cursor % next
+         end do
+         end if
+       else
+
+         if ( threadNum == 0 ) then
+           if(.not.associated(f % array)) then
+             allocate(f % array(f % dimSizes(1), f % dimSizes(2), f % dimSizes(3), f % dimSizes(4)))
+           end if
+         end if
+
+         call mpas_threading_barrier()
+
+         if ( init_array ) then
+         !$omp do collapse(4) schedule(runtime)
+         do i = 1, f % dimSizes(4)
+           do j = 1, f % dimSizes(3)
+             do k = 1, f % dimSizes(2)
+               do l = 1, f % dimSizes(1)
+                 f % array(l, k, j, k) = f % defaultValue
+               end do
+             end do
+           end do
+         end do
+         !$omp end do
+         end if
+       end if
+
+   end subroutine mpas_allocate_scratch_field4d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_scratch_field5d_real_4
+!
+!> \brief   MPAS 5D Scratch real allocation routine.
+!> \author  Doug Jacobsen
+!> \date    04/02/13
+!> \details 
+!> This routine allocates a 5D scratch real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_scratch_field5d_real_4(f, single_block_in, init_array_in)!{{{
+       type (field5dReal_4), pointer :: f !< Input: Field to allocate
+       logical, intent(in), optional :: single_block_in !< Input: Logical flag that determines if a single block should be allocated, or all blocks.
+       logical, intent(in), optional :: init_array_in !< Input: Logical flag that determines if allocated arrays are initialized
+       logical :: single_block, init_array
+       type (field5dReal_4), pointer :: f_cursor
+       integer :: threadNum
+
+       if(f % isPersistent) then
+          return
+       end if
+
+       if(present(single_block_in)) then
+          single_block = single_block_in
+       else
+          single_block = .false.
+       end if
+
+       if (present(init_array_in)) then
+          init_array = init_array_in
+       else
+          init_array = .true.
+       end if
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if(.not. single_block) then
+
+         f_cursor => f
+         if ( threadNum == 0 ) then
+           do while(associated(f_cursor))
+             if(.not.associated(f_cursor % array)) then
+               allocate(f_cursor % array(f_cursor % dimSizes(1), f_cursor % dimSizes(2), f_cursor % dimSizes(3), f_cursor % dimSizes(4), f_cursor % dimSizes(5)))
+             end if
+             f_cursor => f_cursor % next
+           end do
+         end if
+
+         call mpas_threading_barrier()
+
+         if ( init_array ) then
+         f_cursor => f
+         do while(associated(f_cursor))
+           !$omp do collapse(5) schedule(runtime)
+           do i = 1, f_cursor % dimSizes(5)
+             do j = 1, f_cursor % dimSizes(4)
+               do k = 1, f_cursor % dimSizes(3)
+                 do l = 1, f_cursor % dimSizes(2)
+                   do m = 1, f_cursor % dimSizes(1)
+                     f_cursor % array(m, l, k, j, i) = f_cursor % defaultValue
+                   end do
+                 end do
+               end do
+             end do
+           end do
+           !$omp end do
+           f_cursor => f_cursor % next
+         end do
+         end if
+       else
+
+         if ( threadNum == 0 ) then
+           if(.not.associated(f % array)) then
+             allocate(f % array(f % dimSizes(1), f % dimSizes(2), f % dimSizes(3), f % dimSizes(4), f % dimSizes(5)))
+           end if
+         end if
+
+         call mpas_threading_barrier()
+
+         if ( init_array ) then
+         !$omp do collapse(5) schedule(runtime)
+         do i = 1, f % dimSizes(5)
+           do j = 1, f % dimSizes(4)
+             do k = 1, f % dimSizes(3)
+               do l = 1, f % dimSizes(2)
+                 do m = 1, f % dimSizes(1)
+                   f % array(m, l, k, j, k) = f % defaultValue
+                 end do
+               end do
+             end do
+           end do
+         end do
+         !$omp end do
+         end if
+       end if
+
+   end subroutine mpas_allocate_scratch_field5d_real_4!}}}
+
+!***********************************************************************
+!
 !  routine mpas_allocate_scratch_field1D_char
 !
 !> \brief   MPAS 1D Scratch character deallocation rotuine
@@ -1350,6 +1870,256 @@ module mpas_field_routines
        end if
 
    end subroutine mpas_deallocate_scratch_field5d_real!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_scratch_field1d_real_4
+!
+!> \brief   MPAS 1D Scratch real deallocation rotuine
+!> \author  Doug Jacobsen
+!> \date    04/02/13
+!> \details 
+!> This routine deallocates a 1D scratch real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_scratch_field1d_real_4(f, single_block_in)!{{{
+       type (field1dReal_4), pointer :: f !< Input: Field to deallocate
+       logical, intent(in), optional :: single_block_in !< Input: Logical that determines if a single block should be deallocated, or all blocks.
+       logical :: single_block
+       type (field1dReal_4), pointer :: f_cursor
+       integer :: threadNum
+
+       if(f % isPersistent) then
+          return
+       end if
+
+       if(present(single_block_in)) then
+          single_block = single_block_in
+       else
+          single_block = .false.
+       end if
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if ( threadNum == 0 ) then
+          if(.not.single_block) then
+             f_cursor => f
+             do while(associated(f_cursor))
+               if(associated(f_cursor % array)) then
+                 deallocate(f_cursor % array)
+               end if
+   
+               f_cursor => f_cursor % next
+             end do
+          else
+             if(associated(f % array)) then
+                deallocate(f % array)
+             end if
+          end if
+       end if
+
+   end subroutine mpas_deallocate_scratch_field1d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_scratch_field2d_real_4
+!
+!> \brief   MPAS 2D Scratch real deallocation rotuine
+!> \author  Doug Jacobsen
+!> \date    04/02/13
+!> \details 
+!> This routine deallocates a 2D scratch real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_scratch_field2d_real_4(f, single_block_in)!{{{
+       type (field2dReal_4), pointer :: f !< Input: Field to deallocate
+       logical, intent(in), optional :: single_block_in !< Input: Logical that determines if a single block should be deallocated, or all blocks.
+       logical :: single_block
+       type (field2dReal_4), pointer :: f_cursor
+       integer :: threadNum
+
+       if(f % isPersistent) then
+          return
+       end if
+
+       if(present(single_block_in)) then
+          single_block = single_block_in
+       else
+          single_block = .false.
+       end if
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if ( threadNum == 0 ) then
+          if(.not.single_block) then
+             f_cursor => f
+             do while(associated(f_cursor))
+               if(associated(f_cursor % array)) then
+                 deallocate(f_cursor % array)
+               end if
+   
+               f_cursor => f_cursor % next
+             end do
+          else
+             if(associated(f % array)) then
+                deallocate(f % array)
+             end if
+          end if
+       end if
+
+   end subroutine mpas_deallocate_scratch_field2d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_scratch_field3d_real_4
+!
+!> \brief   MPAS 3D Scratch real deallocation rotuine
+!> \author  Doug Jacobsen
+!> \date    04/02/13
+!> \details 
+!> This routine deallocates a 3D scratch real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_scratch_field3d_real_4(f, single_block_in)!{{{
+       type (field3dReal_4), pointer :: f !< Input: Field to deallocate
+       logical, intent(in), optional :: single_block_in !< Input: Logical that determines if a single block should be deallocated, or all blocks.
+       logical :: single_block
+       type (field3dReal_4), pointer :: f_cursor
+       integer :: threadNum
+
+       if(f % isPersistent) then
+          return
+       end if
+
+       if(present(single_block_in)) then
+          single_block = single_block_in
+       else
+          single_block = .false.
+       end if
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if ( threadNum == 0 ) then
+          if(.not.single_block) then
+             f_cursor => f
+             do while(associated(f_cursor))
+               if(associated(f_cursor % array)) then
+                 deallocate(f_cursor % array)
+               end if
+   
+               f_cursor => f_cursor % next
+             end do
+          else
+             if(associated(f % array)) then
+                deallocate(f % array)
+             end if
+          end if
+       end if
+
+   end subroutine mpas_deallocate_scratch_field3d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_scratch_field4d_real_4
+!
+!> \brief   MPAS 4D Scratch real deallocation rotuine
+!> \author  Doug Jacobsen
+!> \date    04/02/13
+!> \details 
+!> This routine deallocates a 4D scratch real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_scratch_field4d_real_4(f, single_block_in)!{{{
+       type (field4dReal_4), pointer :: f !< Input: Field to deallocate
+       logical, intent(in), optional :: single_block_in !< Input: Logical that determines if a single block should be deallocated, or all blocks.
+       logical :: single_block
+       type (field4dReal_4), pointer :: f_cursor
+       integer :: threadNum
+
+       if(f % isPersistent) then
+          return
+       end if
+
+       if(present(single_block_in)) then
+          single_block = single_block_in
+       else
+          single_block = .false.
+       end if
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if ( threadNum == 0 ) then
+          if(.not.single_block) then
+             f_cursor => f
+             do while(associated(f_cursor))
+               if(associated(f_cursor % array)) then
+                 deallocate(f_cursor % array)
+               end if
+   
+               f_cursor => f_cursor % next
+             end do
+          else
+             if(associated(f % array)) then
+                deallocate(f % array)
+             end if
+          end if
+       end if
+
+   end subroutine mpas_deallocate_scratch_field4d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_scratch_field5d_real_4
+!
+!> \brief   MPAS 5D Scratch real deallocation rotuine
+!> \author  Doug Jacobsen
+!> \date    04/02/13
+!> \details 
+!> This routine deallocates a 5D scratch real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_scratch_field5d_real_4(f, single_block_in)!{{{
+       type (field5dReal_4), pointer :: f !< Input: Field to deallocate
+       logical, intent(in), optional :: single_block_in !< Input: Logical that determines if a single block should be deallocated, or all blocks.
+       logical :: single_block
+       type (field5dReal_4), pointer :: f_cursor
+       integer :: threadNum
+
+       if(f % isPersistent) then
+          return
+       end if
+
+       if(present(single_block_in)) then
+          single_block = single_block_in
+       else
+          single_block = .false.
+       end if
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if ( threadNum == 0 ) then
+          if(.not.single_block) then
+             f_cursor => f
+             do while(associated(f_cursor))
+               if(associated(f_cursor % array)) then
+                 deallocate(f_cursor % array)
+               end if
+   
+               f_cursor => f_cursor % next
+             end do
+          else
+             if(associated(f % array)) then
+                deallocate(f % array)
+             end if
+          end if
+       end if
+
+   end subroutine mpas_deallocate_scratch_field5d_real_4!}}}
 
 
 !***********************************************************************
@@ -1840,6 +2610,246 @@ module mpas_field_routines
        end if
 
    end subroutine mpas_deallocate_field5d_real!}}}
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_field0D_real
+!
+!> \brief   MPAS 0D real deallocation routine.
+!> \author  Michael G. Duda
+!> \date    4 November 2019
+!> \details 
+!>  This routine deallocates a 0-d real field. Upon return, all memory
+!>  that is uniquely associated with the field pointed to by f
+!>  (i.e., array storage, attribute lists, constitutent names; *not* sendList,
+!>  recvList, block, etc. that are potentially referenced by other fields)
+!>  will have been freed, and the input pointer will be nullified.
+!>
+!>  For fields that are elements of an array of fields, do not use this
+!>  routine, and instead use mpas_deallocate_field_target.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_field0d_real_4(f)!{{{
+
+       implicit none
+
+       type (field0dReal_4), pointer :: f !< Input: Field to deallocate
+
+       type (field0dReal_4), pointer :: f_cursor, f_next
+
+       call mpas_deallocate_field_target(f)
+
+       if ( mpas_threading_get_thread_num() == 0 ) then
+           f_cursor => f
+           do while(associated(f_cursor))
+               f_next => f_cursor % next
+               deallocate(f_cursor)
+               f_cursor => f_next
+           end do
+       end if
+
+   end subroutine mpas_deallocate_field0d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_field1d_real_4
+!
+!> \brief   MPAS 1D real deallocation routine.
+!> \author  Michael G. Duda
+!> \date    4 November 2019
+!> \details 
+!>  This routine deallocates a 1-d real field. Upon return, all memory
+!>  that is uniquely associated with the field pointed to by f
+!>  (i.e., array storage, attribute lists, constitutent names; *not* sendList,
+!>  recvList, block, etc. that are potentially referenced by other fields)
+!>  will have been freed, and the input pointer will be nullified.
+!>
+!>  For fields that are elements of an array of fields, do not use this
+!>  routine, and instead use mpas_deallocate_field_target.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_field1d_real_4(f)!{{{
+
+       implicit none
+
+       type (field1dReal_4), pointer :: f !< Input: Field to deallocate
+
+       type (field1dReal_4), pointer :: f_cursor, f_next
+
+       call mpas_deallocate_field_target(f)
+
+       if ( mpas_threading_get_thread_num() == 0 ) then
+           f_cursor => f
+           do while(associated(f_cursor))
+               f_next => f_cursor % next
+               deallocate(f_cursor)
+               f_cursor => f_next
+           end do
+       end if
+
+   end subroutine mpas_deallocate_field1d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_field2d_real_4
+!
+!> \brief   MPAS 2D real deallocation routine.
+!> \author  Michael G. Duda
+!> \date    4 November 2019
+!> \details 
+!>  This routine deallocates a 2-d real field. Upon return, all memory
+!>  that is uniquely associated with the field pointed to by f
+!>  (i.e., array storage, attribute lists, constitutent names; *not* sendList,
+!>  recvList, block, etc. that are potentially referenced by other fields)
+!>  will have been freed, and the input pointer will be nullified.
+!>
+!>  For fields that are elements of an array of fields, do not use this
+!>  routine, and instead use mpas_deallocate_field_target.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_field2d_real_4(f)!{{{
+
+       implicit none
+
+       type (field2dReal_4), pointer :: f !< Input: Field to deallocate
+
+       type (field2dReal_4), pointer :: f_cursor, f_next
+
+       call mpas_deallocate_field_target(f)
+
+       if ( mpas_threading_get_thread_num() == 0 ) then
+           f_cursor => f
+           do while(associated(f_cursor))
+               f_next => f_cursor % next
+               deallocate(f_cursor)
+               f_cursor => f_next
+           end do
+       end if
+
+   end subroutine mpas_deallocate_field2d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_field3d_real_4
+!
+!> \brief   MPAS 3D real deallocation routine.
+!> \author  Michael G. Duda
+!> \date    4 November 2019
+!> \details 
+!>  This routine deallocates a 3-d real field. Upon return, all memory
+!>  that is uniquely associated with the field pointed to by f
+!>  (i.e., array storage, attribute lists, constitutent names; *not* sendList,
+!>  recvList, block, etc. that are potentially referenced by other fields)
+!>  will have been freed, and the input pointer will be nullified.
+!>
+!>  For fields that are elements of an array of fields, do not use this
+!>  routine, and instead use mpas_deallocate_field_target.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_field3d_real_4(f)!{{{
+
+       implicit none
+
+       type (field3dReal_4), pointer :: f !< Input: Field to deallocate
+
+       type (field3dReal_4), pointer :: f_cursor, f_next
+
+       call mpas_deallocate_field_target(f)
+
+       if ( mpas_threading_get_thread_num() == 0 ) then
+           f_cursor => f
+           do while(associated(f_cursor))
+               f_next => f_cursor % next
+               deallocate(f_cursor)
+               f_cursor => f_next
+           end do
+       end if
+
+   end subroutine mpas_deallocate_field3d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_field4d_real_4
+!
+!> \brief   MPAS 4D real deallocation routine.
+!> \author  Michael G. Duda
+!> \date    4 November 2019
+!> \details 
+!>  This routine deallocates a 4-d real field. Upon return, all memory
+!>  that is uniquely associated with the field pointed to by f
+!>  (i.e., array storage, attribute lists, constitutent names; *not* sendList,
+!>  recvList, block, etc. that are potentially referenced by other fields)
+!>  will have been freed, and the input pointer will be nullified.
+!>
+!>  For fields that are elements of an array of fields, do not use this
+!>  routine, and instead use mpas_deallocate_field_target.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_field4d_real_4(f)!{{{
+
+       implicit none
+
+       type (field4dReal_4), pointer :: f !< Input: Field to deallocate
+
+       type (field4dReal_4), pointer :: f_cursor, f_next
+
+       call mpas_deallocate_field_target(f)
+
+       if ( mpas_threading_get_thread_num() == 0 ) then
+           f_cursor => f
+           do while(associated(f_cursor))
+               f_next => f_cursor % next
+               deallocate(f_cursor)
+               f_cursor => f_next
+           end do
+       end if
+
+   end subroutine mpas_deallocate_field4d_real_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_field5d_real_4
+!
+!> \brief   MPAS 5D real deallocation routine.
+!> \author  Michael G. Duda
+!> \date    4 November 2019
+!> \details 
+!>  This routine deallocates a 5-d real field. Upon return, all memory
+!>  that is uniquely associated with the field pointed to by f
+!>  (i.e., array storage, attribute lists, constitutent names; *not* sendList,
+!>  recvList, block, etc. that are potentially referenced by other fields)
+!>  will have been freed, and the input pointer will be nullified.
+!>
+!>  For fields that are elements of an array of fields, do not use this
+!>  routine, and instead use mpas_deallocate_field_target.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_field5d_real_4(f)!{{{
+
+       implicit none
+
+       type (field5dReal_4), pointer :: f !< Input: Field to deallocate
+
+       type (field5dReal_4), pointer :: f_cursor, f_next
+
+       call mpas_deallocate_field_target(f)
+
+       if ( mpas_threading_get_thread_num() == 0 ) then
+           f_cursor => f
+           do while(associated(f_cursor))
+               f_next => f_cursor % next
+               deallocate(f_cursor)
+               f_cursor => f_next
+           end do
+       end if
+
+   end subroutine mpas_deallocate_field5d_real_4!}}}
+
 
 
 !***********************************************************************
@@ -2459,6 +3469,302 @@ module mpas_field_routines
 
    end subroutine mpas_deallocate_field5d_real_target!}}}
 
+!***********************************************************************
+!
+!  routine mpas_deallocate_field0D_real_target_4
+!
+!> \brief   MPAS 0D real deallocation routine.
+!> \author  Doug Jacobsen, Michael G. Duda
+!> \date    04/02/13
+!> \details 
+!>  This routine deallocates a 0D real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_field0d_real_target_4(f)!{{{
+
+       implicit none
+
+       type (field0dReal_4), target :: f !< Input: Field to deallocate
+
+       type (field0dReal_4), pointer :: f_cursor, f_next
+       integer :: threadNum
+       integer :: i, iErr
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if ( threadNum == 0 ) then
+           f_cursor => f
+           do while(associated(f_cursor))
+               f_next => f_cursor % next
+
+               if (associated(f_cursor % attLists)) then
+                   do i = 1, size(f_cursor % attLists, dim=1)
+                       call mpas_deallocate_attlist(f_cursor % attLists(i) % attList, iErr)
+                   end do
+                   deallocate(f_cursor % attLists)
+               end if
+
+               if (associated(f_cursor % constituentNames)) then
+                   deallocate(f_cursor % constituentNames)
+               end if
+
+               f_cursor => f_next
+           end do
+       end if
+
+   end subroutine mpas_deallocate_field0d_real_target_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_field1D_real_target_4
+!
+!> \brief   MPAS 1D real deallocation routine.
+!> \author  Doug Jacobsen, Michael G. Duda
+!> \date    04/02/13
+!> \details 
+!>  This routine deallocates a 1D real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_field1d_real_target_4(f)!{{{
+
+       implicit none
+
+       type (field1dReal_4), target :: f !< Input: Field to deallocate
+
+       type (field1dReal_4), pointer :: f_cursor, f_next
+       integer :: threadNum
+       integer :: i, iErr
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if ( threadNum == 0 ) then
+           f_cursor => f
+           do while(associated(f_cursor))
+               f_next => f_cursor % next
+
+               if (associated(f_cursor % array)) then
+                   deallocate(f_cursor % array)
+               end if
+
+               if (associated(f_cursor % attLists)) then
+                   do i = 1, size(f_cursor % attLists, dim=1)
+                       call mpas_deallocate_attlist(f_cursor % attLists(i) % attList, iErr)
+                   end do
+                   deallocate(f_cursor % attLists)
+               end if
+
+               if (associated(f_cursor % constituentNames)) then
+                   deallocate(f_cursor % constituentNames)
+               end if
+
+               f_cursor => f_next
+           end do
+       end if
+
+   end subroutine mpas_deallocate_field1d_real_target_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_field2D_real_target_4
+!
+!> \brief   MPAS 2D real deallocation routine.
+!> \author  Doug Jacobsen, Michael G. Duda
+!> \date    04/02/13
+!> \details 
+!>  This routine deallocates a 2D real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_field2d_real_target_4(f)!{{{
+
+       implicit none
+
+       type (field2dReal_4), target :: f !< Input: Field to deallocate
+
+       type (field2dReal_4), pointer :: f_cursor, f_next
+       integer :: threadNum
+       integer :: i, iErr
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if ( threadNum == 0 ) then
+           f_cursor => f
+           do while(associated(f_cursor))
+               f_next => f_cursor % next
+
+               if (associated(f_cursor % array)) then
+                   deallocate(f_cursor % array)
+               end if
+
+               if (associated(f_cursor % attLists)) then
+                   do i = 1, size(f_cursor % attLists, dim=1)
+                       call mpas_deallocate_attlist(f_cursor % attLists(i) % attList, iErr)
+                   end do
+                   deallocate(f_cursor % attLists)
+               end if
+
+               if (associated(f_cursor % constituentNames)) then
+                   deallocate(f_cursor % constituentNames)
+               end if
+
+               f_cursor => f_next
+           end do
+       end if
+
+   end subroutine mpas_deallocate_field2d_real_target_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_field3D_real_target_4
+!
+!> \brief   MPAS 3D real deallocation routine.
+!> \author  Doug Jacobsen, Michael G. Duda
+!> \date    04/02/13
+!> \details 
+!>  This routine deallocates a 3D real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_field3d_real_target_4(f)!{{{
+
+       implicit none
+
+       type (field3dReal_4), target :: f !< Input: Field to deallocate
+
+       type (field3dReal_4), pointer :: f_cursor, f_next
+       integer :: threadNum
+       integer :: i, iErr
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if ( threadNum == 0 ) then
+           f_cursor => f
+           do while(associated(f_cursor))
+               f_next => f_cursor % next
+
+               if (associated(f_cursor % array)) then
+                   deallocate(f_cursor % array)
+               end if
+
+               if (associated(f_cursor % attLists)) then
+                   do i = 1, size(f_cursor % attLists, dim=1)
+                       call mpas_deallocate_attlist(f_cursor % attLists(i) % attList, iErr)
+                   end do
+                   deallocate(f_cursor % attLists)
+               end if
+
+               if (associated(f_cursor % constituentNames)) then
+                   deallocate(f_cursor % constituentNames)
+               end if
+
+               f_cursor => f_next
+           end do
+       end if
+
+   end subroutine mpas_deallocate_field3d_real_target_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_field4D_real_target_4
+!
+!> \brief   MPAS 4D real deallocation routine.
+!> \author  Doug Jacobsen, Michael G. Duda
+!> \date    04/02/13
+!> \details 
+!>  This routine deallocates a 4D real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_field4d_real_target_4(f)!{{{
+
+       implicit none
+
+       type (field4dReal_4), target :: f !< Input: Field to deallocate
+
+       type (field4dReal_4), pointer :: f_cursor, f_next
+       integer :: threadNum
+       integer :: i, iErr
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if ( threadNum == 0 ) then
+           f_cursor => f
+           do while(associated(f_cursor))
+               f_next => f_cursor % next
+
+               if (associated(f_cursor % array)) then
+                   deallocate(f_cursor % array)
+               end if
+
+               if (associated(f_cursor % attLists)) then
+                   do i = 1, size(f_cursor % attLists, dim=1)
+                       call mpas_deallocate_attlist(f_cursor % attLists(i) % attList, iErr)
+                   end do
+                   deallocate(f_cursor % attLists)
+               end if
+
+               if (associated(f_cursor % constituentNames)) then
+                   deallocate(f_cursor % constituentNames)
+               end if
+
+               f_cursor => f_next
+           end do
+       end if
+
+   end subroutine mpas_deallocate_field4d_real_target_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_deallocate_field5D_real_target_4
+!
+!> \brief   MPAS 5D real deallocation routine.
+!> \author  Doug Jacobsen, Michael G. Duda
+!> \date    04/02/13
+!> \details 
+!>  This routine deallocates a 5D real field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_deallocate_field5d_real_target_4(f)!{{{
+
+       implicit none
+
+       type (field5dReal_4), target :: f !< Input: Field to deallocate
+
+       type (field5dReal_4), pointer :: f_cursor, f_next
+       integer :: threadNum
+       integer :: i, iErr
+
+       threadNum = mpas_threading_get_thread_num()
+
+       if ( threadNum == 0 ) then
+           f_cursor => f
+           do while(associated(f_cursor))
+               f_next => f_cursor % next
+
+               if (associated(f_cursor % array)) then
+                   deallocate(f_cursor % array)
+               end if
+
+               if (associated(f_cursor % attLists)) then
+                   do i = 1, size(f_cursor % attLists, dim=1)
+                       call mpas_deallocate_attlist(f_cursor % attLists(i) % attList, iErr)
+                   end do
+                   deallocate(f_cursor % attLists)
+               end if
+
+               if (associated(f_cursor % constituentNames)) then
+                   deallocate(f_cursor % constituentNames)
+               end if
+
+               f_cursor => f_next
+           end do
+       end if
+
+   end subroutine mpas_deallocate_field5d_real_target_4!}}}
+
+
 
 !***********************************************************************
 !
@@ -2725,6 +4031,348 @@ module mpas_field_routines
       end if
 
    end subroutine mpas_allocate_mold_5dreal!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_mold_1dreal
+!
+!> \brief   Allocates a 1-d real array using the dimensions of another array
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Allocates the array dst to have the same dimensions as the array src.
+!> This routine exists to provide the same functionality as F2008's 
+!> ALLOCATE(A,MOLD=B) functionality, or a similar functionality to F2003's
+!> ALLOCATE(A,SOURCE=B) but without actually copying the source values.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_mold_1dreal(dst, src)!{{{
+
+      implicit none
+
+      real(kind=RKIND), dimension(:), pointer :: dst
+      real(kind=RKIND), dimension(:), intent(in) :: src
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+  
+      if ( threadNum == 0 ) then
+         allocate(dst(size(src)))
+      end if
+
+   end subroutine mpas_allocate_mold_1dreal!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_mold_2dreal
+!
+!> \brief   Allocates a 2-d real array using the dimensions of another array
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Allocates the array dst to have the same dimensions as the array src.
+!> This routine exists to provide the same functionality as F2008's 
+!> ALLOCATE(A,MOLD=B) functionality, or a similar functionality to F2003's
+!> ALLOCATE(A,SOURCE=B) but without actually copying the source values.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_mold_2dreal(dst, src)!{{{
+
+      implicit none
+
+      real(kind=RKIND), dimension(:,:), pointer :: dst
+      real(kind=RKIND), dimension(:,:), intent(in) :: src
+  
+      integer, dimension(2) :: dims
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      dims = shape(src)
+
+      if ( threadNum == 0 ) then
+         allocate(dst(dims(1),dims(2)))
+      end if
+
+   end subroutine mpas_allocate_mold_2dreal!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_mold_3dreal
+!
+!> \brief   Allocates a 3-d real array using the dimensions of another array
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Allocates the array dst to have the same dimensions as the array src.
+!> This routine exists to provide the same functionality as F2008's 
+!> ALLOCATE(A,MOLD=B) functionality, or a similar functionality to F2003's
+!> ALLOCATE(A,SOURCE=B) but without actually copying the source values.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_mold_3dreal(dst, src)!{{{
+
+      implicit none
+
+      real(kind=RKIND), dimension(:,:,:), pointer :: dst
+      real(kind=RKIND), dimension(:,:,:), intent(in) :: src
+  
+      integer, dimension(3) :: dims
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      dims = shape(src)
+
+      if ( threadNum == 0 ) then
+         allocate(dst(dims(1),dims(2),dims(3)))
+      end if
+
+   end subroutine mpas_allocate_mold_3dreal!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_mold_4dreal
+!
+!> \brief   Allocates a 4-d real array using the dimensions of another array
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Allocates the array dst to have the same dimensions as the array src.
+!> This routine exists to provide the same functionality as F2008's 
+!> ALLOCATE(A,MOLD=B) functionality, or a similar functionality to F2003's
+!> ALLOCATE(A,SOURCE=B) but without actually copying the source values.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_mold_4dreal(dst, src)!{{{
+
+      implicit none
+
+      real(kind=RKIND), dimension(:,:,:,:), pointer :: dst
+      real(kind=RKIND), dimension(:,:,:,:), intent(in) :: src
+  
+      integer, dimension(4) :: dims
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      dims = shape(src)
+
+      if ( threadNum == 0 ) then
+         allocate(dst(dims(1),dims(2),dims(3),dims(4)))
+      end if
+
+   end subroutine mpas_allocate_mold_4dreal!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_mold_5dreal
+!
+!> \brief   Allocates a 5-d real array using the dimensions of another array
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Allocates the array dst to have the same dimensions as the array src.
+!> This routine exists to provide the same functionality as F2008's 
+!> ALLOCATE(A,MOLD=B) functionality, or a similar functionality to F2003's
+!> ALLOCATE(A,SOURCE=B) but without actually copying the source values.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_mold_5dreal(dst, src)!{{{
+
+      implicit none
+
+      real(kind=RKIND), dimension(:,:,:,:,:), pointer :: dst
+      real(kind=RKIND), dimension(:,:,:,:,:), intent(in) :: src
+  
+      integer, dimension(5) :: dims
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      dims = shape(src)
+
+      if ( threadNum == 0 ) then
+         allocate(dst(dims(1),dims(2),dims(3),dims(4),dims(5)))
+      end if
+
+   end subroutine mpas_allocate_mold_5dreal!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_mold_1dreal
+!
+!> \brief   Allocates a 1-d real array using the dimensions of another array
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Allocates the array dst to have the same dimensions as the array src.
+!> This routine exists to provide the same functionality as F2008's 
+!> ALLOCATE(A,MOLD=B) functionality, or a similar functionality to F2003's
+!> ALLOCATE(A,SOURCE=B) but without actually copying the source values.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_mold_1dreal_4(dst, src)!{{{
+
+      implicit none
+
+      real(kind=R4KIND), dimension(:), pointer :: dst
+      real(kind=R4KIND), dimension(:), intent(in) :: src
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+  
+      if ( threadNum == 0 ) then
+         allocate(dst(size(src)))
+      end if
+
+   end subroutine mpas_allocate_mold_1dreal_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_mold_2dreal
+!
+!> \brief   Allocates a 2-d real array using the dimensions of another array
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Allocates the array dst to have the same dimensions as the array src.
+!> This routine exists to provide the same functionality as F2008's 
+!> ALLOCATE(A,MOLD=B) functionality, or a similar functionality to F2003's
+!> ALLOCATE(A,SOURCE=B) but without actually copying the source values.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_mold_2dreal_4(dst, src)!{{{
+
+      implicit none
+
+      real(kind=R4KIND), dimension(:,:), pointer :: dst
+      real(kind=R4KIND), dimension(:,:), intent(in) :: src
+  
+      integer, dimension(2) :: dims
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      dims = shape(src)
+
+      if ( threadNum == 0 ) then
+         allocate(dst(dims(1),dims(2)))
+      end if
+
+   end subroutine mpas_allocate_mold_2dreal_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_mold_3dreal
+!
+!> \brief   Allocates a 3-d real array using the dimensions of another array
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Allocates the array dst to have the same dimensions as the array src.
+!> This routine exists to provide the same functionality as F2008's 
+!> ALLOCATE(A,MOLD=B) functionality, or a similar functionality to F2003's
+!> ALLOCATE(A,SOURCE=B) but without actually copying the source values.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_mold_3dreal_4(dst, src)!{{{
+
+      implicit none
+
+      real(kind=R4KIND), dimension(:,:,:), pointer :: dst
+      real(kind=R4KIND), dimension(:,:,:), intent(in) :: src
+  
+      integer, dimension(3) :: dims
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      dims = shape(src)
+
+      if ( threadNum == 0 ) then
+         allocate(dst(dims(1),dims(2),dims(3)))
+      end if
+
+   end subroutine mpas_allocate_mold_3dreal_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_mold_4dreal
+!
+!> \brief   Allocates a 4-d real array using the dimensions of another array
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Allocates the array dst to have the same dimensions as the array src.
+!> This routine exists to provide the same functionality as F2008's 
+!> ALLOCATE(A,MOLD=B) functionality, or a similar functionality to F2003's
+!> ALLOCATE(A,SOURCE=B) but without actually copying the source values.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_mold_4dreal_4(dst, src)!{{{
+
+      implicit none
+
+      real(kind=R4KIND), dimension(:,:,:,:), pointer :: dst
+      real(kind=R4KIND), dimension(:,:,:,:), intent(in) :: src
+  
+      integer, dimension(4) :: dims
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      dims = shape(src)
+
+      if ( threadNum == 0 ) then
+         allocate(dst(dims(1),dims(2),dims(3),dims(4)))
+      end if
+
+   end subroutine mpas_allocate_mold_4dreal_4!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_allocate_mold_5dreal
+!
+!> \brief   Allocates a 5-d real array using the dimensions of another array
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Allocates the array dst to have the same dimensions as the array src.
+!> This routine exists to provide the same functionality as F2008's 
+!> ALLOCATE(A,MOLD=B) functionality, or a similar functionality to F2003's
+!> ALLOCATE(A,SOURCE=B) but without actually copying the source values.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_allocate_mold_5dreal_4(dst, src)!{{{
+
+      implicit none
+
+      real(kind=R4KIND), dimension(:,:,:,:,:), pointer :: dst
+      real(kind=R4KIND), dimension(:,:,:,:,:), intent(in) :: src
+  
+      integer, dimension(5) :: dims
+      integer :: threadNum
+
+      threadNum = mpas_threading_get_thread_num()
+
+      dims = shape(src)
+
+      if ( threadNum == 0 ) then
+         allocate(dst(dims(1),dims(2),dims(3),dims(4),dims(5)))
+      end if
+
+   end subroutine mpas_allocate_mold_5dreal_4!}}}
 
 
 !***********************************************************************
@@ -3025,6 +4673,176 @@ module mpas_field_routines
 
    end subroutine mpas_duplicate_field5d_real !}}}
 
+
+!***********************************************************************
+!
+!  routine mpas_duplicate_field0d_real
+!
+!> \brief   MPAS 0D real field duplication routine.
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Creates a duplicate of the source field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_duplicate_field0d_real_4(src, dst, copy_array_only) !{{{
+
+      implicit none
+
+      type (field0DReal_4), intent(in), target :: src     !< Input: Field to be duplicated
+      type (field0DReal_4), pointer :: dst                !< Output: Field to contain the duplicate
+      logical, intent(in), optional :: copy_array_only  !< Input: whether to assume that dst exists, and only copy array data
+
+      type (field0DReal_4), pointer :: src_cursor, dst_cursor
+      logical :: local_copy_only
+      integer :: threadNum, iConstituent
+
+#include "duplicate_field_scalar.inc"
+
+   end subroutine mpas_duplicate_field0d_real_4 !}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_duplicate_field1d_real
+!
+!> \brief   MPAS 1D real field duplication routine.
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Creates a duplicate of the source field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_duplicate_field1d_real_4(src, dst, copy_array_only) !{{{
+
+      implicit none
+
+      type (field1DReal_4), intent(in), target :: src     !< Input: Field to be duplicated
+      type (field1DReal_4), pointer :: dst                !< Output: Field to contain the duplicate
+      logical, intent(in), optional :: copy_array_only  !< Input: whether to assume that dst exists, and only copy array data
+
+      type (field1DReal_4), pointer :: src_cursor, dst_cursor
+      logical :: local_copy_only
+      integer :: threadNum, iConstituent
+
+#include "duplicate_field_array.inc"
+
+   end subroutine mpas_duplicate_field1d_real_4 !}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_duplicate_field2d_real
+!
+!> \brief   MPAS 2D real field duplication routine.
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Creates a duplicate of the source field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_duplicate_field2d_real_4(src, dst, copy_array_only) !{{{
+
+      implicit none
+
+      type (field2DReal_4), intent(in), target :: src     !< Input: Field to be duplicated
+      type (field2DReal_4), pointer :: dst                !< Output: Field to contain the duplicate
+      logical, intent(in), optional :: copy_array_only  !< Input: whether to assume that dst exists, and only copy array data
+
+      type (field2DReal_4), pointer :: src_cursor, dst_cursor
+      logical :: local_copy_only
+      integer :: threadNum, iConstituent
+
+#include "duplicate_field_array.inc"
+
+   end subroutine mpas_duplicate_field2d_real_4 !}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_duplicate_field3d_real
+!
+!> \brief   MPAS 3D real field duplication routine.
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Creates a duplicate of the source field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_duplicate_field3d_real_4(src, dst, copy_array_only) !{{{
+
+      implicit none
+
+      type (field3DReal_4), intent(in), target :: src     !< Input: Field to be duplicated
+      type (field3DReal_4), pointer :: dst                !< Output: Field to contain the duplicate
+      logical, intent(in), optional :: copy_array_only  !< Input: whether to assume that dst exists, and only copy array data
+
+      type (field3DReal_4), pointer :: src_cursor, dst_cursor
+      logical :: local_copy_only
+      integer :: threadNum, iConstituent
+
+#include "duplicate_field_array.inc"
+
+   end subroutine mpas_duplicate_field3d_real_4 !}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_duplicate_field4d_real
+!
+!> \brief   MPAS 4D real field duplication routine.
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Creates a duplicate of the source field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_duplicate_field4d_real_4(src, dst, copy_array_only) !{{{
+
+      implicit none
+
+      type (field4DReal_4), intent(in), target :: src     !< Input: Field to be duplicated
+      type (field4DReal_4), pointer :: dst                !< Output: Field to contain the duplicate
+      logical, intent(in), optional :: copy_array_only  !< Input: whether to assume that dst exists, and only copy array data
+
+      type (field4DReal_4), pointer :: src_cursor, dst_cursor
+      logical :: local_copy_only
+      integer :: threadNum, iConstituent
+
+#include "duplicate_field_array.inc"
+
+   end subroutine mpas_duplicate_field4d_real_4 !}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_duplicate_field5d_real
+!
+!> \brief   MPAS 5D real field duplication routine.
+!> \author  Michael Duda
+!> \date    04/12/14
+!> \details 
+!> Creates a duplicate of the source field.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_duplicate_field5d_real_4(src, dst, copy_array_only) !{{{
+
+      implicit none
+
+      type (field5DReal_4), intent(in), target :: src     !< Input: Field to be duplicated
+      type (field5DReal_4), pointer :: dst                !< Output: Field to contain the duplicate
+      logical, intent(in), optional :: copy_array_only  !< Input: whether to assume that dst exists, and only copy array data
+
+      type (field5DReal_4), pointer :: src_cursor, dst_cursor
+      logical :: local_copy_only
+      integer :: threadNum, iConstituent
+
+#include "duplicate_field_array.inc"
+
+   end subroutine mpas_duplicate_field5d_real_4 !}}}
+
+
+!***********************************************************************
 
 !***********************************************************************
 !
@@ -3390,6 +5208,179 @@ module mpas_field_routines
       integer :: i, nlevs, threadNum
       type (field5DReal), dimension(:), pointer :: fldarr_ptr
       real(kind=RKIND), dimension(:,:,:,:,:), pointer :: arr_ptr
+      
+#include "shift_time_levs_array.inc"
+
+   end subroutine mpas_shift_time_levs_5dreal!}}}
+
+!***********************************************************************
+!
+!  routine mpas_shift_time_levs_0dreal
+!
+!> \brief   MPAS 0D real time-level shift routine
+!> \author  Michael Duda
+!> \date    04/14/14
+!> \details 
+!> Shifts the contents of the array of fields provided by the input argument.
+!> After returning, the storage for fldarr(n) will point to what was the storage 
+!> for fldarr(n+1) in a period fashion, so that, for N time levels, the storage
+!> for fldarr(N) will point to what was the storage for fldarr(1).
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_shift_time_levs_0dreal_4(fldarr)!{{{
+
+      implicit none
+
+      type (field0DReal_4), dimension(:), pointer :: fldarr
+
+      integer :: i, nlevs, threadNum
+      type (field0DReal_4), dimension(:), pointer :: fldarr_ptr
+      real(kind=R4KIND) :: scalar
+      
+#include "shift_time_levs_scalar.inc"
+
+   end subroutine mpas_shift_time_levs_0dreal!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_shift_time_levs_1dreal
+!
+!> \brief   MPAS 1D real time-level shift routine
+!> \author  Michael Duda
+!> \date    04/14/14
+!> \details 
+!> Shifts the contents of the array of fields provided by the input argument.
+!> After returning, the storage for fldarr(n) will point to what was the storage 
+!> for fldarr(n+1) in a period fashion, so that, for N time levels, the storage
+!> for fldarr(N) will point to what was the storage for fldarr(1).
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_shift_time_levs_1dreal_4(fldarr)!{{{
+
+      implicit none
+
+      type (field1DReal_4), dimension(:), pointer :: fldarr
+
+      integer :: i, nlevs, threadNum
+      type (field1DReal_4), dimension(:), pointer :: fldarr_ptr
+      real(kind=R4KIND), dimension(:), pointer :: arr_ptr
+      
+#include "shift_time_levs_array.inc"
+
+   end subroutine mpas_shift_time_levs_1dreal!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_shift_time_levs_2dreal
+!
+!> \brief   MPAS 2D real time-level shift routine
+!> \author  Michael Duda
+!> \date    04/14/14
+!> \details 
+!> Shifts the contents of the array of fields provided by the input argument.
+!> After returning, the storage for fldarr(n) will point to what was the storage 
+!> for fldarr(n+1) in a period fashion, so that, for N time levels, the storage
+!> for fldarr(N) will point to what was the storage for fldarr(1).
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_shift_time_levs_2dreal_4(fldarr)!{{{
+
+      implicit none
+
+      type (field2DReal_4), dimension(:), pointer :: fldarr
+
+      integer :: i, nlevs, threadNum
+      type (field2DReal_4), dimension(:), pointer :: fldarr_ptr
+      real(kind=R4KIND), dimension(:,:), pointer :: arr_ptr
+      
+#include "shift_time_levs_array.inc"
+
+   end subroutine mpas_shift_time_levs_2dreal!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_shift_time_levs_3dreal
+!
+!> \brief   MPAS 3D real time-level shift routine
+!> \author  Michael Duda
+!> \date    04/14/14
+!> \details 
+!> Shifts the contents of the array of fields provided by the input argument.
+!> After returning, the storage for fldarr(n) will point to what was the storage 
+!> for fldarr(n+1) in a period fashion, so that, for N time levels, the storage
+!> for fldarr(N) will point to what was the storage for fldarr(1).
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_shift_time_levs_3dreal_4(fldarr)!{{{
+
+      implicit none
+
+      type (field3DReal_4), dimension(:), pointer :: fldarr
+
+      integer :: i, nlevs, threadNum
+      type (field3DReal_4), dimension(:), pointer :: fldarr_ptr
+      real(kind=R4KIND), dimension(:,:,:), pointer :: arr_ptr
+      
+#include "shift_time_levs_array.inc"
+
+   end subroutine mpas_shift_time_levs_3dreal!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_shift_time_levs_4dreal
+!
+!> \brief   MPAS 4D real time-level shift routine
+!> \author  Michael Duda
+!> \date    04/14/14
+!> \details 
+!> Shifts the contents of the array of fields provided by the input argument.
+!> After returning, the storage for fldarr(n) will point to what was the storage 
+!> for fldarr(n+1) in a period fashion, so that, for N time levels, the storage
+!> for fldarr(N) will point to what was the storage for fldarr(1).
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_shift_time_levs_4dreal_4(fldarr)!{{{
+
+      implicit none
+
+      type (field4DReal_4), dimension(:), pointer :: fldarr
+
+      integer :: i, nlevs, threadNum
+      type (field4DReal_4), dimension(:), pointer :: fldarr_ptr
+      real(kind=R4KIND), dimension(:,:,:,:), pointer :: arr_ptr
+      
+#include "shift_time_levs_array.inc"
+
+   end subroutine mpas_shift_time_levs_4dreal!}}}
+
+
+!***********************************************************************
+!
+!  routine mpas_shift_time_levs_5dreal
+!
+!> \brief   MPAS 5D real time-level shift routine
+!> \author  Michael Duda
+!> \date    04/14/14
+!> \details 
+!> Shifts the contents of the array of fields provided by the input argument.
+!> After returning, the storage for fldarr(n) will point to what was the storage 
+!> for fldarr(n+1) in a period fashion, so that, for N time levels, the storage
+!> for fldarr(N) will point to what was the storage for fldarr(1).
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_shift_time_levs_5dreal_4(fldarr)!{{{
+
+      implicit none
+
+      type (field5DReal_4), dimension(:), pointer :: fldarr
+
+      integer :: i, nlevs, threadNum
+      type (field5DReal_4), dimension(:), pointer :: fldarr_ptr
+      real(kind=R4KIND), dimension(:,:,:,:,:), pointer :: arr_ptr
       
 #include "shift_time_levs_array.inc"
 

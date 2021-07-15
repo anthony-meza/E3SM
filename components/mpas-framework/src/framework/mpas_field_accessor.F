@@ -25,10 +25,10 @@
 module mpas_field_accessor
 
     use mpas_derived_types, only : mpas_pool_type, mpas_pool_field_info_type, &
-                                   MPAS_POOL_REAL, MPAS_POOL_INTEGER, MPAS_POOL_CHARACTER, MPAS_POOL_LOGICAL, &
-                                   field0DReal, field1DReal, field2DReal, field3DReal, field4DReal, field5DReal, &
-                                   field0DInteger, field1DInteger, field2DInteger, field3DInteger, &
-                                   field0DChar, field1DChar, &
+                                   MPAS_POOL_REAL, MPAS_POOL_REAL_4, MPAS_POOL_INTEGER, MPAS_POOL_CHARACTER, &
+                                   MPAS_POOL_LOGICAL, field0DReal, field1DReal, field2DReal, field3DReal, & 
+                                   field4DReal, field5DReal, field0DInteger, field1DInteger, field2DInteger, &
+                                   field3DInteger, field0DChar, field1DChar, &
                                    field0DLogical, &
                                    MPAS_LOG_ERR
     use mpas_kind_types, only : RKIND, StrKIND
@@ -37,6 +37,8 @@ module mpas_field_accessor
 
     interface mpas_field_access_missing_value
         module procedure mpas_field_access_msgval_real
+        module procedure mpas_field_access_msgval_real_4
+
         module procedure mpas_field_access_msgval_int
         module procedure mpas_field_access_msgval_char
         module procedure mpas_field_access_msgval_logical
@@ -113,6 +115,60 @@ module mpas_field_accessor
 
     end subroutine mpas_field_access_msgval_real
 
+    subroutine mpas_field_access_msgval_real_4(fieldPool, fieldName, missingValue)
+
+        implicit none
+
+        type (mpas_pool_type), intent(in) :: fieldPool
+        character(len=*), intent(in) :: fieldName
+        real(kind=R4KIND), intent(out) :: missingValue
+
+        type (mpas_pool_field_info_type) :: fieldInfo
+        type (field0DReal_4), pointer :: r0 => null()
+        type (field1DReal_4), pointer :: r1 => null()
+        type (field2DReal_4), pointer :: r2 => null()
+        type (field3DReal_4), pointer :: r3 => null()
+        type (field4DReal_4), pointer :: r4 => null()
+        type (field5DReal_4), pointer :: r5 => null()
+
+
+        ! Initialize fieldType so we can detect whether returned info is valid
+        fieldInfo % fieldType = MPAS_POOL_REAL_4 - 1
+        call mpas_pool_get_field_info(fieldPool, trim(fieldName), fieldInfo)
+
+        if (fieldInfo % fieldType /= MPAS_POOL_REAL_4) then
+            ACCESSOR_ERROR_WRITE('Cannot return missingValue for field '//trim(fieldName))
+            ACCESSOR_ERROR_WRITE('Either '//trim(fieldName)//' was not found in the specified pool or is not a real-type field')
+            return
+        end if
+
+        ! At this point, we know that the field exists in the pool and is a real-valued field, 
+        ! so we should not need extensive error checking below...
+
+        select case(fieldInfo % nDims)
+            case (0)
+                call mpas_pool_get_field(fieldPool, trim(fieldName), r0)
+                missingValue = r0 % missingValue
+            case (1)
+                call mpas_pool_get_field(fieldPool, trim(fieldName), r1)
+                missingValue = r1 % missingValue
+            case (2)
+                call mpas_pool_get_field(fieldPool, trim(fieldName), r2)
+                missingValue = r2 % missingValue
+            case (3)
+                call mpas_pool_get_field(fieldPool, trim(fieldName), r3)
+                missingValue = r3 % missingValue
+            case (4)
+                call mpas_pool_get_field(fieldPool, trim(fieldName), r4)
+                missingValue = r4 % missingValue
+            case (5)
+                call mpas_pool_get_field(fieldPool, trim(fieldName), r5)
+                missingValue = r5 % missingValue
+            case default
+                ACCESSOR_ERROR_WRITE('Unhandled dimensionality (6-d or more) in mpas_field_access_msgval_real')
+        end select
+
+    end subroutine mpas_field_access_msgval_real_4
 
     !-----------------------------------------------------------------------
     !  subroutine mpas_field_access_missing_value

@@ -27,6 +27,10 @@ module mpas_attlist
       module procedure mpas_add_att_int1d
       module procedure mpas_add_att_real0d
       module procedure mpas_add_att_real1d
+
+      module procedure mpas_add_att_real0d_4
+      module procedure mpas_add_att_real1d_4
+
       module procedure mpas_add_att_text
    end interface mpas_add_att
 
@@ -35,6 +39,10 @@ module mpas_attlist
       module procedure mpas_get_att_int1d
       module procedure mpas_get_att_real0d
       module procedure mpas_get_att_real1d
+
+      module procedure mpas_get_att_real0d_4
+      module procedure mpas_get_att_real1d_4
+
       module procedure mpas_get_att_text
    end interface mpas_get_att
 
@@ -210,6 +218,92 @@ contains
       cursor % attValueRealA(:) = attValue(:)
 
    end subroutine mpas_add_att_real1d!}}}
+
+!***********************************************************************
+!
+!  routine mpas_add_att_real0d
+!
+!> \brief   MPAS Add 0D real attribute routine
+!> \author  Michael Duda
+!> \date    03/27/13
+!> \details 
+!> This routine adds a 0D real attribute the attribute list.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_add_att_real0d_4(attList, attName, attValue, ierr)!{{{
+
+      implicit none
+
+      type (att_list_type), pointer :: attList !< Input/Output: Attribute list
+      character (len=*), intent(in) :: attName !< Input: Attribute name
+      real (kind=R4KIND), intent(in) :: attValue !< Input: Attribute value
+      integer, intent(out), optional :: ierr !< Output: Error flag
+
+      type (att_list_type), pointer :: cursor
+
+      if (present(ierr)) ierr = 0
+
+      if (.not. associated(attList)) then
+         allocate(attList)
+         cursor => attList
+      else
+         cursor => attList
+         do while (associated(cursor % next))
+            cursor => cursor % next
+         end do
+         allocate(cursor % next)
+         cursor => cursor % next
+      end if
+     
+      cursor % attType = MPAS_ATT_REAL_4
+      write(cursor % attName,'(a)') trim(attName)
+      cursor % attValueReal = attValue
+
+   end subroutine mpas_add_att_real0d_4!}}}
+
+!***********************************************************************
+!
+!  routine mpas_add_att_real1d
+!
+!> \brief   MPAS Add 1D real attribute routine
+!> \author  Michael Duda
+!> \date    03/27/13
+!> \details 
+!> This routine adds a 1D real attribute the attribute list.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_add_att_real1d_4attList, attName, attValue, ierr)!{{{
+
+      implicit none
+
+      type (att_list_type), pointer :: attList !< Input/Output: Attribute list
+      character (len=*), intent(in) :: attName !< Input: Attribute name
+      real (kind=R4KIND), dimension(:), intent(in) :: attValue !< Input: Attribute value
+      integer, intent(out), optional :: ierr !< Output: Error flag
+
+      type (att_list_type), pointer :: cursor
+
+      if (present(ierr)) ierr = 0
+
+      if (.not. associated(attList)) then
+         allocate(attList)
+         cursor => attList
+      else
+         cursor => attList
+         do while (associated(cursor % next))
+            cursor => cursor % next
+         end do
+         allocate(cursor % next)
+         cursor => cursor % next
+      end if
+     
+      cursor % attType = MPAS_ATT_REALA_4
+      allocate(cursor % attValueRealA(size(attValue)))
+      write(cursor % attName,'(a)') trim(attName)
+      cursor % attValueRealA(:) = attValue(:)
+
+   end subroutine mpas_add_att_real1d_4!}}}
+
 
 !***********************************************************************
 !
@@ -418,6 +512,90 @@ contains
       if (present(ierr)) ierr = 1    ! Not found
 
    end subroutine mpas_get_att_real1d!}}}
+
+!***********************************************************************
+!
+!  routine mpas_get_att_real0d
+!
+!> \brief   MPAS get 0D real attribute routine
+!> \author  Michael Duda
+!> \date    03/27/13
+!> \details 
+!> This routine returns the attribute value of a 0D real attribute.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_get_att_real0d_4(attList, attName, attValue, ierr)!{{{
+
+      implicit none
+
+      type (att_list_type), pointer :: attList !< Input: Attribute list
+      character (len=*), intent(in) :: attName !< Input: Attribute name
+      real (kind=R4KIND), intent(out) :: attValue !< Output: Attribute value
+      integer, intent(out), optional :: ierr !< Output: Error flag
+
+      type (att_list_type), pointer :: cursor
+
+      if (present(ierr)) ierr = 0
+
+      cursor => attList
+      do while (associated(cursor))
+         if (trim(attName) == trim(cursor % attName)) then
+            if (cursor % attType /= MPAS_ATT_REAL_4) then
+               if (present(ierr)) ierr = 1        ! Wrong type
+            else
+               attValue = cursor % attValueReal
+            end if
+            return
+         end if 
+         cursor => cursor % next
+      end do
+
+      if (present(ierr)) ierr = 1    ! Not found
+
+   end subroutine mpas_get_att_real0d_4!}}}
+
+!***********************************************************************
+!
+!  routine mpas_get_att_real1d
+!
+!> \brief   MPAS get 1D real attribute routine
+!> \author  Michael Duda
+!> \date    03/27/13
+!> \details 
+!> This routine returns the attribute value of a 1D real attribute.
+!
+!-----------------------------------------------------------------------
+   subroutine mpas_get_att_real1d_4(attList, attName, attValue, ierr)!{{{
+
+      implicit none
+
+      type (att_list_type), pointer :: attList !< Input: Attribute list
+      character (len=*), intent(in) :: attName !< Input: Attribute name
+      real (kind=R4KIND), dimension(:), pointer :: attValue !< Output: Attribute value
+      integer, intent(out), optional :: ierr !< Output: Error flag
+
+      type (att_list_type), pointer :: cursor
+
+      if (present(ierr)) ierr = 0
+
+      cursor => attList
+      do while (associated(cursor))
+         if (trim(attName) == trim(cursor % attName)) then
+            if (cursor % attType /= MPAS_ATT_REALA_4) then
+               if (present(ierr)) ierr = 1        ! Wrong type
+            else
+               allocate(attValue(size(cursor % attValueRealA)))
+               attValue(:) = cursor % attValueRealA(:)
+            end if
+            return
+         end if 
+         cursor => cursor % next
+      end do
+
+      if (present(ierr)) ierr = 1    ! Not found
+
+   end subroutine mpas_get_att_real1d_4!}}}
+
 
 !***********************************************************************
 !

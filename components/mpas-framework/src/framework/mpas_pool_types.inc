@@ -13,7 +13,8 @@
    integer, parameter :: MPAS_POOL_REAL      = 1009, &
                          MPAS_POOL_INTEGER   = 1010, &
                          MPAS_POOL_LOGICAL   = 1011, &
-                         MPAS_POOL_CHARACTER = 1012
+                         MPAS_POOL_CHARACTER = 1012, &
+                         MPAS_POOL_REAL_4    = 1013
 
    type mpas_pool_data_type
       integer :: contentsType

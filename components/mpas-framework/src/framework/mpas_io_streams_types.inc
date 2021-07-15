@@ -23,7 +23,12 @@
                          FIELD_4D_REAL  =  9, &
                          FIELD_5D_REAL  =  10, &
                          FIELD_0D_CHAR  =  11, &
-                         FIELD_1D_CHAR  =  12
+                         FIELD_1D_CHAR  =  12, &
+                         FIELD_0D_REAL_4  = 13, &
+                         FIELD_1D_REAL_4  = 14, &
+                         FIELD_2D_REAL_4  = 15, &
+                         FIELD_3D_REAL_4  = 16, &
+                         FIELD_4D_REAL_4  = 17
 
    type field_list_type
       integer :: field_type = -999
@@ -41,6 +46,14 @@
       type (field3dReal), pointer :: real3dField => null()
       type (field4dReal), pointer :: real4dField => null()
       type (field5dReal), pointer :: real5dField => null()
+
+      type (field0dReal_4), pointer :: real0dField_4 => null()
+      type (field1dReal_4), pointer :: real1dField_4 => null()
+      type (field2dReal_4), pointer :: real2dField_4 => null()
+      type (field3dReal_4), pointer :: real3dField_4 => null()
+      type (field4dReal_4), pointer :: real4dField_4 => null()
+      type (field5dReal_4), pointer :: real5dField_4 => null()
+
       type (field0dChar), pointer :: char0dField => null()
       type (field1dChar), pointer :: char1dField => null()
       type (field_list_type), pointer :: next => null()

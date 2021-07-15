@@ -49,6 +49,9 @@ include 'mpif.h'
    integer, parameter :: MPI_REALKIND = MPI_REAL
    integer, parameter :: MPI_2REALKIND = MPI_2REAL
 #else
+   integer, parameter :: MPI_REALKIND_4 = MPI_REAL
+   integer, parameter :: MPI_2REALKIND_4 = MPI_2REAL
+
    integer, parameter :: MPI_REALKIND = MPI_DOUBLE_PRECISION
    integer, parameter :: MPI_2REALKIND = MPI_2DOUBLE_PRECISION
 #endif

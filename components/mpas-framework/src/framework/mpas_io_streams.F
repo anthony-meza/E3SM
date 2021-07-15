@@ -35,6 +35,14 @@ module mpas_io_streams
       module procedure MPAS_streamAddField_3dReal
       module procedure MPAS_streamAddField_4dReal
       module procedure MPAS_streamAddField_5dReal
+
+      module procedure MPAS_streamAddField_0dReal_4
+      module procedure MPAS_streamAddField_1dReal_4
+      module procedure MPAS_streamAddField_2dReal_4
+      module procedure MPAS_streamAddField_3dReal_4
+      module procedure MPAS_streamAddField_4dReal_4
+      module procedure MPAS_streamAddField_5dReal_4
+
       module procedure MPAS_streamAddField_0dChar
       module procedure MPAS_streamAddField_1dChar
    end interface MPAS_streamAddField
@@ -50,6 +58,14 @@ module mpas_io_streams
       module procedure MPAS_streamUpdateField_3dReal
       module procedure MPAS_streamUpdateField_4dReal
       module procedure MPAS_streamUpdateField_5dReal
+
+      module procedure MPAS_streamUpdateField_0dReal_4
+      module procedure MPAS_streamUpdateField_1dReal_4
+      module procedure MPAS_streamUpdateField_2dReal_4
+      module procedure MPAS_streamUpdateField_3dReal_4
+      module procedure MPAS_streamUpdateField_4dReal_4
+      module procedure MPAS_streamUpdateField_5dReal_4
+
       module procedure MPAS_streamUpdateField_0dChar
       module procedure MPAS_streamUpdateField_1dChar
    end interface MPAS_streamUpdateField
@@ -59,6 +75,10 @@ module mpas_io_streams
       module procedure MPAS_readStreamAtt_1dInteger
       module procedure MPAS_readStreamAtt_0dReal
       module procedure MPAS_readStreamAtt_1dReal
+
+      module procedure MPAS_readStreamAtt_0dReal_4
+      module procedure MPAS_readStreamAtt_1dReal_4
+
       module procedure MPAS_readStreamAtt_text
    end interface MPAS_readStreamAtt
 
@@ -67,6 +87,10 @@ module mpas_io_streams
       module procedure MPAS_writeStreamAtt_1dInteger
       module procedure MPAS_writeStreamAtt_0dReal
       module procedure MPAS_writeStreamAtt_1dReal
+
+      module procedure MPAS_writeStreamAtt_0dReal_4
+      module procedure MPAS_writeStreamAtt_1dReal_4
+
       module procedure MPAS_writeStreamAtt_text
    end interface MPAS_writeStreamAtt
 
@@ -1465,6 +1489,688 @@ module mpas_io_streams
 
    end subroutine MPAS_streamAddField_5dReal
 
+   subroutine MPAS_streamAddField_0dReal_4(stream, field, precision, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      type (field0DReal_4), intent(in), target :: field
+      integer, intent(in), optional :: precision
+      integer, intent(out), optional :: ierr
+
+      integer :: io_err
+      integer :: i
+      integer :: idim
+      integer :: totalDimSize, globalDimSize
+      integer :: ndims
+      type (field0DReal_4), pointer :: field_ptr
+      character (len=StrKIND), dimension(:), pointer :: dimNames
+      integer, dimension(:), pointer :: indices
+      integer, dimension(:), pointer :: dimSizes
+      type (field_list_type), pointer :: field_list_cursor
+      type (field_list_type), pointer :: new_field_list_node
+      integer :: local_precision
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+     
+      if (present(precision)) then
+         local_precision = precision
+      else
+         local_precision = stream % defaultPrecision
+      end if
+
+!call mpas_log_write('... Adding field '//trim(field % fieldName)//' to stream')
+
+      ndims = 0
+
+!call mpas_log_write('... field has $i dimensions', intArgs=(/ndims/))
+
+      ! 
+      ! Determine whether the field is decomposed, the indices that are owned by this task's blocks,
+      !    and the total number of outer-indices owned by this task
+      ! 
+      idim = ndims
+      allocate(indices(0))
+      allocate(dimSizes(0))
+      allocate(dimNames(0))
+      globalDimSize = 0
+      totalDimSize = 0
+
+      call MPAS_streamAddField_generic(stream, trim(field % fieldName), REAL_IO_TYPE , dimNames, dimSizes, &
+                                       field % hasTimeDimension, field % isDecomposed, totalDimSize, globalDimSize, indices, precision=local_precision, ierr=io_err)
+
+      deallocate(indices)
+      deallocate(dimSizes)
+      deallocate(dimNames)
+      if (io_err /= MPAS_STREAM_NOERR) then
+          if (present(ierr)) ierr = MPAS_IO_ERR
+          return
+      end if
+
+      call put_get_field_atts(stream % fileHandle, stream % ioDirection, trim(field % fieldname), field % attLists(1) % attList)
+
+
+      !
+      ! Set field pointer and type in fieldList
+      !
+      new_field_list_node => stream % fieldList
+      do while (associated(new_field_list_node % next))
+         new_field_list_node => new_field_list_node % next
+      end do
+      new_field_list_node % field_type = FIELD_0D_REAL_4
+      new_field_list_node % real0dField_4 => field
+
+!call mpas_log_write('... done adding field')
+
+   end subroutine MPAS_streamAddField_0dReal_4
+
+
+   subroutine MPAS_streamAddField_1dReal_4(stream, field, precision, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      type (field1DReal_4), intent(in), target :: field
+      integer, intent(in), optional :: precision
+      integer, intent(out), optional :: ierr
+
+      integer :: io_err
+      integer :: i
+      integer :: idim
+      integer :: totalDimSize, globalDimSize
+      integer :: ndims
+      type (field1DReal_4), pointer :: field_ptr
+      character (len=StrKIND), dimension(5) :: dimNames
+      character (len=StrKIND), dimension(:), pointer :: dimNamesInq
+      character (len=StrKIND), dimension(0) :: dimNames0
+      integer, dimension(0) :: dimSizes0
+      integer, dimension(:), pointer :: indices
+      type (field_list_type), pointer :: field_list_cursor
+      type (field_list_type), pointer :: new_field_list_node
+      logical :: any_success
+      logical, dimension(:), pointer :: isAvailable
+      integer :: local_precision
+
+      type (mpas_pool_type), pointer :: meshPool
+      integer, dimension(:), pointer :: indexArray
+      integer, pointer :: indexDimension
+      character (len=StrKIND) :: elementName, elementNamePlural
+      logical :: meshFieldDim
+
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+     
+      if (present(precision)) then
+         local_precision = precision
+      else
+         local_precision = stream % defaultPrecision
+      end if
+
+      if (.not. field % isPersistent .or. .not. field % isActive) then
+        return
+      end if
+
+!call mpas_log_write('... Adding field '//trim(field % fieldName)//' to stream')
+
+      ndims = size(field % dimSizes)
+
+!call mpas_log_write('... field has $i dimensions', intArgs=(/ndims/))
+
+      ! 
+      ! Determine whether the field is decomposed, the indices that are owned by this task's blocks,
+      !    and the total number of outer-indices owned by this task
+      ! 
+#include "add_field_indices.inc"
+
+      
+      any_success = .false.
+      if (field % isVarArray) then
+         allocate(isAvailable(size(field % constituentNames)))
+         isAvailable(:) = .false.
+         do i=1,size(field % constituentNames)
+            call MPAS_streamAddField_generic(stream, trim(field % constituentNames(i)), REAL_IO_TYPE , dimNames0, &
+                                             dimSizes0, field % hasTimeDimension, field % isDecomposed, totalDimSize, globalDimSize, &
+                                             indices, precision=local_precision, ierr=io_err)
+            if (io_err == MPAS_STREAM_NOERR) then
+               isAvailable(i) = .true.
+               any_success = .true.
+            end if
+         end do
+      else
+         nullify(isAvailable)
+         call MPAS_streamAddField_generic(stream, trim(field % fieldName), REAL_IO_TYPE , field % dimNames, field % dimSizes, &
+                                          field % hasTimeDimension, field % isDecomposed, totalDimSize, globalDimSize, indices, precision=local_precision, ierr=io_err)
+         if (io_err == MPAS_STREAM_NOERR) then
+            any_success = .true.
+         end if
+      end if
+
+      deallocate(indices)
+      if (.not. any_success) then
+          if (present(ierr)) ierr = MPAS_IO_ERR
+          return
+      end if
+
+      if (field % isVarArray) then
+         do i=1,size(field % constituentNames)
+            call put_get_field_atts(stream % fileHandle, stream % ioDirection, trim(field % constituentNames(i)), field % attLists(i) % attList)
+         end do
+      else
+         call put_get_field_atts(stream % fileHandle, stream % ioDirection, trim(field % fieldname), field % attLists(1) % attList)
+      end if
+
+
+      !
+      ! Set field pointer and type in fieldList
+      !
+      new_field_list_node => stream % fieldList
+      do while (associated(new_field_list_node % next))
+         new_field_list_node => new_field_list_node % next
+      end do
+      new_field_list_node % field_type = FIELD_1D_REAL_4
+      new_field_list_node % real1dField_4 => field
+      new_field_list_node % isAvailable => isAvailable
+
+!call mpas_log_write('... done adding field')
+
+   end subroutine MPAS_streamAddField_1dReal_4
+
+
+   subroutine MPAS_streamAddField_2dReal_4(stream, field, precision, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      type (field2DReal_4), intent(in), target :: field
+      integer, intent(in), optional :: precision
+      integer, intent(out), optional :: ierr
+
+      integer :: io_err
+      integer :: i
+      integer :: idim
+      integer :: totalDimSize, globalDimSize
+      integer :: ndims
+      type (field2DReal_4), pointer :: field_ptr
+      character (len=StrKIND), dimension(5) :: dimNames
+      character (len=StrKIND), dimension(:), pointer :: dimNamesInq
+      integer, dimension(:), pointer :: indices
+      type (field_list_type), pointer :: field_list_cursor
+      type (field_list_type), pointer :: new_field_list_node
+      logical :: any_success
+      logical, dimension(:), pointer :: isAvailable
+      integer :: local_precision
+
+      type (mpas_pool_type), pointer :: meshPool
+      integer, dimension(:), pointer :: indexArray
+      integer, pointer :: indexDimension
+      character (len=StrKIND) :: elementName, elementNamePlural
+      logical :: meshFieldDim
+
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+     
+      if (present(precision)) then
+         local_precision = precision
+      else
+         local_precision = stream % defaultPrecision
+      end if
+
+      if (.not. field % isPersistent .or. .not. field % isActive) then
+        return
+      end if
+
+!call mpas_log_write('... Adding field '//trim(field % fieldName)//' to stream')
+
+      ndims = size(field % dimSizes)
+
+!call mpas_log_write('... field has $i dimensions', intArgs=(/ndims/))
+
+      ! 
+      ! Determine whether the field is decomposed, the indices that are owned by this task's blocks,
+      !    and the total number of outer-indices owned by this task
+      ! 
+#include "add_field_indices.inc"
+
+      
+      any_success = .false.
+      if (field % isVarArray) then
+         allocate(isAvailable(size(field % constituentNames)))
+         isAvailable(:) = .false.
+         do i=1,size(field % constituentNames)
+            call MPAS_streamAddField_generic(stream, trim(field % constituentNames(i)), REAL_IO_TYPE , field % dimNames(2:ndims), &
+                                             field % dimSizes(2:ndims), field % hasTimeDimension, field % isDecomposed, totalDimSize, globalDimSize, &
+                                             indices, precision=local_precision, ierr=io_err)
+            if (io_err == MPAS_STREAM_NOERR) then
+               isAvailable(i) = .true.
+               any_success = .true.
+            end if
+         end do
+      else
+         nullify(isAvailable)
+         call MPAS_streamAddField_generic(stream, trim(field % fieldName), REAL_IO_TYPE , field % dimNames, field % dimSizes, &
+                                          field % hasTimeDimension, field % isDecomposed, totalDimSize, globalDimSize, indices, precision=local_precision, ierr=io_err)
+         if (io_err == MPAS_STREAM_NOERR) then
+            any_success = .true.
+         end if
+      end if
+
+      deallocate(indices)
+      if (.not. any_success) then
+          if (present(ierr)) ierr = MPAS_IO_ERR
+          return
+      end if
+
+      if (field % isVarArray) then
+         do i=1,size(field % constituentNames)
+            call put_get_field_atts(stream % fileHandle, stream % ioDirection, trim(field % constituentNames(i)), field % attLists(i) % attList)
+         end do
+      else
+         call put_get_field_atts(stream % fileHandle, stream % ioDirection, trim(field % fieldname), field % attLists(1) % attList)
+      end if
+
+
+      !
+      ! Set field pointer and type in fieldList
+      !
+      new_field_list_node => stream % fieldList
+      do while (associated(new_field_list_node % next))
+         new_field_list_node => new_field_list_node % next
+      end do
+      new_field_list_node % field_type = FIELD_2D_REAL_4
+      new_field_list_node % real2dField_4 => field
+      new_field_list_node % isAvailable => isAvailable
+
+!call mpas_log_write('... done adding field')
+
+   end subroutine MPAS_streamAddField_2dReal_4
+
+
+   subroutine MPAS_streamAddField_3dReal_4(stream, field, precision, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      type (field3DReal_4), intent(in), target :: field
+      integer, intent(in), optional :: precision
+      integer, intent(out), optional :: ierr
+
+      integer :: io_err
+      integer :: i
+      integer :: idim
+      integer :: totalDimSize, globalDimSize
+      integer :: ndims
+      type (field3DReal_4), pointer :: field_ptr
+      character (len=StrKIND), dimension(5) :: dimNames
+      character (len=StrKIND), dimension(:), pointer :: dimNamesInq
+      integer, dimension(:), pointer :: indices
+      type (field_list_type), pointer :: field_list_cursor
+      type (field_list_type), pointer :: new_field_list_node
+      logical :: any_success
+      logical, dimension(:), pointer :: isAvailable
+      integer :: local_precision
+
+      type (mpas_pool_type), pointer :: meshPool
+      integer, dimension(:), pointer :: indexArray
+      integer, pointer :: indexDimension
+      character (len=StrKIND) :: elementName, elementNamePlural
+      logical :: meshFieldDim
+
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+     
+      if (present(precision)) then
+         local_precision = precision
+      else
+         local_precision = stream % defaultPrecision
+      end if
+
+      if (.not. field % isPersistent .or. .not. field % isActive) then
+        return
+      end if
+
+!call mpas_log_write('... Adding field '//trim(field % fieldName)//' to stream')
+
+      ndims = size(field % dimSizes)
+
+!call mpas_log_write('... field has $i dimensions', intArgs=(/ndims/))
+
+      ! 
+      ! Determine whether the field is decomposed, the indices that are owned by this task's blocks,
+      !    and the total number of outer-indices owned by this task
+      ! 
+#include "add_field_indices.inc"
+
+      
+      any_success = .false.
+      if (field % isVarArray) then
+!call mpas_log_write('^^^^^^^^^^^^^^^^^^^^^^^^^^^ we are adding a var-array')
+         allocate(isAvailable(size(field % constituentNames)))
+         isAvailable(:) = .false.
+         do i=1,size(field % constituentNames)
+            call MPAS_streamAddField_generic(stream, trim(field % constituentNames(i)), REAL_IO_TYPE , field % dimNames(2:ndims), &
+                                             field % dimSizes(2:ndims), field % hasTimeDimension, field % isDecomposed, totalDimSize, globalDimSize, &
+                                             indices, precision=local_precision, ierr=io_err)
+            if (io_err == MPAS_STREAM_NOERR) then
+               isAvailable(i) = .true.
+               any_success = .true.
+            end if
+         end do
+      else
+         nullify(isAvailable)
+         call MPAS_streamAddField_generic(stream, trim(field % fieldName), REAL_IO_TYPE , field % dimNames, field % dimSizes, &
+                                          field % hasTimeDimension, field % isDecomposed, totalDimSize, globalDimSize, indices, precision=local_precision, ierr=io_err)
+         if (io_err == MPAS_STREAM_NOERR) then
+            any_success = .true.
+         end if
+      end if
+
+      deallocate(indices)
+      if (.not. any_success) then
+          if (present(ierr)) ierr = MPAS_IO_ERR
+          return
+      end if
+
+      if (field % isVarArray) then
+         do i=1,size(field % constituentNames)
+            call put_get_field_atts(stream % fileHandle, stream % ioDirection, trim(field % constituentNames(i)), field % attLists(i) % attList)
+         end do
+      else
+         call put_get_field_atts(stream % fileHandle, stream % ioDirection, trim(field % fieldname), field % attLists(1) % attList)
+      end if
+
+
+      !
+      ! Set field pointer and type in fieldList
+      !
+      new_field_list_node => stream % fieldList
+      do while (associated(new_field_list_node % next))
+         new_field_list_node => new_field_list_node % next
+      end do
+      new_field_list_node % field_type = FIELD_3D_REAL_4
+      new_field_list_node % real3dField_4 => field
+      new_field_list_node % isAvailable => isAvailable
+
+!call mpas_log_write('... done adding field')
+!call mpas_log_write('DEBUGGING : Finished adding 3d real field '//trim(field % fieldName))
+
+   end subroutine MPAS_streamAddField_3dReal_4
+
+
+   subroutine MPAS_streamAddField_4dReal_4(stream, field, precision, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      type (field4DReal_4), intent(in), target :: field
+      integer, intent(in), optional :: precision
+      integer, intent(out), optional :: ierr
+
+      integer :: io_err
+      integer :: i
+      integer :: idim
+      integer :: totalDimSize, globalDimSize
+      integer :: ndims
+      type (field4DReal_4), pointer :: field_ptr
+      character (len=StrKIND), dimension(5) :: dimNames
+      character (len=StrKIND), dimension(:), pointer :: dimNamesInq
+      integer, dimension(:), pointer :: indices
+      type (field_list_type), pointer :: field_list_cursor
+      type (field_list_type), pointer :: new_field_list_node
+      logical :: any_success
+      logical, dimension(:), pointer :: isAvailable
+      integer :: local_precision
+
+      type (mpas_pool_type), pointer :: meshPool
+      integer, dimension(:), pointer :: indexArray
+      integer, pointer :: indexDimension
+      character (len=StrKIND) :: elementName, elementNamePlural
+      logical :: meshFieldDim
+
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+     
+      if (present(precision)) then
+         local_precision = precision
+      else
+         local_precision = stream % defaultPrecision
+      end if
+
+      if (.not. field % isPersistent .or. .not. field % isActive) then
+        return
+      end if
+
+!call mpas_log_write('... Adding field '//trim(field % fieldName)//' to stream')
+
+      ndims = size(field % dimSizes)
+
+!call mpas_log_write('... field has $i dimensions', intArgs=(/ndims/))
+
+      ! 
+      ! Determine whether the field is decomposed, the indices that are owned by this task's blocks,
+      !    and the total number of outer-indices owned by this task
+      ! 
+#include "add_field_indices.inc"
+
+      
+      any_success = .false.
+      if (field % isVarArray) then
+!call mpas_log_write('^^^^^^^^^^^^^^^^^^^^^^^^^^^ we are adding a var-array')
+         allocate(isAvailable(size(field % constituentNames)))
+         isAvailable(:) = .false.
+         do i=1,size(field % constituentNames)
+            call MPAS_streamAddField_generic(stream, trim(field % constituentNames(i)), REAL_IO_TYPE , field % dimNames(2:ndims), &
+                                             field % dimSizes(2:ndims), field % hasTimeDimension, field % isDecomposed, totalDimSize, globalDimSize, &
+                                             indices, precision=local_precision, ierr=io_err)
+            if (io_err == MPAS_STREAM_NOERR) then
+               isAvailable(i) = .true.
+               any_success = .true.
+            end if
+         end do
+      else
+         nullify(isAvailable)
+         call MPAS_streamAddField_generic(stream, trim(field % fieldName), REAL_IO_TYPE , field % dimNames, field % dimSizes, &
+                                          field % hasTimeDimension, field % isDecomposed, totalDimSize, globalDimSize, indices, precision=local_precision, ierr=io_err)
+         if (io_err == MPAS_STREAM_NOERR) then
+            any_success = .true.
+         end if
+      end if
+
+      deallocate(indices)
+      if (.not. any_success) then
+          if (present(ierr)) ierr = MPAS_IO_ERR
+          return
+      end if
+
+      if (field % isVarArray) then
+         do i=1,size(field % constituentNames)
+            call put_get_field_atts(stream % fileHandle, stream % ioDirection, trim(field % constituentNames(i)), field % attLists(i) % attList)
+         end do
+      else
+         call put_get_field_atts(stream % fileHandle, stream % ioDirection, trim(field % fieldname), field % attLists(1) % attList)
+      end if
+
+
+      !
+      ! Set field pointer and type in fieldList
+      !
+      new_field_list_node => stream % fieldList
+      do while (associated(new_field_list_node % next))
+         new_field_list_node => new_field_list_node % next
+      end do
+      new_field_list_node % field_type = FIELD_4D_REAL_4
+      new_field_list_node % real4dField_4 => field
+      new_field_list_node % isAvailable => isAvailable
+
+!call mpas_log_write('... done adding field')
+!call mpas_log_write('DEBUGGING : Finished adding 4d real field '//trim(field % fieldName))
+
+   end subroutine MPAS_streamAddField_4dReal_4
+
+
+   subroutine MPAS_streamAddField_5dReal_4(stream, field, precision, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      type (field5DReal_4), intent(in), target :: field
+      integer, intent(in), optional :: precision
+      integer, intent(out), optional :: ierr
+
+      integer :: io_err
+      integer :: i
+      integer :: idim
+      integer :: totalDimSize, globalDimSize
+      integer :: ndims
+      type (field5DReal_4), pointer :: field_ptr
+      character (len=StrKIND), dimension(5) :: dimNames
+      character (len=StrKIND), dimension(:), pointer :: dimNamesInq
+      integer, dimension(:), pointer :: indices
+      type (field_list_type), pointer :: field_list_cursor
+      type (field_list_type), pointer :: new_field_list_node
+      logical :: any_success
+      logical, dimension(:), pointer :: isAvailable
+      integer :: local_precision
+
+      type (mpas_pool_type), pointer :: meshPool
+      integer, dimension(:), pointer :: indexArray
+      integer, pointer :: indexDimension
+      character (len=StrKIND) :: elementName, elementNamePlural
+      logical :: meshFieldDim
+
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+     
+      if (present(precision)) then
+         local_precision = precision
+      else
+         local_precision = stream % defaultPrecision
+      end if
+
+      if (.not. field % isPersistent .or. .not. field % isActive) then
+        return
+      end if
+
+!call mpas_log_write('... Adding field '//trim(field % fieldName)//' to stream')
+
+      ndims = size(field % dimSizes)
+
+!call mpas_log_write('... field has $i dimensions', intArgs=(/ndims/))
+
+      ! 
+      ! Determine whether the field is decomposed, the indices that are owned by this task's blocks,
+      !    and the total number of outer-indices owned by this task
+      ! 
+#include "add_field_indices.inc"
+
+      
+      any_success = .false.
+      if (field % isVarArray) then
+!call mpas_log_write('^^^^^^^^^^^^^^^^^^^^^^^^^^^ we are adding a var-array')
+         allocate(isAvailable(size(field % constituentNames)))
+         isAvailable(:) = .false.
+         do i=1,size(field % constituentNames)
+            call MPAS_streamAddField_generic(stream, trim(field % constituentNames(i)), REAL_IO_TYPE , field % dimNames(2:ndims), &
+                                             field % dimSizes(2:ndims), field % hasTimeDimension, field % isDecomposed, totalDimSize, globalDimSize, &
+                                             indices, precision=local_precision, ierr=io_err)
+            if (io_err == MPAS_STREAM_NOERR) then
+               isAvailable(i) = .true.
+               any_success = .true.
+            end if
+         end do
+      else
+         nullify(isAvailable)
+         call MPAS_streamAddField_generic(stream, trim(field % fieldName), REAL_IO_TYPE , field % dimNames, field % dimSizes, &
+                                          field % hasTimeDimension, field % isDecomposed, totalDimSize, globalDimSize, indices, precision=local_precision, ierr=io_err)
+         if (io_err == MPAS_STREAM_NOERR) then
+            any_success = .true.
+         end if
+      end if
+
+      deallocate(indices)
+      if (.not. any_success) then
+          if (present(ierr)) ierr = MPAS_IO_ERR
+          return
+      end if
+
+      if (field % isVarArray) then
+         do i=1,size(field % constituentNames)
+            call put_get_field_atts(stream % fileHandle, stream % ioDirection, trim(field % constituentNames(i)), field % attLists(i) % attList)
+         end do
+      else
+         call put_get_field_atts(stream % fileHandle, stream % ioDirection, trim(field % fieldname), field % attLists(1) % attList)
+      end if
+
+
+      !
+      ! Set field pointer and type in fieldList
+      !
+      new_field_list_node => stream % fieldList
+      do while (associated(new_field_list_node % next))
+         new_field_list_node => new_field_list_node % next
+      end do
+      new_field_list_node % field_type = FIELD_5D_REAL_4
+      new_field_list_node % real5dField_4 => field
+      new_field_list_node % isAvailable => isAvailable
+
+!call mpas_log_write('... done adding field')
+!call mpas_log_write('DEBUGGING : Finished adding 5d real field '//trim(field % fieldName))
+
+   end subroutine MPAS_streamAddField_5dReal_4
+
 
    subroutine MPAS_streamAddField_0dChar(stream, field, ierr)
 
@@ -2332,6 +3038,256 @@ module mpas_io_streams
       STREAM_DEBUG_WRITE( '... done updating field' )
 
    end subroutine MPAS_streamUpdateField_5dReal
+
+   subroutine MPAS_streamUpdateField_1dReal_4(stream, field, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      type (field1dReal_4), intent(in), target :: field
+      integer, intent(out), optional :: ierr
+
+      type (field_list_type), pointer :: field_cursor
+
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+      STREAM_DEBUG_WRITE( '... Updating 1d real field '//trim(field % fieldName)//' in stream' )
+
+      field_cursor => stream % fieldList
+      do while (associated(field_cursor))
+         if (field_cursor % field_type == FIELD_1D_REAL_4) then
+            if (field_cursor % real1dField % fieldname == field % fieldname .and. &
+                field_cursor % real1dField % dimSizes(1) == field % dimSizes(1) .and. &
+                field_cursor % real1dField % dimNames(1) == field % dimNames(1)) then
+               STREAM_DEBUG_WRITE( '... found 1d real named '//trim(field_cursor % real1dField % fieldname) )
+               field_cursor % real1dField => field
+               exit
+            end if
+         end if
+         field_cursor => field_cursor % next
+      end do
+      if (.not. associated(field_cursor)) then
+         STREAM_DEBUG_WRITE( '... 1d real field '//trim(field % fieldname)//' not found in stream' )
+         if (present(ierr)) ierr = MPAS_STREAM_FIELD_NOT_FOUND
+      end if
+
+      STREAM_DEBUG_WRITE( '... done updating field' )
+
+   end subroutine MPAS_streamUpdateField_1dReal_4
+
+
+   subroutine MPAS_streamUpdateField_2dReal_4(stream, field, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      type (field2dReal_4), intent(in), target :: field
+      integer, intent(out), optional :: ierr
+
+      type (field_list_type), pointer :: field_cursor
+
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+      STREAM_DEBUG_WRITE( '... Updating 2d real field '//trim(field % fieldName)//' in stream' )
+
+      field_cursor => stream % fieldList
+      do while (associated(field_cursor))
+         if (field_cursor % field_type == FIELD_2D_REAL_4) then
+            if (field_cursor % real2dField % fieldname == field % fieldname .and. &
+                field_cursor % real2dField % dimSizes(1) == field % dimSizes(1) .and. &
+                field_cursor % real2dField % dimSizes(2) == field % dimSizes(2) .and. &
+                field_cursor % real2dField % dimNames(1) == field % dimNames(1) .and. &
+                field_cursor % real2dField % dimNames(2) == field % dimNames(2)) then
+               STREAM_DEBUG_WRITE( '... found 2d real named '//trim(field_cursor % real2dField % fieldname) )
+               field_cursor % real2dField => field
+               exit
+            end if
+         end if
+         field_cursor => field_cursor % next
+      end do
+      if (.not. associated(field_cursor)) then
+         STREAM_DEBUG_WRITE( '... 2d real field '//trim(field % fieldname)//' not found in stream' )
+         if (present(ierr)) ierr = MPAS_STREAM_FIELD_NOT_FOUND
+      end if
+
+      STREAM_DEBUG_WRITE( '... done updating field' )
+
+   end subroutine MPAS_streamUpdateField_2dReal_4
+
+
+   subroutine MPAS_streamUpdateField_3dReal_4(stream, field, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      type (field3dReal_4), intent(in), target :: field
+      integer, intent(out), optional :: ierr
+
+      type (field_list_type), pointer :: field_cursor
+
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+      STREAM_DEBUG_WRITE( '... Updating 3d real field '//trim(field % fieldName)//' in stream' )
+
+      field_cursor => stream % fieldList
+      do while (associated(field_cursor))
+         if (field_cursor % field_type == FIELD_3D_REAL_4) then
+            if (field_cursor % real3dField % fieldname == field % fieldname .and. &
+                field_cursor % real3dField % dimSizes(1) == field % dimSizes(1) .and. &
+                field_cursor % real3dField % dimSizes(2) == field % dimSizes(2) .and. &
+                field_cursor % real3dField % dimSizes(3) == field % dimSizes(3) .and. &
+                field_cursor % real3dField % dimNames(1) == field % dimNames(1) .and. &
+                field_cursor % real3dField % dimNames(2) == field % dimNames(2) .and. &
+                field_cursor % real3dField % dimNames(3) == field % dimNames(3)) then
+               STREAM_DEBUG_WRITE( '... found 3d real named '//trim(field_cursor % real3dField % fieldname) )
+               field_cursor % real3dField => field
+               exit
+            end if
+         end if
+         field_cursor => field_cursor % next
+      end do
+      if (.not. associated(field_cursor)) then
+         STREAM_DEBUG_WRITE( '... 3d real field '//trim(field % fieldname)//' not found in stream' )
+         if (present(ierr)) ierr = MPAS_STREAM_FIELD_NOT_FOUND
+      end if
+
+      STREAM_DEBUG_WRITE( '... done updating field' )
+
+   end subroutine MPAS_streamUpdateField_3dReal_4
+
+
+   subroutine MPAS_streamUpdateField_4dReal_4(stream, field, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      type (field4dReal_4), intent(in), target :: field
+      integer, intent(out), optional :: ierr
+
+      type (field_list_type), pointer :: field_cursor
+
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+      STREAM_DEBUG_WRITE( '... Updating 4d real field '//trim(field % fieldName)//' in stream' )
+
+      field_cursor => stream % fieldList
+      do while (associated(field_cursor))
+         if (field_cursor % field_type == FIELD_4D_REAL_4) then
+            if (field_cursor % real4dField % fieldname == field % fieldname .and. &
+                field_cursor % real4dField % dimSizes(1) == field % dimSizes(1) .and. &
+                field_cursor % real4dField % dimSizes(2) == field % dimSizes(2) .and. &
+                field_cursor % real4dField % dimSizes(3) == field % dimSizes(3) .and. &
+                field_cursor % real4dField % dimSizes(4) == field % dimSizes(4) .and. &
+                field_cursor % real4dField % dimNames(1) == field % dimNames(1) .and. &
+                field_cursor % real4dField % dimNames(2) == field % dimNames(2) .and. &
+                field_cursor % real4dField % dimNames(3) == field % dimNames(3) .and. &
+                field_cursor % real4dField % dimNames(4) == field % dimNames(4)) then
+               STREAM_DEBUG_WRITE( '... found 4d real named '//trim(field_cursor % real4dField % fieldname) )
+               field_cursor % real4dField => field
+               exit
+            end if
+         end if
+         field_cursor => field_cursor % next
+      end do
+      if (.not. associated(field_cursor)) then
+         STREAM_DEBUG_WRITE( '... 4d real field '//trim(field % fieldname)//' not found in stream' )
+         if (present(ierr)) ierr = MPAS_STREAM_FIELD_NOT_FOUND
+      end if
+
+      STREAM_DEBUG_WRITE( '... done updating field' )
+
+   end subroutine MPAS_streamUpdateField_4dReal_4
+
+
+   subroutine MPAS_streamUpdateField_5dReal_4(stream, field, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      type (field5dReal_4), intent(in), target :: field
+      integer, intent(out), optional :: ierr
+
+      type (field_list_type), pointer :: field_cursor
+
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+      STREAM_DEBUG_WRITE( '... Updating 5d real field '//trim(field % fieldName)//' in stream' )
+
+      field_cursor => stream % fieldList
+      do while (associated(field_cursor))
+         if (field_cursor % field_type == FIELD_5D_REAL_4) then
+            if (field_cursor % real5dField % fieldname == field % fieldname .and. &
+                field_cursor % real5dField % dimSizes(1) == field % dimSizes(1) .and. &
+                field_cursor % real5dField % dimSizes(2) == field % dimSizes(2) .and. &
+                field_cursor % real5dField % dimSizes(3) == field % dimSizes(3) .and. &
+                field_cursor % real5dField % dimSizes(4) == field % dimSizes(4) .and. &
+                field_cursor % real5dField % dimSizes(5) == field % dimSizes(5) .and. &
+                field_cursor % real5dField % dimNames(1) == field % dimNames(1) .and. &
+                field_cursor % real5dField % dimNames(2) == field % dimNames(2) .and. &
+                field_cursor % real5dField % dimNames(3) == field % dimNames(3) .and. &
+                field_cursor % real5dField % dimNames(4) == field % dimNames(4) .and. &
+                field_cursor % real5dField % dimNames(5) == field % dimNames(5)) then
+               STREAM_DEBUG_WRITE( '... found 5d real named '//trim(field_cursor % real5dField % fieldname) )
+               field_cursor % real5dField => field
+               exit
+            end if
+         end if
+         field_cursor => field_cursor % next
+      end do
+      if (.not. associated(field_cursor)) then
+         STREAM_DEBUG_WRITE( '... 5d real field '//trim(field % fieldname)//' not found in stream' )
+         if (present(ierr)) ierr = MPAS_STREAM_FIELD_NOT_FOUND
+      end if
+
+      STREAM_DEBUG_WRITE( '... done updating field' )
+
+   end subroutine MPAS_streamUpdateField_5dReal_4
+
 
 
    subroutine MPAS_streamUpdateField_0dChar(stream, field, ierr)
@@ -4049,6 +5005,77 @@ module mpas_io_streams
 
    end subroutine MPAS_readStreamAtt_1dReal
 
+   subroutine MPAS_readStreamAtt_0dReal_4(stream, attName, attValue, precision, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      character (len=*), intent(in) :: attName
+      real (kind=R4KIND), intent(out) :: attValue
+      integer, intent(in), optional :: precision
+      integer, intent(out), optional :: ierr
+
+      integer :: io_err
+      integer :: local_precision
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+      if (present(precision)) then
+         local_precision = precision
+      else
+         local_precision = stream % defaultPrecision
+      end if
+
+      call MPAS_io_get_att(stream % fileHandle, attName, attValue, precision=local_precision, ierr=io_err)
+      call MPAS_io_err_mesg(io_err, .false.)
+      if (io_err /= MPAS_IO_NOERR .and. present(ierr)) ierr = MPAS_IO_ERR
+
+   end subroutine MPAS_readStreamAtt_0dReal_4
+
+
+   subroutine MPAS_readStreamAtt_1dReal_4(stream, attName, attValue, precision, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      character (len=*), intent(in) :: attName
+      real (kind=R4KIND), dimension(:), pointer :: attValue
+      integer, intent(in), optional :: precision
+      integer, intent(out), optional :: ierr
+
+      integer :: io_err
+      integer :: local_precision
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+      if (present(precision)) then
+         local_precision = precision
+      else
+         local_precision = stream % defaultPrecision
+      end if
+
+      call MPAS_io_get_att(stream % fileHandle, attName, attValue, precision=local_precision, ierr=io_err)
+      call MPAS_io_err_mesg(io_err, .false.)
+      if (io_err /= MPAS_IO_NOERR .and. present(ierr)) ierr = MPAS_IO_ERR
+
+   end subroutine MPAS_readStreamAtt_1dReal_4
+
 
    subroutine MPAS_readStreamAtt_text(stream, attName, attValue, ierr)
 
@@ -4209,6 +5236,79 @@ module mpas_io_streams
 
    end subroutine MPAS_writeStreamAtt_1dReal
 
+
+   subroutine MPAS_writeStreamAtt_0dReal_4(stream, attName, attValue, syncVal, precision, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      character (len=*), intent(in) :: attName
+      real (kind=R4KIND), intent(in) :: attValue
+      logical, intent(in), optional :: syncVal
+      integer, intent(in), optional :: precision
+      integer, intent(out), optional :: ierr
+
+      integer :: io_err
+      integer :: local_precision
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+      if (present(precision)) then
+         local_precision = precision
+      else
+         local_precision = stream % defaultPrecision
+      end if
+
+      call MPAS_io_put_att(stream % fileHandle, attName, attValue, syncVal=syncVal, precision=local_precision, ierr=io_err)
+      call MPAS_io_err_mesg(io_err, .false.)
+      if (io_err /= MPAS_IO_NOERR .and. present(ierr)) ierr = MPAS_IO_ERR
+
+   end subroutine MPAS_writeStreamAtt_0dReal_4
+
+
+   subroutine MPAS_writeStreamAtt_1dReal_4(stream, attName, attValue, syncVal, precision, ierr)
+
+      implicit none
+
+      type (MPAS_Stream_type), intent(inout) :: stream
+      character (len=*), intent(in) :: attName
+      real (kind=R4KIND), dimension(:), intent(in) :: attValue
+      logical, intent(in), optional :: syncVal
+      integer, intent(in), optional :: precision
+      integer, intent(out), optional :: ierr
+
+      integer :: io_err
+      integer :: local_precision
+
+      if (present(ierr)) ierr = MPAS_STREAM_NOERR
+
+      !
+      ! Sanity checks
+      !
+      if (.not. stream % isInitialized) then
+         if (present(ierr)) ierr = MPAS_STREAM_NOT_INITIALIZED
+         return
+      end if
+
+      if (present(precision)) then
+         local_precision = precision
+      else
+         local_precision = stream % defaultPrecision
+      end if
+
+      call MPAS_io_put_att(stream % fileHandle, attName, attValue, syncVal=syncVal, precision=local_precision, ierr=io_err)
+      call MPAS_io_err_mesg(io_err, .false.)
+      if (io_err /= MPAS_IO_NOERR .and. present(ierr)) ierr = MPAS_IO_ERR
+
+   end subroutine MPAS_writeStreamAtt_1dReal_4
 
    subroutine MPAS_writeStreamAtt_text(stream, attName, attValue, syncVal, ierr)
 
