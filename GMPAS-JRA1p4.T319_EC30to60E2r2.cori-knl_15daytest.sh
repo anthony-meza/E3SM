@@ -64,7 +64,7 @@ fi
 export COMPSET=GMPAS-JRA1p4
 export GRID=TL319_EC30to60E2r2
 export COMPILER=intel
-export TAG=15daytest_single_darins_suggestions_5440
+export TAG=15daytest_single_density_1920
 export E3SM_CASE=`date +"%Y%m%d"`.${COMPSET}.${GRID}.${TAG}.${MACHINE}
 
 #####################################################################
@@ -90,12 +90,12 @@ cd $CASE_ROOT/$E3SM_CASE
 # Number of processors being used 
 # Each node has 68 processors 
 
-export NPROCS_CPL=5440
+export NPROCS_CPL=1920
 export NPROCS_ATM=640
 export NPROCS_LND=640
 export NPROCS_ROF=640
-export NPROCS_ICE=5440
-export NPROCS_OCN=5440
+export NPROCS_ICE=1920
+export NPROCS_OCN=1920
 export NPROCS_GLC=640
 export NPROCS_WAV=640
 
@@ -113,7 +113,7 @@ export ROOTPE_ATM=0
 export ROOTPE_LND=0
 export ROOTPE_ROF=0
 export ROOTPE_ICE=0
-export ROOTPE_OCN=5440
+export ROOTPE_OCN=1920
 export ROOTPE_GLC=0
 export ROOTPE_WAV=0
 

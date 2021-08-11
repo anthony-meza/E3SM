@@ -6887,13 +6887,13 @@ contains
                             ! If nParents = 3, this is mass*tracer1*tracer2*tracer3
                             ! Note: Parent tracer must have ndims = 2
                             thisTracer % triangleValue2D(iCat,iqp,iTri,iEdge) = &
-                               parentTracer % triangleValue2D(iCat,iqp,iTri,iEdge) * &
+                               (1.0_R8KIND * parentTracer % triangleValue2D(iCat,iqp,iTri,iEdge)) * &
                                ( thisTracer % center2D(iCat,iCell)                              &
                                + thisTracer %  xGrad2D(iCat,iCell) * xTriangle(iqp,iTri,iEdge) &
                                + thisTracer %  yGrad2D(iCat,iCell) * yTriangle(iqp,iTri,iEdge) &
                                )
                             ! integrate over the triangle by summing over quadrature points
-                            tracerIntegral2D(iCat) = tracerIntegral2D(iCat) &
+                            tracerIntegral2D(iCat) = (1.0_R8KIND * tracerIntegral2D(iCat)) &
                                + weightQuadPoint(iqp) * thisTracer % triangleValue2D(iCat,iqp,iTri,iEdge)
                          enddo ! iCat
                       enddo    ! iqp
@@ -6933,21 +6933,21 @@ contains
                                   ! If nParents = 3, this is mass*tracer1*tracer2*tracer3
                                   ! Note: Parent tracer can have ndims = 2 or 3
                                   thisTracer % triangleValue3D(iLayer,iCat,iqp,iTri,iEdge) = &
-                                     parentTracer % triangleValue2D(iCat,iqp,iTri,iEdge) * &
+                                     (1.0_R8KIND * parentTracer % triangleValue2D(iCat,iqp,iTri,iEdge)) * &
                                      ( thisTracer % center3D(iLayer,iCat,iCell) &
                                      + thisTracer %  xGrad3D(iLayer,iCat,iCell) * xTriangle(iqp,iTri,iEdge) &
                                      + thisTracer %  yGrad3D(iLayer,iCat,iCell) * yTriangle(iqp,iTri,iEdge) &
                                      )
                                else  ! parents has ndims = 3
                                   thisTracer % triangleValue3D(iLayer,iCat,iqp,iTri,iEdge) = &
-                                     parentTracer % triangleValue3D(iLayer,iCat,iqp,iTri,iEdge) * &
+                                     (1.0_R8KIND * parentTracer % triangleValue3D(iLayer,iCat,iqp,iTri,iEdge)) * &
                                      ( thisTracer % center3D(iLayer,iCat,iCell) &
                                      + thisTracer %  xGrad3D(iLayer,iCat,iCell) * xTriangle(iqp,iTri,iEdge) &
                                      + thisTracer %  yGrad3D(iLayer,iCat,iCell) * yTriangle(iqp,iTri,iEdge) &
                                      )
                                endif
                                ! integrate over the triangle by summing over quadrature points
-                               tracerIntegral3D(iLayer,iCat) = tracerIntegral3D(iLayer,iCat) &
+                               tracerIntegral3D(iLayer,iCat) = (1.0_R8KIND * tracerIntegral3D(iLayer,iCat)) &
                                   + weightQuadPoint(iqp) * thisTracer % triangleValue3D(iLayer,iCat,iqp,iTri,iEdge)
                             enddo ! iLayer
                          enddo    ! iCat

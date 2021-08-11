@@ -50,6 +50,8 @@ module ocn_equation_of_state_linear
    interface ocn_equation_of_state_linear_density
       module procedure ocn_equation_of_state_linear_density_only
       module procedure ocn_equation_of_state_linear_density_exp
+      module procedure ocn_equation_of_state_linear_density_only_R8
+      module procedure ocn_equation_of_state_linear_density_exp_R8
    end interface
 
    !--------------------------------------------------------------------
@@ -363,6 +365,273 @@ contains
       !-----------------------------------------------------------------
 
    end subroutine ocn_equation_of_state_linear_density_exp!}}}
+
+
+   subroutine ocn_equation_of_state_linear_density_only_R8(          &
+              nVertLevels, nCells, kDisplaced, displacementType,  &
+              indexT, indexS, tracers, density, err,              &
+              tracersSurfaceLayerValue)
+      !{{{
+      !-----------------------------------------------------------------
+      !
+      ! Input variables
+      !
+      !-----------------------------------------------------------------
+
+      integer, intent(in) ::     &
+         nCells,                 &! num of horizontal cells
+         nVertLevels,            &! num of vertical levels
+         kDisplaced,             &! num of levels to displace parcel
+         indexT, indexS           ! index into tracer array for T,S
+
+      character(len=*), intent(in) :: &
+         displacementType
+
+      real (kind=RKIND), dimension(:,:,:), intent(in) :: &
+         tracers                  ! array containing T,S for calculation
+
+      real (kind=RKIND), dimension(:,:), intent(in), optional :: &
+         tracersSurfaceLayerValue ! optional sfc tracer values for sfc
+                                  ! displacement option
+
+      !-----------------------------------------------------------------
+      !
+      ! Output variables
+      !
+      !-----------------------------------------------------------------
+
+      integer, intent(out) :: &
+         err                   ! error flag
+
+      real (kind=R8KIND), dimension(:,:), intent(out) :: &
+         density               ! computed density
+
+      !-----------------------------------------------------------------
+      !
+      ! Local variables
+      !
+      !-----------------------------------------------------------------
+
+      integer :: &
+         iCell, k    ! cell and level loop indices
+
+      !-----------------------------------------------------------------
+
+      !*** initialize error flag
+
+      err = 0
+
+      !*** check for displacement choice
+      !*** for linear EOS, only choice that impacts the
+      !*** density is surface displacement
+
+      ! ignore this test for performance reasons
+      ! test of request to address out of bounds
+      !if (displacement_type_local == 'absolute' .and.   &
+      !   (k_displaced_local <= 0 .or. k_displaced_local > nVertLevels) ) then
+      !   call mpas_log_write('Abort: In equation_of_state_linear' // &
+      !       ' k_displaced must be between 1 and nVertLevels for ' // &
+      !       'displacement_type = absolute', MPAS_LOG_CRIT)
+      !endif
+
+      ! copy some intent(in) into local work space
+
+      !*** if surfaceDisplaced, then compute density at all levels
+      !*** based on input surface values
+
+      if (trim(displacementType) == 'surfaceDisplaced') then
+
+         !$omp parallel
+         !$omp do schedule(runtime) private(k)
+         do iCell = 1, nCells
+         do k = 1, nVertLevels
+
+            density(k,iCell) =  ocnEqStateLinearRhoRef &
+                             - ocnEqStateLinearAlpha * &
+                               (tracersSurfaceLayerValue(indexT,iCell) - &
+                                ocnEqStateLinearTref)  &
+                             + ocnEqStateLinearBeta  * &
+                               (tracersSurfaceLayerValue(indexS,iCell) - &
+                                ocnEqStateLinearSref)
+         end do
+         end do
+         !$omp end do
+         !$omp end parallel
+
+      else  ! all other displacement types
+
+         !$omp parallel
+         !$omp do schedule(runtime) private(k)
+         do iCell = 1, nCells
+         do k = 1, nVertLevels
+
+            density(k,iCell) = ocnEqStateLinearRhoRef     &
+                             - ocnEqStateLinearAlpha *    &
+                               (tracers(indexT,k,iCell) - &
+                                ocnEqStateLinearTref)     &
+                             + ocnEqStateLinearBeta  *    &
+                               (tracers(indexS,k,iCell) - &
+                                ocnEqStateLinearSref)
+         end do
+         end do
+         !$omp end do
+         !$omp end parallel
+
+      endif
+
+      !-----------------------------------------------------------------
+
+   end subroutine ocn_equation_of_state_linear_density_only_R8!}}}
+
+!***********************************************************************
+!
+!  routine ocn_equation_of_state_linear_density_exp
+!
+!> \brief   Computes density using a linear equation of state
+!> \author  Mark Petersen, Todd Ringler, modified by Phil Jones
+!> \date    September 2011, modified May 2018
+!> \details
+!>  This routine uses a linear equation of state to update the density.
+!>  This instance also returns the expansion coefficients.
+!>
+!-----------------------------------------------------------------------
+
+   subroutine ocn_equation_of_state_linear_density_exp_R8(           &
+              nVertLevels, nCells, kDisplaced, displacementType,  &
+              indexT, indexS, tracers, density, err,              &
+              thermalExpansionCoeff, salineContractionCoeff,      &
+              tracersSurfaceLayerValue)
+      !{{{
+      !-----------------------------------------------------------------
+      !
+      ! Input variables
+      !
+      !-----------------------------------------------------------------
+
+      integer, intent(in) ::     &
+         nCells,                 &! num of horizontal cells
+         nVertLevels,            &! num of vertical levels
+         kDisplaced,             &! num of levels to displace parcel
+         indexT, indexS           ! index into tracer array for T,S
+
+      character(len=*), intent(in) :: &
+         displacementType
+
+      real (kind=RKIND), dimension(:,:,:), intent(in) :: &
+         tracers                  ! array containing T,S for calculation
+
+      real (kind=RKIND), dimension(:,:), intent(in), optional :: &
+         tracersSurfaceLayerValue ! optional sfc tracer values for sfc
+                                  ! displacement option
+
+      !-----------------------------------------------------------------
+      !
+      ! Output variables
+      !
+      !-----------------------------------------------------------------
+
+      integer, intent(out) :: &
+         err                   ! error flag
+
+      real (kind=R8KIND), dimension(:,:), intent(out) :: &
+         density               ! computed density
+
+      ! Optional expansion (contraction) coefficients
+      ! alpha defined as $-1/\rho d\rho/dT$ (note negative sign)
+      ! beta  defined as $1/\rho d\rho/dS$
+      real (kind=RKIND), dimension(:,:), intent(out) :: &
+         thermalExpansionCoeff,  &! Thermal expansion coeff (alpha)
+         salineContractionCoeff   ! Saline contraction coeff (beta)
+
+      !-----------------------------------------------------------------
+      !
+      ! Local variables
+      !
+      !-----------------------------------------------------------------
+
+      integer :: &
+         iCell, k    ! cell and level loop indices
+
+      !-----------------------------------------------------------------
+
+      !*** initialize error flag
+
+      err = 0
+
+      !*** check for displacement choice
+      !*** for linear EOS, only choice that impacts the
+      !*** density is surface displacement
+
+      ! ignore this test for performance reasons
+      ! test of request to address out of bounds
+      !if (displacement_type_local == 'absolute' .and.   &
+      !   (k_displaced_local <= 0 .or. k_displaced_local > nVertLevels) ) then
+      !   call mpas_log_write('Abort: In equation_of_state_linear' // &
+      !       ' k_displaced must be between 1 and nVertLevels for ' // &
+      !       'displacement_type = absolute', MPAS_LOG_CRIT)
+      !endif
+
+      ! copy some intent(in) into local work space
+
+      !*** if surfaceDisplaced, then compute density at all levels
+      !*** based on input surface values
+      !*** return fixed values of expansion coefficients
+
+      if (trim(displacementType) == 'surfaceDisplaced') then
+
+         !$omp parallel
+         !$omp do schedule(runtime) private(k)
+         do iCell = 1, nCells
+         do k = 1, nVertLevels
+
+            density(k,iCell) =  ocnEqStateLinearRhoRef &
+                             - ocnEqStateLinearAlpha * &
+                               (tracersSurfaceLayerValue(indexT,iCell) - &
+                                ocnEqStateLinearTref)  &
+                             + ocnEqStateLinearBeta  * &
+                               (tracersSurfaceLayerValue(indexS,iCell) - &
+                                ocnEqStateLinearSref)
+
+            thermalExpansionCoeff(k,iCell) = ocnEqStateLinearAlpha/ &
+                                             density(k,iCell)
+
+            salineContractionCoeff(k,iCell) = ocnEqStateLinearBeta/ &
+                                              density(k,iCell)
+         end do
+         end do
+         !$omp end do
+         !$omp end parallel
+
+      else  ! all other displacement types
+
+         !$omp parallel
+         !$omp do schedule(runtime) private(k)
+         do iCell = 1, nCells
+         do k = 1, nVertLevels
+
+            density(k,iCell) = ocnEqStateLinearRhoRef     &
+                             - ocnEqStateLinearAlpha *    &
+                               (tracers(indexT,k,iCell) - &
+                                ocnEqStateLinearTref)     &
+                             + ocnEqStateLinearBeta  *    &
+                               (tracers(indexS,k,iCell) - &
+                                ocnEqStateLinearSref)
+
+            thermalExpansionCoeff(k,iCell) = ocnEqStateLinearAlpha/ &
+                                             density(k,iCell)
+
+            salineContractionCoeff(k,iCell) = ocnEqStateLinearBeta/ &
+                                              density(k,iCell)
+         end do
+         end do
+         !$omp end do
+         !$omp end parallel
+
+      endif
+
+      !-----------------------------------------------------------------
+
+   end subroutine ocn_equation_of_state_linear_density_exp_R8!}}}
 
 !***********************************************************************
 !

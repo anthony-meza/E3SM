@@ -240,10 +240,10 @@ contains
 
       ! compute in-place density
       call ocn_equation_of_state_density(statePool, meshPool, tracersSurfaceValue, &
-                                         nCells, 0, 'relative', density, err, &
+                                         nCells, 0, 'relative', density_R8, err, &
                                          thermExpCoeff, salineContractCoeff, &
                                          timeLevelIn=timeLevel)
-
+      density = real(density_R8, kind=RKIND)
       ! compute potentialDensity, the density displaced adiabatically to the mid-depth of top layer.
       call ocn_equation_of_state_density(statePool, meshPool, tracersSurfaceValue, &
                                          nCells, 1, 'absolute', potentialDensity, &
@@ -259,7 +259,7 @@ contains
       ! Pressure
       ! This section must be placed in the code after computing the density.
       !
-      call ocn_diagnostic_solve_pressure(layerThickness, density, &
+      call ocn_diagnostic_solve_pressure(layerThickness, density_R8, &
                 surfacePressure, montgomeryPotential, pressure)
 
       !$acc update device (montgomeryPotential, pressure)
@@ -271,7 +271,7 @@ contains
          !
          ! Brunt-Vaisala frequency and gradient Richardson number
          !
-         call ocn_diagnostic_solve_richardson(displacedDensity, density, zMid, &
+         call ocn_diagnostic_solve_richardson(displacedDensity, density_R8, zMid, &
                 normalVelocity, edgeAreaFractionOfCell, BruntVaisalaFreqTop, RiTopOfCell)
 
 #ifdef MPAS_OPENACC
@@ -911,7 +911,7 @@ contains
 
       real (kind=RKIND), dimension(:,:), intent(in) :: &
         displacedDensity
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=R8KIND), dimension(:,:), intent(in) :: &
         density
       real (kind=RKIND), dimension(:,:), intent(in) :: &
         zMid
@@ -1569,7 +1569,7 @@ contains
 
       real (kind=RKIND), dimension(:,:), intent(in) :: &
          layerThickness
-      real (kind=RKIND), dimension(:,:), intent(in) :: &
+      real (kind=R8KIND), dimension(:,:), intent(in) :: &
          density
       real (kind=RKIND), dimension(:), intent(in) :: &
          surfacePressure

@@ -405,7 +405,7 @@ contains
       ! Add pressure gradient
       call ocn_vel_pressure_grad_tend(ssh, pressure, &
                                montgomeryPotential, zMid, &
-                               density, potentialDensity, &
+                               density_R8, potentialDensity, &
                                indxTemp, indxSalt, activeTracers, &
                                thermExpCoeff, salineContractCoeff, &
                                tendVel, err)

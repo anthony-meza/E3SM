@@ -64,8 +64,8 @@ fi
 export COMPSET=GMPAS-JRA1p4
 export GRID=TL319_EC30to60E2r2
 export COMPILER=intel
-export TAG=3yrtest_single_fst
-export E3SM_CASE=`date +"20210729"`.${COMPSET}.${GRID}.${TAG}.${MACHINE}
+export TAG=3yrs_single_density-adjust
+export E3SM_CASE=`date +"20210810"`.${COMPSET}.${GRID}.${TAG}.${MACHINE}
 
 #####################################################################
 # Create case (won't have to change) 
@@ -206,8 +206,8 @@ export ROOTPE_WAV=0
 ./xmlchange -file env_run.xml -id STOP_N -val 3
 ./xmlchange -file env_run.xml -id REST_OPTION -val nmonths
 ./xmlchange -file env_run.xml -id REST_N -val 3
-./xmlchange -file env_run.xml -id CONTINUE_RUN -val TRUE
-./xmlchange -file env_run.xml -id RESUBMIT -val 6
+#./xmlchange -file env_run.xml -id CONTINUE_RUN -val TRUE
+#./xmlchange -file env_run.xml -id RESUBMIT -val 6
 #
 #./xmlchange -file env_run.xml -id HIST_OPTION -val nyears
 #./xmlchange -file env_run.xml -id HIST_N -val 5

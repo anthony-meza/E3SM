@@ -117,8 +117,10 @@ contains
          pressure,            &!< [in] Pressure field
          montgomeryPotential, &!< [in] Mongomery potential
          zMid,                &!< [in] z-coordinate at layer mid-depth
-         density,             &!< [in] density
          potentialDensity      !< [in] potentialDensity
+
+      real (kind=R8KIND), dimension(:,:), intent(in) :: &
+         density
 
       real (kind=RKIND), dimension(:,:), intent(in) :: &
          thermExpCoeff,       &!< [in] in situ thermal expansion coeff

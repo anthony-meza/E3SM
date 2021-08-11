@@ -194,6 +194,8 @@ module ocn_diagnostics_variables
    real (kind=RKIND), dimension(:), pointer :: CGvec_w0,CGvec_w1 ,CGvec_wh0,CGvec_wh1,CGvec_y0
    real (kind=RKIND), dimension(:), pointer :: CGvec_z0,CGvec_z1 ,CGvec_zh0,CGvec_zh1
 
+   real (kind=R8KIND), dimension(:,:), allocatable :: density_R8
+
    !--------------------------------------------------------------------
    !
    ! Public member functions
@@ -537,6 +539,7 @@ contains
       call mpas_pool_get_array(diagnosticsPool, 'zMid', zMid)
       call mpas_pool_get_array(diagnosticsPool, 'zTop', zTop)
       call mpas_pool_get_array(diagnosticsPool, 'density', density)
+      density_R8 = real(density, kind=R8KIND)
       call mpas_pool_get_array(diagnosticsPool, 'pressure', pressure)
       call mpas_pool_get_array(diagnosticsPool, 'displacedDensity', &
                 displacedDensity)
@@ -1243,7 +1246,7 @@ contains
               simulationStartTime,                     &
               boundaryLayerDepthSmooth,                &
               surfaceFluxAttenuationCoefficientRunoff)
-
+      deallocate(density_R8)
     end subroutine ocn_diagnostics_variables_destroy!}}}
 
 end module ocn_diagnostics_variables
